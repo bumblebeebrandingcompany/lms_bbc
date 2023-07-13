@@ -11,7 +11,7 @@ class UpdateProjectRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('project_edit');
+        return !auth()->user()->is_agency;
     }
 
     public function rules()

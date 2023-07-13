@@ -1,5 +1,5 @@
 <div class="m-3">
-    @can('campaign_create')
+    @if(!auth()->user()->is_client)
         <div style="margin-bottom: 10px;" class="row">
             <div class="col-lg-12">
                 <a class="btn btn-success" href="{{ route('admin.campaigns.create') }}">
@@ -7,12 +7,11 @@
                 </a>
             </div>
         </div>
-    @endcan
+    @endif
     <div class="card">
         <div class="card-header">
             {{ trans('cruds.campaign.title_singular') }} {{ trans('global.list') }}
         </div>
-
         <div class="card-body">
             <div class="table-responsive">
                 <table class=" table table-bordered table-striped table-hover datatable datatable-projectCampaigns">
@@ -81,28 +80,27 @@
                                     {{ $campaign->created_at ?? '' }}
                                 </td>
                                 <td>
-                                    @can('campaign_show')
+                                    @if(!auth()->user()->is_client)
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.campaigns.show', $campaign->id) }}">
                                             {{ trans('global.view') }}
                                         </a>
-                                    @endcan
+                                    @endif
 
-                                    @can('campaign_edit')
+                                    @if(!auth()->user()->is_client)
                                         <a class="btn btn-xs btn-info" href="{{ route('admin.campaigns.edit', $campaign->id) }}">
                                             {{ trans('global.edit') }}
                                         </a>
-                                    @endcan
+                                    @endif
 
-                                    @can('campaign_delete')
+                                    @if(!auth()->user()->is_client)
                                         <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                             <input type="hidden" name="_method" value="DELETE">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                         </form>
-                                    @endcan
+                                    @endif
 
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
@@ -116,7 +114,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('campaign_delete')
+@if(!auth()->user()->is_client)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
@@ -144,7 +142,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,

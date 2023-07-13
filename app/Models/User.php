@@ -17,6 +17,13 @@ class User extends Authenticatable
 {
     use SoftDeletes, Notifiable, Auditable, HasFactory;
 
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = ['is_superadmin', 'is_client', 'is_agency'];
+    
     public $table = 'users';
 
     protected $hidden = [
@@ -115,5 +122,35 @@ class User extends Authenticatable
     public function agency()
     {
         return $this->belongsTo(Agency::class, 'agency_id');
+    }
+
+    /**
+     * is user super admin?
+     *
+     * @return boolean
+     */
+    public function getIsSuperadminAttribute()
+    {
+        return $this->user_type == 'Superadmin';
+    }
+
+    /**
+     * is user client?
+     *
+     * @return boolean
+     */
+    public function getIsClientAttribute()
+    {
+        return $this->user_type == 'Client';
+    }
+
+    /**
+     * is user agency?
+     *
+     * @return boolean
+     */
+    public function getIsAgencyAttribute()
+    {
+        return $this->user_type == 'Agency';
     }
 }

@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('content')
-@can('project_create')
+@if(auth()->user()->is_superadmin)
     <div style="margin-bottom: 10px;" class="row">
         <div class="col-lg-12">
             <a class="btn btn-success" href="{{ route('admin.projects.create') }}">
@@ -12,12 +12,11 @@
             @include('csvImport.modal', ['model' => 'Project', 'route' => 'admin.projects.parseCsvImport'])
         </div>
     </div>
-@endcan
+@endif
 <div class="card">
     <div class="card-header">
         {{ trans('cruds.project.title_singular') }} {{ trans('global.list') }}
     </div>
-
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Project">
             <thead>
@@ -94,16 +93,13 @@
         </table>
     </div>
 </div>
-
-
-
 @endsection
 @section('scripts')
 @parent
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('project_delete')
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
@@ -131,7 +127,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
