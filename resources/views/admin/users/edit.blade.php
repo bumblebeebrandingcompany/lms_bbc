@@ -34,7 +34,7 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.user.fields.password_helper') }}</span>
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
                 <label class="required" for="roles">{{ trans('cruds.user.fields.roles') }}</label>
                 <div style="padding-bottom: 4px">
                     <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
@@ -49,12 +49,12 @@
                     <span class="text-danger">{{ $errors->first('roles') }}</span>
                 @endif
                 <span class="help-block">{{ trans('cruds.user.fields.roles_helper') }}</span>
-            </div>
+            </div> -->
             <div class="form-group">
                 <label class="required">{{ trans('cruds.user.fields.user_type') }}</label>
                 @foreach(App\Models\User::USER_TYPE_RADIO as $key => $label)
                     <div class="form-check {{ $errors->has('user_type') ? 'is-invalid' : '' }}">
-                        <input class="form-check-input" type="radio" id="user_type_{{ $key }}" name="user_type" value="{{ $key }}" {{ old('user_type', $user->user_type) === (string) $key ? 'checked' : '' }} required>
+                        <input class="form-check-input user_type_input" type="radio" id="user_type_{{ $key }}" name="user_type" value="{{ $key }}" {{ old('user_type', $user->user_type) === (string) $key ? 'checked' : '' }} required>
                         <label class="form-check-label" for="user_type_{{ $key }}">{{ $label }}</label>
                     </div>
                 @endforeach
@@ -96,7 +96,7 @@
                 <span class="help-block">{{ trans('cruds.user.fields.website_helper') }}</span>
             </div>
             <div class="form-group">
-                <label for="client_id">{{ trans('cruds.user.fields.client') }}</label>
+                <label class="required" for="client_id">{{ trans('cruds.user.fields.client') }}</label>
                 <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}" name="client_id" id="client_id">
                     @foreach($clients as $id => $entry)
                         <option value="{{ $id }}" {{ (old('client_id') ? old('client_id') : $user->client->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
@@ -108,7 +108,7 @@
                 <span class="help-block">{{ trans('cruds.user.fields.client_helper') }}</span>
             </div>
             <div class="form-group">
-                <label for="agency_id">{{ trans('cruds.user.fields.agency') }}</label>
+                <label class="required" for="agency_id">{{ trans('cruds.user.fields.agency') }}</label>
                 <select class="form-control select2 {{ $errors->has('agency') ? 'is-invalid' : '' }}" name="agency_id" id="agency_id">
                     @foreach($agencies as $id => $entry)
                         <option value="{{ $id }}" {{ (old('agency_id') ? old('agency_id') : $user->agency->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
@@ -127,7 +127,9 @@
         </form>
     </div>
 </div>
-
-
-
+@endsection
+@section('scripts')
+<script>
+    @includeIf('admin.users.partials.user_crud_js')
+</script>
 @endsection

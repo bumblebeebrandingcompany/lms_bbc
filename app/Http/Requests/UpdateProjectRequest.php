@@ -29,10 +29,6 @@ class UpdateProjectRequest extends FormRequest
                 'date_format:' . config('panel.date_format'),
                 'nullable',
             ],
-            'created_by_id' => [
-                'required',
-                'integer',
-            ],
             'client_id' => [
                 'required',
                 'integer',

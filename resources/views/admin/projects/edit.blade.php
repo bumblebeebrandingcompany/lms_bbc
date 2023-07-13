@@ -35,18 +35,6 @@
                 <span class="help-block">{{ trans('cruds.project.fields.end_date_helper') }}</span>
             </div>
             <div class="form-group">
-                <label class="required" for="created_by_id">{{ trans('cruds.project.fields.created_by') }}</label>
-                <select class="form-control select2 {{ $errors->has('created_by') ? 'is-invalid' : '' }}" name="created_by_id" id="created_by_id" required>
-                    @foreach($created_bies as $id => $entry)
-                        <option value="{{ $id }}" {{ (old('created_by_id') ? old('created_by_id') : $project->created_by->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('created_by'))
-                    <span class="text-danger">{{ $errors->first('created_by') }}</span>
-                @endif
-                <span class="help-block">{{ trans('cruds.project.fields.created_by_helper') }}</span>
-            </div>
-            <div class="form-group">
                 <label class="required" for="client_id">{{ trans('cruds.project.fields.client') }}</label>
                 <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}" name="client_id" id="client_id" required>
                     @foreach($clients as $id => $entry)

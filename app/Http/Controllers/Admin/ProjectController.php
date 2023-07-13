@@ -93,7 +93,10 @@ class ProjectController extends Controller
 
     public function store(StoreProjectRequest $request)
     {
-        $project = Project::create($request->all());
+        $project_details = $request->except('_token');
+        $project_details['created_by_id'] = auth()->user()->id;
+
+        $project = Project::create($project_details);
 
         if ($media = $request->input('ck-media', false)) {
             Media::whereIn('id', $media)->update(['model_id' => $project->id]);

@@ -37,7 +37,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @can('permission_access')
+                            <!-- @can('permission_access')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.permissions.index") }}" class="nav-link {{ request()->is("admin/permissions") || request()->is("admin/permissions/*") ? "active" : "" }}">
                                         <i class="fa-fw nav-icon fas fa-unlock-alt">
@@ -48,8 +48,8 @@
                                         </p>
                                     </a>
                                 </li>
-                            @endcan
-                            @can('role_access')
+                            @endcan -->
+                            <!-- @can('role_access')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.roles.index") }}" class="nav-link {{ request()->is("admin/roles") || request()->is("admin/roles/*") ? "active" : "" }}">
                                         <i class="fa-fw nav-icon fas fa-briefcase">
@@ -60,7 +60,7 @@
                                         </p>
                                     </a>
                                 </li>
-                            @endcan
+                            @endcan -->
                             @can('user_access')
                                 <li class="nav-item">
                                     <a href="{{ route("admin.users.index") }}" class="nav-link {{ request()->is("admin/users") || request()->is("admin/users/*") ? "active" : "" }}">
