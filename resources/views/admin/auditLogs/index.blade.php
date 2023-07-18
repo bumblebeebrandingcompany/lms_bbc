@@ -1,20 +1,19 @@
 @extends('layouts.admin')
 @section('content')
-
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.auditLog.title_singular') }} {{ trans('global.list') }}
-    </div>
-
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+            {{ trans('cruds.auditLog.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-AuditLog">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.auditLog.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.auditLog.fields.description') }}
@@ -61,7 +60,6 @@
     ajax: "{{ route('admin.audit-logs.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'description', name: 'description' },
 { data: 'subject_id', name: 'subject_id' },
 { data: 'subject_type', name: 'subject_type' },
@@ -71,7 +69,7 @@
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    order: [[ 6, 'desc' ]],
     pageLength: 100,
   };
   let table = $('.datatable-AuditLog').DataTable(dtOverrideGlobals);

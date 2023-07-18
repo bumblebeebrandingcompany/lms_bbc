@@ -1,18 +1,22 @@
 @extends('layouts.admin')
 @section('content')
 
-<div class="card">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+            {{ trans('global.show') }} {{ trans('cruds.auditLog.title') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
     <div class="card-header">
-        {{ trans('global.show') }} {{ trans('cruds.auditLog.title') }}
+        <a class="btn btn-default float-right" href="{{ route('admin.audit-logs.index') }}">
+            <i class="fas fa-chevron-left"></i>
+            {{ trans('global.back_to_list') }}
+        </a>
     </div>
-
     <div class="card-body">
         <div class="form-group">
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.audit-logs.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
             <table class="table table-bordered table-striped">
                 <tbody>
                     <tr>
@@ -81,11 +85,6 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.audit-logs.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
         </div>
     </div>
 </div>

@@ -1,17 +1,12 @@
 <div class="m-3">
-    @if(!auth()->user()->is_client)
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.leads.create') }}">
+    <div class="card">
+        @if(auth()->user()->is_superadmin)
+            <div class="card-header">
+                <a class="btn btn-success float-right" href="{{ route('admin.leads.create') }}">
                     {{ trans('global.add') }} {{ trans('cruds.lead.title_singular') }}
                 </a>
             </div>
-        </div>
-    @endif
-    <div class="card">
-        <div class="card-header">
-            {{ trans('cruds.lead.title_singular') }} {{ trans('global.list') }}
-        </div>
+        @endif
         <div class="card-body">
             <div class="table-responsive">
                 <table class=" table table-bordered table-striped table-hover datatable datatable-projectLeads">
@@ -19,9 +14,6 @@
                         <tr>
                             <th width="10">
 
-                            </th>
-                            <th>
-                                {{ trans('cruds.lead.fields.id') }}
                             </th>
                             <th>
                                 {{ trans('cruds.lead.fields.project') }}
@@ -44,40 +36,34 @@
 
                                 </td>
                                 <td>
-                                    {{ $lead->id ?? '' }}
-                                </td>
-                                <td>
                                     {{ $lead->project->name ?? '' }}
                                 </td>
                                 <td>
                                     {{ $lead->campaign->campaign_name ?? '' }}
                                 </td>
                                 <td>
-                                    {{ $lead->lead_details ?? '' }}
+                                    @if(!empty($lead->lead_details) && is_array($lead->lead_details))
+                                        @foreach($lead->lead_details as $key => $value)
+                                            {{$key}} : {{$value}} <br>
+                                        @endforeach
+                                    @endif
                                 </td>
                                 <td>
-                                    @if(!auth()->user()->is_client)
-                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.leads.show', $lead->id) }}">
-                                            {{ trans('global.view') }}
-                                        </a>
-                                    @endif
+                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.leads.show', $lead->id) }}">
+                                        {{ trans('global.view') }}
+                                    </a>
 
-                                    @if(!auth()->user()->is_client)
-                                        <a class="btn btn-xs btn-info" href="{{ route('admin.leads.edit', $lead->id) }}">
-                                            {{ trans('global.edit') }}
-                                        </a>
-                                    @endif
-
-                                    @if(!auth()->user()->is_client)
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.leads.edit', $lead->id) }}">
+                                        {{ trans('global.edit') }}
+                                    </a>
+                                    @if(auth()->user()->is_superadmin)
                                         <form action="{{ route('admin.leads.destroy', $lead->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                             <input type="hidden" name="_method" value="DELETE">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                         </form>
                                     @endif
-
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
@@ -91,7 +77,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@if(!auth()->user()->is_client)
+  @if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,

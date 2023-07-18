@@ -1,28 +1,26 @@
 @extends('layouts.admin')
 @section('content')
-@can('user_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.users.create') }}">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+            {{ trans('cruds.user.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    @if(auth()->user()->is_superadmin)
+        <div class="card-header">
+            <a class="btn btn-success float-right" href="{{ route('admin.users.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.user.title_singular') }}
             </a>
         </div>
-    </div>
-@endcan
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.user.title_singular') }} {{ trans('global.list') }}
-    </div>
-
+    @endif
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-User">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.user.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.user.fields.name') }}
@@ -32,9 +30,6 @@
                     </th>
                     <th>
                         {{ trans('cruds.user.fields.email_verified_at') }}
-                    </th>
-                    <th>
-                        {{ trans('cruds.user.fields.roles') }}
                     </th>
                     <th>
                         {{ trans('cruds.user.fields.user_type') }}
@@ -66,17 +61,6 @@
                     </td>
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
-                    </td>
-                    <td>
-                        <input class="search" type="text" placeholder="{{ trans('global.search') }}">
-                    </td>
-                    <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($roles as $key => $item)
-                                <option value="{{ $item->title }}">{{ $item->title }}</option>
-                            @endforeach
-                        </select>
                     </td>
                     <td>
                         <select class="search" strict="true">
@@ -124,7 +108,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('user_delete')
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
@@ -152,7 +136,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
@@ -163,11 +147,9 @@
     ajax: "{{ route('admin.users.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'name', name: 'name' },
 { data: 'email', name: 'email' },
 { data: 'email_verified_at', name: 'email_verified_at' },
-{ data: 'roles', name: 'roles.title' },
 { data: 'user_type', name: 'user_type' },
 { data: 'contact_number_1', name: 'contact_number_1' },
 { data: 'website', name: 'website' },

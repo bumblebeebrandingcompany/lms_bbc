@@ -11,6 +11,9 @@ Route::get('/home', function () {
 
 Auth::routes(['register' => false]);
 
+//webhook receiver
+Route::any('webhook/{secret}', 'Admin\WebhookReceiverController@processor')->name('webhook.processor');
+
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
     Route::get('/', 'HomeController@index')->name('home');
     // Permissions
@@ -34,6 +37,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('projects', 'ProjectController');
 
     // Campaign
+    Route::get('campaigns/{id}/webhook', 'CampaignController@getWebhookDetails')->name('campaigns.webhook');
     Route::delete('campaigns/destroy', 'CampaignController@massDestroy')->name('campaigns.massDestroy');
     Route::resource('campaigns', 'CampaignController');
 

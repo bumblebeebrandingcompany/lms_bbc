@@ -1,28 +1,26 @@
 @extends('layouts.admin')
 @section('content')
-@can('client_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.clients.create') }}">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+        {{ trans('cruds.client.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        @if(auth()->user()->is_superadmin)
+            <a class="btn btn-success float-right" href="{{ route('admin.clients.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.client.title_singular') }}
             </a>
-        </div>
+        @endif
     </div>
-@endcan
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.client.title_singular') }} {{ trans('global.list') }}
-    </div>
-
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Client">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.client.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.client.fields.name') }}
@@ -53,7 +51,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('client_delete')
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
@@ -81,7 +79,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
@@ -92,7 +90,6 @@
     ajax: "{{ route('admin.clients.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'name', name: 'name' },
 { data: 'email', name: 'email' },
 { data: 'website', name: 'website' },

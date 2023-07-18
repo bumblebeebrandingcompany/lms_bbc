@@ -1,17 +1,12 @@
 <div class="m-3">
-    @if(!auth()->user()->is_client)
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.campaigns.create') }}">
+    <div class="card">
+        @if(auth()->user()->is_superadmin)
+            <div class="card-header">
+                <a class="btn btn-success float-right" href="{{ route('admin.campaigns.create') }}">
                     {{ trans('global.add') }} {{ trans('cruds.campaign.title_singular') }}
                 </a>
             </div>
-        </div>
-    @endif
-    <div class="card">
-        <div class="card-header">
-            {{ trans('cruds.campaign.title_singular') }} {{ trans('global.list') }}
-        </div>
+        @endif
         <div class="card-body">
             <div class="table-responsive">
                 <table class=" table table-bordered table-striped table-hover datatable datatable-projectCampaigns">
@@ -19,9 +14,6 @@
                         <tr>
                             <th width="10">
 
-                            </th>
-                            <th>
-                                {{ trans('cruds.campaign.fields.id') }}
                             </th>
                             <th>
                                 {{ trans('cruds.campaign.fields.campaign_name') }}
@@ -56,9 +48,6 @@
 
                                 </td>
                                 <td>
-                                    {{ $campaign->id ?? '' }}
-                                </td>
-                                <td>
                                     {{ $campaign->campaign_name ?? '' }}
                                 </td>
                                 <td>
@@ -80,26 +69,20 @@
                                     {{ $campaign->created_at ?? '' }}
                                 </td>
                                 <td>
-                                    @if(!auth()->user()->is_client)
-                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.campaigns.show', $campaign->id) }}">
-                                            {{ trans('global.view') }}
-                                        </a>
-                                    @endif
+                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.campaigns.show', $campaign->id) }}">
+                                        {{ trans('global.view') }}
+                                    </a>
 
-                                    @if(!auth()->user()->is_client)
-                                        <a class="btn btn-xs btn-info" href="{{ route('admin.campaigns.edit', $campaign->id) }}">
-                                            {{ trans('global.edit') }}
-                                        </a>
-                                    @endif
-
-                                    @if(!auth()->user()->is_client)
+                                    <a class="btn btn-xs btn-info" href="{{ route('admin.campaigns.edit', $campaign->id) }}">
+                                        {{ trans('global.edit') }}
+                                    </a>
+                                    @if(auth()->user()->is_superadmin)
                                         <form action="{{ route('admin.campaigns.destroy', $campaign->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                             <input type="hidden" name="_method" value="DELETE">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                         </form>
                                     @endif
-
                                 </td>
                             </tr>
                         @endforeach
@@ -114,7 +97,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@if(!auth()->user()->is_client)
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,

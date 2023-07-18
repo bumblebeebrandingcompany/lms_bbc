@@ -3,11 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use LaravelDaily\LaravelCharts\Classes\LaravelChart;
-
+use App\Utils\Util;
 class HomeController
 {
+    /**
+    * All Utils instance.
+    *
+    */
+    protected $util;
+
+    /**
+    * Constructor
+    *
+    */
+    public function __construct(Util $util)
+    {
+        $this->util = $util;
+    }
+
     public function index()
     {
+        $project_ids = $this->util->getUserProjects(auth()->user());
+        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+
         $settings1 = [
             'chart_title'           => 'Admin Users',
             'chart_type'            => 'number_block',
@@ -233,6 +251,7 @@ class HomeController
                     }
                 }
             })
+                ->whereIn('id', $project_ids)
                 ->{$settings6['aggregate_function'] ?? 'count'}($settings6['aggregate_field'] ?? '*');
         }
 
@@ -271,6 +290,7 @@ class HomeController
                     }
                 }
             })
+                ->whereIn('id', $campaign_ids)
                 ->{$settings7['aggregate_function'] ?? 'count'}($settings7['aggregate_field'] ?? '*');
         }
 
@@ -309,6 +329,10 @@ class HomeController
                     }
                 }
             })
+                ->where(function ($q) use($project_ids, $campaign_ids) {
+                    $q->whereIn('project_id', $project_ids)
+                        ->orWhereIn('campaign_id', $campaign_ids);
+                })
                 ->{$settings8['aggregate_function'] ?? 'count'}($settings8['aggregate_field'] ?? '*');
         }
 
@@ -325,7 +349,6 @@ class HomeController
             'column_class'          => 'col-md-6',
             'entries_number'        => '10',
             'fields'                => [
-                'id'            => '',
                 'campaign_name' => '',
                 'start_date'    => '',
                 'source'        => '',
@@ -339,7 +362,8 @@ class HomeController
 
         $settings9['data'] = [];
         if (class_exists($settings9['model'])) {
-            $settings9['data'] = $settings9['model']::latest()
+            $settings9['data'] = $settings9['model']::whereIn('id', $campaign_ids)
+                ->latest()
                 ->take($settings9['entries_number'])
                 ->get();
         }
@@ -361,7 +385,6 @@ class HomeController
             'column_class'          => 'col-md-6',
             'entries_number'        => '20',
             'fields'                => [
-                'id'           => '',
                 'project'      => 'name',
                 'campaign'     => 'campaign_name',
                 'lead_details' => '',
@@ -372,7 +395,11 @@ class HomeController
 
         $settings10['data'] = [];
         if (class_exists($settings10['model'])) {
-            $settings10['data'] = $settings10['model']::latest()
+            $settings10['data'] = $settings10['model']::where(function ($q) use($project_ids, $campaign_ids) {
+                    $q->whereIn('leads.project_id', $project_ids)
+                    ->orWhereIn('leads.campaign_id', $campaign_ids);
+                })
+                ->latest()
                 ->take($settings10['entries_number'])
                 ->get();
         }
@@ -398,7 +425,7 @@ class HomeController
         ];
 
         $chart11 = new LaravelChart($settings11);
-
+        
         return view('home', compact('chart11', 'settings1', 'settings10', 'settings2', 'settings3', 'settings4', 'settings5', 'settings6', 'settings7', 'settings8', 'settings9'));
     }
 }

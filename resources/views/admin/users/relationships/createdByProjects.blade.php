@@ -1,18 +1,12 @@
 <div class="m-3">
-    @can('project_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.projects.create') }}">
+    <div class="card">
+        @if(auth()->user()->is_superadmin)
+            <div class="card-header">
+                <a class="btn btn-success float-right" href="{{ route('admin.projects.create') }}">
                     {{ trans('global.add') }} {{ trans('cruds.project.title_singular') }}
                 </a>
             </div>
-        </div>
-    @endcan
-    <div class="card">
-        <div class="card-header">
-            {{ trans('cruds.project.title_singular') }} {{ trans('global.list') }}
-        </div>
-
+        @endif
         <div class="card-body">
             <div class="table-responsive">
                 <table class=" table table-bordered table-striped table-hover datatable datatable-createdByProjects">
@@ -116,7 +110,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('project_delete')
+  @if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
@@ -144,7 +138,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,

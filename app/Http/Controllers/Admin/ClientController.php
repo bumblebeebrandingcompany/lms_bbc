@@ -20,7 +20,7 @@ class ClientController extends Controller
 
     public function index(Request $request)
     {
-        abort_if(Gate::denies('client_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
             $query = Client::query()->select(sprintf('%s.*', (new Client)->table));
@@ -30,9 +30,9 @@ class ClientController extends Controller
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate      = 'client_show';
-                $editGate      = 'client_edit';
-                $deleteGate    = 'client_delete';
+                $viewGate      = auth()->user()->is_superadmin;
+                $editGate      = auth()->user()->is_superadmin;
+                $deleteGate    = auth()->user()->is_superadmin;
                 $crudRoutePart = 'clients';
 
                 return view('partials.datatablesActions', compact(
@@ -42,10 +42,6 @@ class ClientController extends Controller
                     'crudRoutePart',
                     'row'
                 ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : '';
             });
             $table->editColumn('name', function ($row) {
                 return $row->name ? $row->name : '';
@@ -70,7 +66,7 @@ class ClientController extends Controller
 
     public function create()
     {
-        abort_if(Gate::denies('client_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.clients.create');
     }
@@ -88,7 +84,7 @@ class ClientController extends Controller
 
     public function edit(Client $client)
     {
-        abort_if(Gate::denies('client_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.clients.edit', compact('client'));
     }
@@ -102,7 +98,7 @@ class ClientController extends Controller
 
     public function show(Client $client)
     {
-        abort_if(Gate::denies('client_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $client->load('clientProjects', 'clientUsers');
 
@@ -111,7 +107,7 @@ class ClientController extends Controller
 
     public function destroy(Client $client)
     {
-        abort_if(Gate::denies('client_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $client->delete();
 
@@ -131,7 +127,7 @@ class ClientController extends Controller
 
     public function storeCKEditorImages(Request $request)
     {
-        abort_if(Gate::denies('client_create') && Gate::denies('client_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $model         = new Client();
         $model->id     = $request->input('crud_id', 0);

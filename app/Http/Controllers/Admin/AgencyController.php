@@ -16,7 +16,7 @@ class AgencyController extends Controller
 {
     public function index(Request $request)
     {
-        abort_if(Gate::denies('agency_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
             $query = Agency::query()->select(sprintf('%s.*', (new Agency)->table));
@@ -26,9 +26,9 @@ class AgencyController extends Controller
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate      = 'agency_show';
-                $editGate      = 'agency_edit';
-                $deleteGate    = 'agency_delete';
+                $viewGate      = auth()->user()->is_superadmin;
+                $editGate      = auth()->user()->is_superadmin;
+                $deleteGate    = auth()->user()->is_superadmin;
                 $crudRoutePart = 'agencies';
 
                 return view('partials.datatablesActions', compact(
@@ -38,10 +38,6 @@ class AgencyController extends Controller
                     'crudRoutePart',
                     'row'
                 ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : '';
             });
             $table->editColumn('name', function ($row) {
                 return $row->name ? $row->name : '';
@@ -63,7 +59,7 @@ class AgencyController extends Controller
 
     public function create()
     {
-        abort_if(Gate::denies('agency_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.agencies.create');
     }
@@ -77,7 +73,7 @@ class AgencyController extends Controller
 
     public function edit(Agency $agency)
     {
-        abort_if(Gate::denies('agency_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.agencies.edit', compact('agency'));
     }
@@ -91,7 +87,7 @@ class AgencyController extends Controller
 
     public function show(Agency $agency)
     {
-        abort_if(Gate::denies('agency_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $agency->load('agencyUsers', 'agencyCampaigns');
 
@@ -100,7 +96,7 @@ class AgencyController extends Controller
 
     public function destroy(Agency $agency)
     {
-        abort_if(Gate::denies('agency_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $agency->delete();
 

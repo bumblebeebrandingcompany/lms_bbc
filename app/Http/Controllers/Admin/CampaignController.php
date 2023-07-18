@@ -10,40 +10,61 @@ use App\Models\Agency;
 use App\Models\Campaign;
 use App\Models\Project;
 use Gate;
+use App\Models\Lead;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Utils\Util;
 use Yajra\DataTables\Facades\DataTables;
-
+use Illuminate\Support\Facades\DB;
 class CampaignController extends Controller
 {
+    /**
+    * All Utils instance.
+    *
+    */
+    protected $util;
+
+    /**
+    * Constructor
+    *
+    */
+    public function __construct(Util $util)
+    {
+        $this->util = $util;
+    }
+
     public function index(Request $request)
     {
-        abort_if(Gate::denies('campaign_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        $project_ids = $this->util->getUserProjects(auth()->user());
+        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
         if ($request->ajax()) {
-            $query = Campaign::with(['project', 'agency'])->select(sprintf('%s.*', (new Campaign)->table));
+
+            $user = auth()->user();
+
+            $query = Campaign::whereIn('id', $campaign_ids)
+                        ->with(['project', 'agency'])->select(sprintf('%s.*', (new Campaign)->table));
+                        
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');
 
-            $table->editColumn('actions', function ($row) {
-                $viewGate      = 'campaign_show';
-                $editGate      = 'campaign_edit';
-                $deleteGate    = 'campaign_delete';
+            $table->editColumn('actions', function ($row) use($user) {
+                $viewGate      = true;
+                $editGate      = true;
+                $deleteGate    = $user->is_superadmin;
+                $webhookSecretGate = $user->is_superadmin;
                 $crudRoutePart = 'campaigns';
 
                 return view('partials.datatablesActions', compact(
                     'viewGate',
                     'editGate',
                     'deleteGate',
+                    'webhookSecretGate',
                     'crudRoutePart',
                     'row'
                 ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : '';
             });
             $table->editColumn('campaign_name', function ($row) {
                 return $row->campaign_name ? $row->campaign_name : '';
@@ -65,7 +86,8 @@ class CampaignController extends Controller
             return $table->make(true);
         }
 
-        $projects = Project::get();
+        $projects = Project::whereIn('id', $project_ids)
+                        ->get();
         $agencies = Agency::get();
 
         return view('admin.campaigns.index', compact('projects', 'agencies'));
@@ -73,7 +95,7 @@ class CampaignController extends Controller
 
     public function create()
     {
-        abort_if(Gate::denies('campaign_create'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $projects = Project::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -84,15 +106,16 @@ class CampaignController extends Controller
 
     public function store(StoreCampaignRequest $request)
     {
-        $campaign = Campaign::create($request->all());
+        
+        $campaign_details = $request->except('_token');
+        $campaign_details['webhook_secret'] = $this->util->generateWebhookSecret();
+        $campaign = Campaign::create($campaign_details);
 
         return redirect()->route('admin.campaigns.index');
     }
 
     public function edit(Campaign $campaign)
     {
-        abort_if(Gate::denies('campaign_edit'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         $projects = Project::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
@@ -111,8 +134,6 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign)
     {
-        abort_if(Gate::denies('campaign_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         $campaign->load('project', 'agency', 'campaignLeads');
 
         return view('admin.campaigns.show', compact('campaign'));
@@ -120,7 +141,7 @@ class CampaignController extends Controller
 
     public function destroy(Campaign $campaign)
     {
-        abort_if(Gate::denies('campaign_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $campaign->delete();
 
@@ -136,5 +157,16 @@ class CampaignController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function getWebhookDetails($id)
+    {
+        $campaign = Campaign::findOrFail($id);
+
+        $lead =  Lead::where('campaign_id', $id)
+                    ->latest()
+                    ->first();
+                    
+        return view('admin.campaigns.webhook', compact('campaign', 'lead'));
     }
 }

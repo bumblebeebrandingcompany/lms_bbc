@@ -1,11 +1,13 @@
 @extends('layouts.admin')
 @section('content')
-
-<div class="card">
-    <div class="card-header">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
         {{ trans('global.edit') }} {{ trans('cruds.agency.title_singular') }}
-    </div>
-
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
     <div class="card-body">
         <form method="POST" action="{{ route("admin.agencies.update", [$agency->id]) }}" enctype="multipart/form-data">
             @method('PUT')
@@ -42,7 +44,4 @@
         </form>
     </div>
 </div>
-
-
-
 @endsection

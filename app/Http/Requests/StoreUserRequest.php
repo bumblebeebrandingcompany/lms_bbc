@@ -11,7 +11,7 @@ class StoreUserRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('user_create');
+        return auth()->user()->is_superadmin;
     }
 
     public function rules()

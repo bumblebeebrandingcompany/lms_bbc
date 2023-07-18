@@ -11,7 +11,7 @@ class StoreCampaignRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('campaign_create');
+        return auth()->user()->is_superadmin;
     }
 
     public function rules()

@@ -11,7 +11,7 @@ class UpdateClientRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('client_edit');
+        return auth()->user()->is_superadmin;
     }
 
     public function rules()

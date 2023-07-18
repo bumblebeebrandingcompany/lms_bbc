@@ -11,7 +11,7 @@ class UpdateCampaignRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('campaign_edit');
+        return true;
     }
 
     public function rules()

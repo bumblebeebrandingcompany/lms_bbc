@@ -1,13 +1,18 @@
 @extends('layouts.admin')
 @section('content')
-
+<div class="row mb-2">
+    <div class="col-sm-6">
+        <h2>
+            {{ trans('global.my_profile') }}
+        </h2>
+    </div>
+</div>
 <div class="row">
     <div class="col-md-6">
-        <div class="card">
+        <div class="card card-primary card-outline">
             <div class="card-header">
-                {{ trans('global.my_profile') }}
+                {{ trans('messages.edit_profile') }}
             </div>
-
             <div class="card-body">
                 <form method="POST" action="{{ route("profile.password.updateProfile") }}">
                     @csrf
@@ -30,16 +35,22 @@
                         @endif
                     </div>
                     <div class="form-group">
-                        <button class="btn btn-danger" type="submit">
+                        <button class="btn btn-primary" type="submit">
                             {{ trans('global.save') }}
                         </button>
+                        <button class="btn btn-danger float-right delete-account" type="button">
+                            {{ trans('global.delete_account') }}
+                        </button>
                     </div>
+                </form>
+                <form method="POST" id="delete_account_form" action="{{ route("profile.password.destroyProfile") }}" onsubmit="return prompt('{{ __('global.delete_account_warning') }}') == '{{ auth()->user()->email }}'">
+                    @csrf
                 </form>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="card">
+        <div class="card card-primary card-outline">
             <div class="card-header">
                 {{ trans('global.change_password') }}
             </div>
@@ -67,25 +78,13 @@
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                {{ trans('global.delete_account') }}
-            </div>
-
-            <div class="card-body">
-                <form method="POST" action="{{ route("profile.password.destroyProfile") }}" onsubmit="return prompt('{{ __('global.delete_account_warning') }}') == '{{ auth()->user()->email }}'">
-                    @csrf
-                    <div class="form-group">
-                        <button class="btn btn-danger" type="submit">
-                            {{ trans('global.delete') }}
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-</div>
+@endsection
+@section('scripts')
+<script>
+    $(function() {
+        $(document).on('click', '.delete-account', function() {
+            $("form#delete_account_form").submit();
+        });
+    });
+</script>
 @endsection

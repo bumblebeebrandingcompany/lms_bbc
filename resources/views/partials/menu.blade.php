@@ -118,30 +118,26 @@
                         </a>
                     </li>
                 @endif
-                @if(!auth()->user()->is_client)
-                    <li class="nav-item">
-                        <a href="{{ route("admin.campaigns.index") }}" class="nav-link {{ request()->is("admin/campaigns") || request()->is("admin/campaigns/*") ? "active" : "" }}">
-                            <i class="fa-fw nav-icon fas fa-bullhorn">
+                <li class="nav-item">
+                    <a href="{{ route("admin.campaigns.index") }}" class="nav-link {{ request()->is("admin/campaigns") || request()->is("admin/campaigns/*") ? "active" : "" }}">
+                        <i class="fa-fw nav-icon fas fa-bullhorn">
 
-                            </i>
-                            <p>
-                                {{ trans('cruds.campaign.title') }}
-                            </p>
-                        </a>
-                    </li>
-                @endif
-                @if(!auth()->user()->is_client)
-                    <li class="nav-item">
-                        <a href="{{ route("admin.leads.index") }}" class="nav-link {{ request()->is("admin/leads") || request()->is("admin/leads/*") ? "active" : "" }}">
-                            <i class="fa-fw nav-icon fas fa-handshake">
+                        </i>
+                        <p>
+                            {{ trans('cruds.campaign.title') }}
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route("admin.leads.index") }}" class="nav-link {{ request()->is("admin/leads") || request()->is("admin/leads/*") ? "active" : "" }}">
+                        <i class="fa-fw nav-icon fas fa-handshake">
 
-                            </i>
-                            <p>
-                                {{ trans('cruds.lead.title') }}
-                            </p>
-                        </a>
-                    </li>
-                @endif
+                        </i>
+                        <p>
+                            {{ trans('cruds.lead.title') }}
+                        </p>
+                    </a>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route("admin.systemCalendar") }}" class="nav-link {{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active" : "" }}">
                         <i class="fas fa-fw fa-calendar nav-icon">
@@ -155,10 +151,9 @@
                 @if(file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
                     <li class="nav-item">
                         <a class="nav-link {{ request()->is('profile/password') || request()->is('profile/password/*') ? 'active' : '' }}" href="{{ route('profile.password.edit') }}">
-                            <i class="fa-fw fas fa-key nav-icon">
-                            </i>
+                            <i class="fas fa-user nav-icon"></i>
                             <p>
-                                {{ trans('global.change_password') }}
+                                {{ trans('messages.profile') }}
                             </p>
                         </a>
                     </li>

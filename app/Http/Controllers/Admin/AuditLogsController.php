@@ -13,7 +13,7 @@ class AuditLogsController extends Controller
 {
     public function index(Request $request)
     {
-        abort_if(Gate::denies('audit_log_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
             $query = AuditLog::query()->select(sprintf('%s.*', (new AuditLog)->table));
@@ -23,22 +23,14 @@ class AuditLogsController extends Controller
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate      = 'audit_log_show';
-                $editGate      = 'audit_log_edit';
-                $deleteGate    = 'audit_log_delete';
+                $viewGate      = auth()->user()->is_superadmin;
                 $crudRoutePart = 'audit-logs';
 
                 return view('partials.datatablesActions', compact(
                     'viewGate',
-                    'editGate',
-                    'deleteGate',
                     'crudRoutePart',
                     'row'
                 ));
-            });
-
-            $table->editColumn('id', function ($row) {
-                return $row->id ? $row->id : '';
             });
             $table->editColumn('description', function ($row) {
                 return $row->description ? $row->description : '';
@@ -66,7 +58,7 @@ class AuditLogsController extends Controller
 
     public function show(AuditLog $auditLog)
     {
-        abort_if(Gate::denies('audit_log_show'), Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.auditLogs.show', compact('auditLog'));
     }

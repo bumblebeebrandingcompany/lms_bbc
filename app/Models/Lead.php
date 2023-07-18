@@ -33,6 +33,15 @@ class Lead extends Model
         'deleted_at',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'lead_details' => 'array'
+    ];
+    
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

@@ -11,7 +11,7 @@ class StoreLeadRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('lead_create');
+        return auth()->user()->is_superadmin;
     }
 
     public function rules()

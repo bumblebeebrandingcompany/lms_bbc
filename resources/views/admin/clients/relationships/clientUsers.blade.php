@@ -1,18 +1,12 @@
 <div class="m-3">
-    @can('user_create')
-        <div style="margin-bottom: 10px;" class="row">
-            <div class="col-lg-12">
-                <a class="btn btn-success" href="{{ route('admin.users.create') }}">
-                    {{ trans('global.add') }} {{ trans('cruds.user.title_singular') }}
-                </a>
-            </div>
-        </div>
-    @endcan
     <div class="card">
         <div class="card-header">
-            {{ trans('cruds.user.title_singular') }} {{ trans('global.list') }}
+            @if(auth()->user()->is_superadmin)
+                <a class="btn btn-success float-right" href="{{ route('admin.users.create') }}">
+                    {{ trans('global.add') }} {{ trans('cruds.user.title_singular') }}
+                </a>
+            @endif
         </div>
-
         <div class="card-body">
             <div class="table-responsive">
                 <table class=" table table-bordered table-striped table-hover datatable datatable-clientUsers">
@@ -20,9 +14,6 @@
                         <tr>
                             <th width="10">
 
-                            </th>
-                            <th>
-                                {{ trans('cruds.user.fields.id') }}
                             </th>
                             <th>
                                 {{ trans('cruds.user.fields.name') }}
@@ -63,9 +54,6 @@
 
                                 </td>
                                 <td>
-                                    {{ $user->id ?? '' }}
-                                </td>
-                                <td>
                                     {{ $user->name ?? '' }}
                                 </td>
                                 <td>
@@ -95,28 +83,26 @@
                                     {{ $user->agency->name ?? '' }}
                                 </td>
                                 <td>
-                                    @can('user_show')
+                                    @if(auth()->user()->is_superadmin)
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.users.show', $user->id) }}">
                                             {{ trans('global.view') }}
                                         </a>
-                                    @endcan
+                                    @endif
 
-                                    @can('user_edit')
+                                    @if(auth()->user()->is_superadmin)
                                         <a class="btn btn-xs btn-info" href="{{ route('admin.users.edit', $user->id) }}">
                                             {{ trans('global.edit') }}
                                         </a>
-                                    @endcan
+                                    @endif
 
-                                    @can('user_delete')
+                                    @if(auth()->user()->is_superadmin)
                                         <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                             <input type="hidden" name="_method" value="DELETE">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
                                             <input type="submit" class="btn btn-xs btn-danger" value="{{ trans('global.delete') }}">
                                         </form>
-                                    @endcan
-
+                                    @endif
                                 </td>
-
                             </tr>
                         @endforeach
                     </tbody>
@@ -130,7 +116,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('user_delete')
+  @if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}'
   let deleteButton = {
     text: deleteButtonTrans,
@@ -158,7 +144,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   $.extend(true, $.fn.dataTable.defaults, {
     orderCellsTop: true,

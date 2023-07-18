@@ -1,11 +1,13 @@
 @extends('layouts.admin')
 @section('content')
-
-<div class="card">
-    <div class="card-header">
-        {{ trans('global.create') }} {{ trans('cruds.project.title_singular') }}
-    </div>
-
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+		{{ trans('global.create') }} {{ trans('cruds.project.title_singular') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
     <div class="card-body">
         <form method="POST" action="{{ route("admin.projects.store") }}" enctype="multipart/form-data">
             @csrf

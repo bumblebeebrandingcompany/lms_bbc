@@ -20,6 +20,11 @@
     <link href="https://cdn.datatables.net/buttons/1.2.4/css/buttons.dataTables.min.css" rel="stylesheet" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.5.1/min/dropzone.min.css" rel="stylesheet" />
     <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
+    <style type="text/css">
+        .cursor-pointer{
+            cursor: pointer;
+        }
+    </style>
     @yield('styles')
 </head>
 
@@ -78,9 +83,8 @@
 
         <footer class="main-footer">
             <div class="float-right d-none d-sm-block">
-                <b>Version</b> 3.0.0-alpha
+                {{config('app.name', 'Laravel')}} | Copyright <strong> &copy;</strong> {{Date('Y')}} {{ trans('global.allRightsReserved') }}
             </div>
-            <strong> &copy;</strong> {{ trans('global.allRightsReserved') }}
         </footer>
         <form id="logoutform" action="{{ route('logout') }}" method="POST" style="display: none;">
             {{ csrf_field() }}

@@ -11,7 +11,7 @@ class UpdateAgencyRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('agency_edit');
+        return auth()->user()->is_superadmin;
     }
 
     public function rules()

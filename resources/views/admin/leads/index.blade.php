@@ -1,28 +1,26 @@
 @extends('layouts.admin')
 @section('content')
-@can('lead_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.leads.create') }}">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+            {{ trans('cruds.lead.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    @if(auth()->user()->is_superadmin)
+        <div class="card-header">
+            <a class="btn btn-success float-right" href="{{ route('admin.leads.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.lead.title_singular') }}
             </a>
         </div>
-    </div>
-@endcan
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.lead.title_singular') }} {{ trans('global.list') }}
-    </div>
-
+    @endif
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Lead">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.lead.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.lead.fields.project') }}
@@ -41,15 +39,14 @@
                     <td>
                     </td>
                     <td>
-                        <input class="search" type="text" placeholder="{{ trans('global.search') }}">
-                    </td>
-                    <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($projects as $key => $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        @if(!auth()->user()->is_agency)
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($projects as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
                         <select class="search">
@@ -78,7 +75,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('lead_delete')
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
@@ -106,7 +103,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
@@ -117,7 +114,6 @@
     ajax: "{{ route('admin.leads.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'project_name', name: 'project.name' },
 { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
 { data: 'lead_details', name: 'lead_details' },

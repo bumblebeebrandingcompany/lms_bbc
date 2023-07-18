@@ -1,28 +1,23 @@
 @extends('layouts.admin')
 @section('content')
-
-<div class="card">
-    <div class="card-header">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
         {{ trans('global.show') }} {{ trans('cruds.lead.title') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <a class="btn btn-default float-right" href="{{ route('admin.leads.index') }}">
+        <i class="fas fa-chevron-left"></i>
+            {{ trans('global.back_to_list') }}
+        </a>
     </div>
-
     <div class="card-body">
         <div class="form-group">
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.leads.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
             <table class="table table-bordered table-striped">
                 <tbody>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.lead.fields.id') }}
-                        </th>
-                        <td>
-                            {{ $lead->id }}
-                        </td>
-                    </tr>
                     <tr>
                         <th>
                             {{ trans('cruds.lead.fields.project') }}
@@ -44,16 +39,13 @@
                             {{ trans('cruds.lead.fields.lead_details') }}
                         </th>
                         <td>
-                            {{ $lead->lead_details }}
+                            @foreach($lead->lead_details as $key => $value)
+                                {{$key}} : {{$value}} <br>
+                            @endforeach
                         </td>
                     </tr>
                 </tbody>
             </table>
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.leads.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
         </div>
     </div>
 </div>

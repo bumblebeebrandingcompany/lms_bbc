@@ -1,28 +1,26 @@
 @extends('layouts.admin')
 @section('content')
-@can('agency_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.agencies.create') }}">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+        {{ trans('cruds.agency.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    @if(auth()->user()->is_superadmin)
+        <div class="card-header">
+            <a class="btn btn-success float-right" href="{{ route('admin.agencies.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.agency.title_singular') }}
             </a>
         </div>
-    </div>
-@endcan
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.agency.title_singular') }} {{ trans('global.list') }}
-    </div>
-
+    @endif
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Agency">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.agency.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.agency.fields.name') }}
@@ -41,16 +39,13 @@
         </table>
     </div>
 </div>
-
-
-
 @endsection
 @section('scripts')
 @parent
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('agency_delete')
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
@@ -78,7 +73,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
@@ -89,7 +84,6 @@
     ajax: "{{ route('admin.agencies.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'name', name: 'name' },
 { data: 'email', name: 'email' },
 { data: 'contact_number_1', name: 'contact_number_1' },

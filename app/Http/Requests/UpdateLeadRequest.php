@@ -11,7 +11,7 @@ class UpdateLeadRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('lead_edit');
+        return true;
     }
 
     public function rules()

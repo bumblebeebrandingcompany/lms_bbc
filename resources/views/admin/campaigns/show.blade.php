@@ -1,28 +1,25 @@
 @extends('layouts.admin')
 @section('content')
-
-<div class="card">
-    <div class="card-header">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
         {{ trans('global.show') }} {{ trans('cruds.campaign.title') }}
+        </h2>
+   </div>
+</div>
+<div class="row">
+    <div class="col-md-4">
+<div class="card card-primary card-outline">
+    <div class="card-header">
+        <a class="btn btn-default float-right" href="{{ route('admin.campaigns.index') }}">
+            <i class="fas fa-chevron-left"></i>
+            {{ trans('global.back_to_list') }}
+        </a>
     </div>
-
     <div class="card-body">
         <div class="form-group">
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.campaigns.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
             <table class="table table-bordered table-striped">
                 <tbody>
-                    <tr>
-                        <th>
-                            {{ trans('cruds.campaign.fields.id') }}
-                        </th>
-                        <td>
-                            {{ $campaign->id }}
-                        </td>
-                    </tr>
                     <tr>
                         <th>
                             {{ trans('cruds.campaign.fields.campaign_name') }}
@@ -89,31 +86,28 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="form-group">
-                <a class="btn btn-default" href="{{ route('admin.campaigns.index') }}">
-                    {{ trans('global.back_to_list') }}
-                </a>
-            </div>
         </div>
     </div>
 </div>
-
-<div class="card">
+</div>
+<div class="col-md-8">
+<div class="card card-primary card-outline">
     <div class="card-header">
         {{ trans('global.relatedData') }}
     </div>
     <ul class="nav nav-tabs" role="tablist" id="relationship-tabs">
         <li class="nav-item">
-            <a class="nav-link" href="#campaign_leads" role="tab" data-toggle="tab">
+            <a class="nav-link active show" href="#campaign_leads" role="tab" data-toggle="tab">
                 {{ trans('cruds.lead.title') }}
             </a>
         </li>
     </ul>
     <div class="tab-content">
-        <div class="tab-pane" role="tabpanel" id="campaign_leads">
+        <div class="tab-pane active show" role="tabpanel" id="campaign_leads">
             @includeIf('admin.campaigns.relationships.campaignLeads', ['leads' => $campaign->campaignLeads])
         </div>
     </div>
 </div>
-
+</div>
+</div>
 @endsection

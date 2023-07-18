@@ -1,31 +1,30 @@
 @extends('layouts.admin')
 @section('content')
-@if(auth()->user()->is_superadmin)
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.projects.create') }}">
-                {{ trans('global.add') }} {{ trans('cruds.project.title_singular') }}
-            </a>
-            <button class="btn btn-warning" data-toggle="modal" data-target="#csvImportModal">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+            {{ trans('cruds.project.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    @if(auth()->user()->is_superadmin)
+        <div class="card-header">
+            <button class="btn btn-warning float-right m-1" data-toggle="modal" data-target="#csvImportModal">
                 {{ trans('global.app_csvImport') }}
             </button>
+            <a class="btn btn-success float-right m-1" href="{{ route('admin.projects.create') }}">
+                {{ trans('global.add') }} {{ trans('cruds.project.title_singular') }}
+            </a>
             @include('csvImport.modal', ['model' => 'Project', 'route' => 'admin.projects.parseCsvImport'])
         </div>
-    </div>
-@endif
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.project.title_singular') }} {{ trans('global.list') }}
-    </div>
+    @endif
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Project">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.project.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.project.fields.name') }}
@@ -59,27 +58,28 @@
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
                     <td>
-                        <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
                     <td>
                     </td>
                     <td>
+                        @if(auth()->user()->is_superadmin)
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($users as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($users as $key => $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
-                    </td>
-                    <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($clients as $key => $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        @if(auth()->user()->is_superadmin)
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($clients as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
                     </td>
@@ -138,7 +138,6 @@
     ajax: "{{ route('admin.projects.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'name', name: 'name' },
 { data: 'start_date', name: 'start_date' },
 { data: 'end_date', name: 'end_date' },

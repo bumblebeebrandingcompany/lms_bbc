@@ -31,6 +31,7 @@ class Campaign extends Model
     ];
 
     protected $fillable = [
+        'webhook_secret',
         'campaign_name',
         'start_date',
         'end_date',

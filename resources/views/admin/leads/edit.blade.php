@@ -1,11 +1,13 @@
 @extends('layouts.admin')
 @section('content')
-
-<div class="card">
-    <div class="card-header">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
         {{ trans('global.edit') }} {{ trans('cruds.lead.title_singular') }}
-    </div>
-
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
     <div class="card-body">
         <form method="POST" action="{{ route("admin.leads.update", [$lead->id]) }}" enctype="multipart/form-data">
             @method('PUT')
@@ -36,7 +38,7 @@
             </div>
             <div class="form-group">
                 <label class="required" for="lead_details">{{ trans('cruds.lead.fields.lead_details') }}</label>
-                <textarea class="form-control {{ $errors->has('lead_details') ? 'is-invalid' : '' }}" name="lead_details" id="lead_details" required>{{ old('lead_details', $lead->lead_details) }}</textarea>
+                <textarea class="form-control {{ $errors->has('lead_details') ? 'is-invalid' : '' }}" name="lead_details" id="lead_details" required>{{ old('lead_details', json_encode($lead->lead_details)) }}</textarea>
                 @if($errors->has('lead_details'))
                     <span class="text-danger">{{ $errors->first('lead_details') }}</span>
                 @endif

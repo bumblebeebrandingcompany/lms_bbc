@@ -1,28 +1,26 @@
 @extends('layouts.admin')
 @section('content')
-@can('campaign_create')
-    <div style="margin-bottom: 10px;" class="row">
-        <div class="col-lg-12">
-            <a class="btn btn-success" href="{{ route('admin.campaigns.create') }}">
+<div class="row mb-2">
+   <div class="col-sm-6">
+        <h2>
+        {{ trans('cruds.campaign.title_singular') }} {{ trans('global.list') }}
+        </h2>
+   </div>
+</div>
+<div class="card card-primary card-outline">
+    @if(auth()->user()->is_superadmin)
+        <div class="card-header">
+            <a class="btn btn-success float-right" href="{{ route('admin.campaigns.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.campaign.title_singular') }}
             </a>
         </div>
-    </div>
-@endcan
-<div class="card">
-    <div class="card-header">
-        {{ trans('cruds.campaign.title_singular') }} {{ trans('global.list') }}
-    </div>
-
+    @endif
     <div class="card-body">
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Campaign">
             <thead>
                 <tr>
                     <th width="10">
 
-                    </th>
-                    <th>
-                        {{ trans('cruds.campaign.fields.id') }}
                     </th>
                     <th>
                         {{ trans('cruds.campaign.fields.campaign_name') }}
@@ -56,9 +54,6 @@
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
                     <td>
-                        <input class="search" type="text" placeholder="{{ trans('global.search') }}">
-                    </td>
-                    <td>
                     </td>
                     <td>
                     </td>
@@ -71,20 +66,24 @@
                         </select>
                     </td>
                     <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($projects as $key => $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        @if(!auth()->user()->is_agency)
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($projects as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($agencies as $key => $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        @if(auth()->user()->is_superadmin)
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($agencies as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
@@ -96,16 +95,13 @@
         </table>
     </div>
 </div>
-
-
-
 @endsection
 @section('scripts')
 @parent
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@can('campaign_delete')
+@if(auth()->user()->is_superadmin)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
@@ -133,7 +129,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endcan
+@endif
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
@@ -144,7 +140,6 @@
     ajax: "{{ route('admin.campaigns.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'id', name: 'id' },
 { data: 'campaign_name', name: 'campaign_name' },
 { data: 'start_date', name: 'start_date' },
 { data: 'end_date', name: 'end_date' },
