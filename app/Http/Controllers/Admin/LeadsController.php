@@ -43,8 +43,8 @@ class LeadsController extends Controller
             $query = Lead::with(['project', 'campaign'])->select(sprintf('%s.*', (new Lead)->table));
 
             $query = $query->where(function ($q) use($project_ids, $campaign_ids) {
-                        $q->whereIn('project_id', $project_ids)
-                            ->orWhereIn('campaign_id', $campaign_ids);
+                        $q->whereIn('leads.project_id', $project_ids)
+                            ->orWhereIn('leads.campaign_id', $campaign_ids);
                     })->groupBy('id');
             
             $table = Datatables::of($query);
@@ -84,7 +84,15 @@ class LeadsController extends Controller
                 return  $html;
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'project', 'campaign', 'lead_details']);
+            $table->addColumn('created_at', function ($row) {
+                return $row->created_at;
+            });
+
+            $table->addColumn('updated_at', function ($row) {
+                return $row->updated_at;
+            });
+
+            $table->rawColumns(['actions', 'placeholder', 'project', 'campaign', 'lead_details', 'created_at', 'updated_at']);
 
             return $table->make(true);
         }

@@ -32,6 +32,12 @@
                         {{ trans('cruds.lead.fields.lead_details') }}
                     </th>
                     <th>
+                        {{ trans('messages.created_at') }}
+                    </th>
+                    <th>
+                        {{ trans('messages.updated_at') }}
+                    </th>
+                    <th>
                         &nbsp;
                     </th>
                 </tr>
@@ -59,6 +65,8 @@
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
+                    <td></td>
+                    <td></td>
                     <td>
                     </td>
                 </tr>
@@ -117,10 +125,12 @@
 { data: 'project_name', name: 'project.name' },
 { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
 { data: 'lead_details', name: 'lead_details' },
+{ data: 'campaign.created_at', name: 'campaign.created_at' },
+{ data: 'campaign.updated_at', name: 'campaign.updated_at' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    order: [[ 4, 'desc' ]],
     pageLength: 100,
   };
   let table = $('.datatable-Lead').DataTable(dtOverrideGlobals);
