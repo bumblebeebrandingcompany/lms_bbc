@@ -37,6 +37,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('projects', 'ProjectController');
 
     // Campaign
+    Route::post('store-campaign-outgoing-webhook', 'CampaignController@saveOutgoingWebhookInfo')
+        ->name('campaigns.outgoing.webhook.store');
     Route::get('campaigns/{id}/webhook', 'CampaignController@getWebhookDetails')->name('campaigns.webhook');
     Route::delete('campaigns/destroy', 'CampaignController@massDestroy')->name('campaigns.massDestroy');
     Route::resource('campaigns', 'CampaignController');

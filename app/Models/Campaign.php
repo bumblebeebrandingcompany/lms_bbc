@@ -32,6 +32,7 @@ class Campaign extends Model
 
     protected $fillable = [
         'webhook_secret',
+        'outgoing_webhook',
         'campaign_name',
         'start_date',
         'end_date',
@@ -43,6 +44,15 @@ class Campaign extends Model
         'deleted_at',
     ];
 
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'outgoing_webhook' => 'array'
+    ];
+    
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');

@@ -169,4 +169,17 @@ class CampaignController extends Controller
                     
         return view('admin.campaigns.webhook', compact('campaign', 'lead'));
     }
+
+    public function saveOutgoingWebhookInfo(Request $request)
+    {
+
+        $id = $request->input('campaign_id');
+        $webhook = $request->input('webhook');
+
+        $campaign = Campaign::findOrFail($id);
+        $campaign->outgoing_webhook = $webhook;
+        $campaign->save();
+
+        return redirect()->route('admin.campaigns.webhook', $campaign->id);
+    }
 }

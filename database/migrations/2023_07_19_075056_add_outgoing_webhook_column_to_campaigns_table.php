@@ -12,9 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('campaigns', function (Blueprint $table) {
-            $table->string('webhook_secret')
-                ->comment('incoming webhook details')
-                ->after('id');
+            $table->longText('outgoing_webhook')
+                ->comment('outgoing webhook details')
+                ->after('webhook_secret')
+                ->nullable();
         });
     }
 

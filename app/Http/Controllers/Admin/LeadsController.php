@@ -118,7 +118,12 @@ class LeadsController extends Controller
 
     public function store(StoreLeadRequest $request)
     {
-        $lead = Lead::create($request->all());
+        $input = $request->except(['_method', '_token']);
+        $input['lead_details'] = (!empty($input['lead_details']) && is_string($input['lead_details'])) ? json_decode($input['lead_details'], true) : [];
+        
+        $lead = Lead::create($input);
+
+        $this->util->sendWebhook($lead->id);
 
         return redirect()->route('admin.leads.index');
     }

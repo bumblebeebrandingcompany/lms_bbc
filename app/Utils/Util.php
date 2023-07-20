@@ -5,6 +5,7 @@ use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\Lead;
 use Illuminate\Support\Str;
+use Spatie\WebhookServer\WebhookCall;
 class Util
 {
     public function getUserProjects($user)
@@ -59,6 +60,51 @@ class Util
             'lead_details' => $payload
         ]);
         
+        $this->sendWebhook($lead->id);
+
         return $lead;
+    }
+
+    public function sendWebhook($id)
+    {
+        try {
+
+            $lead = Lead::findOrFail($id);
+            $campaign = Campaign::findOrFail($lead->campaign_id);
+
+            if(
+                !empty($campaign) &&
+                !empty($campaign->outgoing_webhook) &&
+                !empty($lead) &&
+                !empty($lead->lead_details)
+            ) {
+                foreach ($campaign->outgoing_webhook as $webhook) {
+                    if(!empty($webhook['url'])) {
+                        if(!empty($webhook['secret_key'])) {
+                            WebhookCall::create()
+                                ->useSecret($webhook['secret_key'])
+                                ->useHttpVerb($webhook['method'])
+                                ->url($webhook['url'])
+                                ->payload($lead->lead_details)
+                                ->dispatch();
+                        }
+
+                        if(empty($webhook['secret_key'])) {
+                            WebhookCall::create()
+                                ->doNotSign()
+                                ->useHttpVerb($webhook['method'])
+                                ->url($webhook['url'])
+                                ->payload($lead->lead_details)
+                                ->dispatch();
+                        }
+                    }
+                }
+            }
+
+            $output = ['success' => true, 'msg' => __('messages.success')];
+        } catch (\Exception $e) {
+            $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
+        }
+        return $output;
     }
 }
