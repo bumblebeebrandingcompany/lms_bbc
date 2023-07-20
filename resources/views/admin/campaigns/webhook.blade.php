@@ -142,16 +142,34 @@
             <form action="{{route('admin.campaigns.outgoing.webhook.store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
+                    <h4>
+                        {{trans('messages.outgoing_webhook')}}
+                    </h4>
                     <div class="form-group">
                         @php
                             $webhooks = $campaign->outgoing_webhook ?? [];
                         @endphp
                         <input type="hidden" name="campaign_id" value="{{$campaign->id}}">
                         @forelse($webhooks as $key => $webhook)
-                            @includeIf('admin.campaigns.partials.card', ['key' => $key, 'webhook' => $webhook])
+                            @includeIf('admin.campaigns.partials.webhook_card', ['key' => $key, 'webhook' => $webhook])
                         @empty
                             @for($i = 0; $i<=2 ; $i++)
-                                @includeIf('admin.campaigns.partials.card', ['key' => $i, 'webhook' => []])
+                                @includeIf('admin.campaigns.partials.webhook_card', ['key' => $i, 'webhook' => []])
+                            @endfor
+                        @endforelse
+                    </div>
+                    <h4>
+                        {{trans('messages.api')}}
+                    </h4>
+                    <div class="form-group">
+                        @php
+                            $apis = $campaign->outgoing_apis ?? [];
+                        @endphp
+                        @forelse($apis as $key => $api)
+                            @includeIf('admin.campaigns.partials.api_card', ['key' => $key, 'api' => $api])
+                        @empty
+                            @for($i = 0; $i<=4 ; $i++)
+                                @includeIf('admin.campaigns.partials.api_card', ['key' => $i, 'api' => []])
                             @endfor
                         @endforelse
                         <button type="submit" class="btn btn-primary">

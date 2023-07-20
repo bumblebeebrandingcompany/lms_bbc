@@ -16,6 +16,11 @@ return new class extends Migration
                 ->comment('outgoing webhook details')
                 ->after('webhook_secret')
                 ->nullable();
+            
+            $table->longText('outgoing_apis')
+                ->comment('outgoing api details')
+                ->after('outgoing_webhook')
+                ->nullable();
         });
     }
 

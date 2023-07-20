@@ -26,5 +26,8 @@ return [
     'method' => 'Method',
     '12_char_random_str' => "Random string, the receiving app can use to verify the data hasn't been tampered with. <br/> keep it blank if you don't want to verify the data",
     'headers' => 'Headers',
-    'headers_help_text' => 'headers as a key value pair in json format.'
+    'headers_help_text' => 'headers as a key value pair in json format. key should not contain space. check example below-',
+    'outgoing_webhook' => 'Outgoing webhook',
+    'api' => 'API',
+    'api_to_send_webhook' => 'API to send webhook',
 ];

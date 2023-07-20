@@ -124,7 +124,8 @@ class LeadsController extends Controller
         $lead = Lead::create($input);
 
         $this->util->sendWebhook($lead->id);
-
+        $this->util->sendApiWebhook($lead->id);
+        
         return redirect()->route('admin.leads.index');
     }
 

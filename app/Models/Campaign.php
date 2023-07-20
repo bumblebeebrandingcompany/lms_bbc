@@ -33,6 +33,7 @@ class Campaign extends Model
     protected $fillable = [
         'webhook_secret',
         'outgoing_webhook',
+        'outgoing_apis',
         'campaign_name',
         'start_date',
         'end_date',
@@ -50,7 +51,8 @@ class Campaign extends Model
      * @var array
      */
     protected $casts = [
-        'outgoing_webhook' => 'array'
+        'outgoing_webhook' => 'array',
+        'outgoing_apis' => 'array',
     ];
     
     protected function serializeDate(DateTimeInterface $date)

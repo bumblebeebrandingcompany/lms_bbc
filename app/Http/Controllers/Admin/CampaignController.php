@@ -175,9 +175,11 @@ class CampaignController extends Controller
 
         $id = $request->input('campaign_id');
         $webhook = $request->input('webhook');
+        $api = $request->input('api');
 
         $campaign = Campaign::findOrFail($id);
         $campaign->outgoing_webhook = $webhook;
+        $campaign->outgoing_apis = $api;
         $campaign->save();
 
         return redirect()->route('admin.campaigns.webhook', $campaign->id);

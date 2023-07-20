@@ -6,6 +6,8 @@ use App\Models\Project;
 use App\Models\Lead;
 use Illuminate\Support\Str;
 use Spatie\WebhookServer\WebhookCall;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 class Util
 {
     public function getUserProjects($user)
@@ -47,7 +49,6 @@ class Util
 
     public function generateWebhookSecret()
     {
-        // $webhookSecret = Str::random(32);
         $webhookSecret = (string)Str::uuid();
         return $webhookSecret;
     }
@@ -61,6 +62,7 @@ class Util
         ]);
         
         $this->sendWebhook($lead->id);
+        $this->sendApiWebhook($lead->id);
 
         return $lead;
     }
@@ -103,6 +105,52 @@ class Util
 
             $output = ['success' => true, 'msg' => __('messages.success')];
         } catch (\Exception $e) {
+            $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
+        }
+        return $output;
+    }
+
+    public function sendApiWebhook($id)
+    {
+        try {
+
+            $lead = Lead::findOrFail($id);
+            $campaign = Campaign::findOrFail($lead->campaign_id);
+
+            if(
+                !empty($campaign) &&
+                !empty($campaign->outgoing_apis) &&
+                !empty($lead) &&
+                !empty($lead->lead_details)
+            ) {
+                foreach ($campaign->outgoing_apis as $api) {
+                    $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
+                    if(!empty($api['url'])) {
+                        $headers['secret-key'] = $api['secret_key'] ?? '';
+                        if(in_array($api['method'], ['get'])) {
+                            $client = new Client();
+                            $response = $client->get($api['url'], [
+                                'query' => $lead->lead_details,
+                                'headers' => $headers,
+                            ]);
+                            //Response check
+                            // $data = json_decode($response->getBody(), true);
+                        }
+                        if(in_array($api['method'], ['post'])) {
+                            $client = new Client();
+                            $response = $client->post($api['url'], [
+                                'headers' => $headers,
+                                'json' => $lead->lead_details,
+                            ]);
+
+                            //Response check
+                            // $data = json_decode($response->getBody(), true);
+                        }
+                    }
+                }
+            }
+            $output = ['success' => true, 'msg' => __('messages.success')];
+        } catch (RequestException $e) {
             $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
         }
         return $output;
