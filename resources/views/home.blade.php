@@ -202,7 +202,7 @@
                                                     <td>
                                                         @if($key == 'lead_details')
                                                             @php
-                                                                $lead_arr = $entry->{$key};
+                                                                $lead_arr = $entry->lead_info;
                                                             @endphp
                                                             @foreach($lead_arr as $key => $value)
                                                                 {!!$key!!} : {!!$value!!} <br>

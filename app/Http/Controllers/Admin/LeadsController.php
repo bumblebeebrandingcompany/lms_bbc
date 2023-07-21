@@ -76,8 +76,8 @@ class LeadsController extends Controller
 
             $table->editColumn('lead_details', function ($row) {
                 $html = '';
-                if(!empty($row->lead_details)) {
-                    foreach ($row->lead_details as $key => $value) {
+                if(!empty($row->lead_info)) {
+                    foreach ($row->lead_info as $key => $value) {
                         $html .= $key.': '.$value.'<br>';
                     }
                 }
@@ -143,7 +143,12 @@ class LeadsController extends Controller
     public function update(UpdateLeadRequest $request, Lead $lead)
     {
         $input = $request->except(['_method', '_token']);
-        $input['lead_details'] = (!empty($input['lead_details']) && is_string($input['lead_details'])) ? json_decode($input['lead_details'], true) : [];
+        
+        if(!empty($input['lead_details']) && is_string($input['lead_details'])) {
+            $input['lead_details'] = json_decode($input['lead_details'], true);
+        } else if(!empty($input['lead_details']) && is_array($input['lead_details'])) {
+            $input['lead_details'] = $input['lead_details'];
+        }
 
         $lead->update($input);
 

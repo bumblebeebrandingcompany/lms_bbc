@@ -36,23 +36,38 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
             </div>
+            @if(empty($lead->lead_info))
+                <div class="form-group">
+                    <label class="required" for="lead_details">{{ trans('cruds.lead.fields.lead_details') }}</label>
+                    <textarea class="form-control {{ $errors->has('lead_details') ? 'is-invalid' : '' }}" name="lead_details" id="lead_details" required>{{ old('lead_details', json_encode($lead->lead_info)) }}</textarea>
+                    @if($errors->has('lead_details'))
+                        <span class="text-danger">{{ $errors->first('lead_details') }}</span>
+                    @endif
+                    <span class="help-block">{{ trans('cruds.lead.fields.lead_details_helper') }}</span>
+                </div>
+            @else
+                <h4>
+                    {{ trans('cruds.lead.fields.lead_details') }}
+                </h4>
+                <div class="row">
+                    @foreach($lead->lead_info as $key => $value)
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>
+                                    {{ $key }}
+                                </label>
+                                <input type="text" name="lead_details[{{$key}}]" value="{{$value}}" class="form-control">
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
             <div class="form-group">
-                <label class="required" for="lead_details">{{ trans('cruds.lead.fields.lead_details') }}</label>
-                <textarea class="form-control {{ $errors->has('lead_details') ? 'is-invalid' : '' }}" name="lead_details" id="lead_details" required>{{ old('lead_details', json_encode($lead->lead_details)) }}</textarea>
-                @if($errors->has('lead_details'))
-                    <span class="text-danger">{{ $errors->first('lead_details') }}</span>
-                @endif
-                <span class="help-block">{{ trans('cruds.lead.fields.lead_details_helper') }}</span>
-            </div>
-            <div class="form-group">
-                <button class="btn btn-danger" type="submit">
-                    {{ trans('global.save') }}
+                <button class="btn btn-primary" type="submit">
+                    {{ trans('global.update') }}
                 </button>
             </div>
         </form>
     </div>
 </div>
-
-
-
 @endsection

@@ -48,8 +48,8 @@
                                     {{ $lead->campaign->campaign_name ?? '' }}
                                 </td>
                                 <td>
-                                    @if(!empty($lead->lead_details) && is_array($lead->lead_details))
-                                        @foreach($lead->lead_details as $key => $value)
+                                    @if(!empty($lead->lead_info) && is_array($lead->lead_info))
+                                        @foreach($lead->lead_info as $key => $value)
                                             {{$key}} : {{$value}} <br>
                                         @endforeach
                                     @endif

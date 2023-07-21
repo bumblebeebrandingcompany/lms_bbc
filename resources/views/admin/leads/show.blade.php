@@ -39,7 +39,7 @@
                             {{ trans('cruds.lead.fields.lead_details') }}
                         </th>
                         <td>
-                            @foreach($lead->lead_details as $key => $value)
+                            @foreach($lead->lead_info as $key => $value)
                                 {{$key}} : {{$value}} <br>
                             @endforeach
                         </td>

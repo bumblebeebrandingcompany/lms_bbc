@@ -72,11 +72,11 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @if(!empty($lead) && !empty($lead->lead_details))
+                                        @if(!empty($lead) && !empty($lead->lead_info))
                                             @php
                                                 $serial_num = 0;
                                             @endphp
-                                            @foreach($lead->lead_details as $key => $value)
+                                            @foreach($lead->lead_info as $key => $value)
                                                 @php
                                                     $serial_num = $loop->iteration;
                                                 @endphp
@@ -164,12 +164,13 @@
                     <div class="form-group">
                         @php
                             $apis = $campaign->outgoing_apis ?? [];
+                            $tags = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
                         @endphp
                         @forelse($apis as $key => $api)
-                            @includeIf('admin.campaigns.partials.api_card', ['key' => $key, 'api' => $api])
+                            @includeIf('admin.campaigns.partials.api_card', ['key' => $key, 'api' => $api, 'tags' => $tags])
                         @empty
                             @for($i = 0; $i<=4 ; $i++)
-                                @includeIf('admin.campaigns.partials.api_card', ['key' => $i, 'api' => []])
+                                @includeIf('admin.campaigns.partials.api_card', ['key' => $i, 'api' => [], 'tags' => $tags])
                             @endfor
                         @endforelse
                         <button type="submit" class="btn btn-primary">

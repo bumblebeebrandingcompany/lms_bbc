@@ -14,6 +14,8 @@ class Lead extends Model
 
     public $table = 'leads';
 
+    protected $appends = ['lead_info'];
+
     public static $searchable = [
         'lead_details',
     ];
@@ -55,5 +57,37 @@ class Lead extends Model
     public function campaign()
     {
         return $this->belongsTo(Campaign::class, 'campaign_id');
+    }
+
+    public function flattenData($datas)
+    {
+        $singleDimArr = [];
+        foreach ($datas as $key => $data) {
+            if (!empty($data) && !is_array($data)) $singleDimArr[$key] = $data;
+            if (!empty($data) &&  is_array($data)) {
+                $singleDimArr = array_merge($singleDimArr, $this->flattenData($data));
+            }
+        }
+        return $singleDimArr;
+    }
+
+    /**
+     * Get lead details by converting 2D[] => 1D[]
+     */
+    public function getLeadInfoAttribute()
+    {
+        $lead_info = [];
+        $lead_details = $this->lead_details;
+
+        if (empty($lead_details)) return $lead_info;
+        
+        foreach ($lead_details as $key => $lead_detail) {
+            if (!empty($lead_detail) && !is_array($lead_detail)) $lead_info[$key] = $lead_detail;
+            if (!empty($lead_detail) && is_array($lead_detail)) {
+                $lead_info = array_merge($lead_info, $this->flattenData($lead_detail));
+            }
+        }
+
+        return $lead_info;
     }
 }

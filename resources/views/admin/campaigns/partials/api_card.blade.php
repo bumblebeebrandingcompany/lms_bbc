@@ -62,5 +62,30 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        {{trans('messages.request_body')}}
+                    </label>
+                    <textarea  class="form-control" name="api[{{$key}}][request_body]" rows="3">{{$api['request_body'] ?? ''}}</textarea>
+                    <small class="form-text text-muted">
+                        {{trans('messages.request_body_help_text')}} <br>
+                        @if(!empty($tags))
+                            <strong>
+                                {{trans('messages.available_tags')}}:
+                            </strong>
+                            @foreach($tags as $tag)
+                                {{'{'.$tag.'}'}} @if(!$loop->last) {{','}}@endif
+                            @endforeach
+                        @else
+                            <strong>
+                                {{trans('messages.send_webhook_request_to_view_tags')}}
+                            </strong>
+                        @endif
+                    </small>
+                </div>
+            </div>
+        </div>
     </div>
 </div>

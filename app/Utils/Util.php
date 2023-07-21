@@ -125,12 +125,13 @@ class Util
             ) {
                 foreach ($campaign->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
+                    $request_body = $this->replaceTags($lead, $api['request_body']);
                     if(!empty($api['url'])) {
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         if(in_array($api['method'], ['get'])) {
                             $client = new Client();
                             $response = $client->get($api['url'], [
-                                'query' => $lead->lead_details,
+                                'query' => $request_body,
                                 'headers' => $headers,
                             ]);
                             //Response check
@@ -140,7 +141,7 @@ class Util
                             $client = new Client();
                             $response = $client->post($api['url'], [
                                 'headers' => $headers,
-                                'json' => $lead->lead_details,
+                                'json' => $request_body,
                             ]);
 
                             //Response check
@@ -154,5 +155,18 @@ class Util
             $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
         }
         return $output;
+    }
+
+    public function replaceTags($lead, $str)
+    {
+        if(empty($str)) {
+            return $lead->lead_details;
+        }
+
+        foreach ($lead->lead_info as $key => $value) {
+            $str = str_replace('{' . $key . '}', $value, $str);
+        }
+
+        return json_decode($str, true) ?? [];
     }
 }
