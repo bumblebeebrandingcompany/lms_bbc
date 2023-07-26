@@ -23,13 +23,6 @@ class Campaign extends Model
         'deleted_at',
     ];
 
-    public const SOURCE_SELECT = [
-        'Facebook' => 'Facebook',
-        'Google'   => 'Google',
-        'Youtube'  => 'Youtube',
-        'LinkedIN' => 'LinkedIN',
-    ];
-
     protected $fillable = [
         'webhook_secret',
         'outgoing_webhook',
@@ -37,22 +30,11 @@ class Campaign extends Model
         'campaign_name',
         'start_date',
         'end_date',
-        'source',
         'project_id',
         'agency_id',
         'created_at',
         'updated_at',
         'deleted_at',
-    ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'outgoing_webhook' => 'array',
-        'outgoing_apis' => 'array',
     ];
     
     protected function serializeDate(DateTimeInterface $date)
@@ -65,6 +47,11 @@ class Campaign extends Model
         return $this->hasMany(Lead::class, 'campaign_id', 'id');
     }
 
+    public function campaignSources()
+    {
+        return $this->hasMany(Source::class, 'campaign_id', 'id');
+    }
+    
     public function getStartDateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('panel.date_format')) : null;

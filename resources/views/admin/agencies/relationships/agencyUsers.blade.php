@@ -25,9 +25,6 @@
                                 {{ trans('cruds.user.fields.email_verified_at') }}
                             </th>
                             <th>
-                                {{ trans('cruds.user.fields.roles') }}
-                            </th>
-                            <th>
                                 {{ trans('cruds.user.fields.user_type') }}
                             </th>
                             <th>
@@ -61,11 +58,6 @@
                                 </td>
                                 <td>
                                     {{ $user->email_verified_at ?? '' }}
-                                </td>
-                                <td>
-                                    @foreach($user->roles as $key => $item)
-                                        <span class="badge badge-info">{{ $item->title }}</span>
-                                    @endforeach
                                 </td>
                                 <td>
                                     {{ App\Models\User::USER_TYPE_RADIO[$user->user_type] ?? '' }}

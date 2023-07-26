@@ -1,44 +1,33 @@
 @extends('layouts.admin')
 @section('content')
 <div class="row mb-2">
-   <div class="col-sm-6">
+   <div class="col-sm-12">
         <h2>
-        {{ trans('cruds.campaign.title_singular') }} {{ trans('global.list') }}
+        {{ trans('cruds.source.title_singular') }} {{ trans('global.list') }}
         </h2>
    </div>
 </div>
 <div class="card card-primary card-outline">
-    @if(auth()->user()->is_superadmin)
-        <div class="card-header">
-            <a class="btn btn-success float-right" href="{{ route('admin.campaigns.create') }}">
-                {{ trans('global.add') }} {{ trans('cruds.campaign.title_singular') }}
-            </a>
-        </div>
-    @endif
+    <div class="card-header">
+        <a class="btn btn-success float-right" href="{{ route('admin.sources.create') }}">
+            {{ trans('global.add') }} {{ trans('cruds.source.title_singular') }}
+        </a>
+    </div>
     <div class="card-body">
-        <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Campaign">
+        <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Source">
             <thead>
                 <tr>
                     <th width="10">
 
                     </th>
                     <th>
-                        {{ trans('cruds.campaign.fields.campaign_name') }}
+                        {{ trans('cruds.source.fields.project') }}
                     </th>
                     <th>
-                        {{ trans('cruds.campaign.fields.start_date') }}
+                        {{ trans('cruds.source.fields.campaign') }}
                     </th>
                     <th>
-                        {{ trans('cruds.campaign.fields.end_date') }}
-                    </th>
-                    <th>
-                        {{ trans('cruds.campaign.fields.project') }}
-                    </th>
-                    <th>
-                        {{ trans('cruds.campaign.fields.agency') }}
-                    </th>
-                    <th>
-                        {{ trans('cruds.campaign.fields.created_at') }}
+                        {{ trans('cruds.source.fields.name') }}
                     </th>
                     <th>
                         &nbsp;
@@ -48,31 +37,20 @@
                     <td>
                     </td>
                     <td>
-                        <input class="search" type="text" placeholder="{{ trans('global.search') }}">
+                        <select class="search">
+                            <option value>{{ trans('global.all') }}</option>
+                            @foreach($projects as $key => $item)
+                                <option value="{{ $item->name }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
                     </td>
                     <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                        @if(!auth()->user()->is_agency)
-                            <select class="search">
-                                <option value>{{ trans('global.all') }}</option>
-                                @foreach($projects as $key => $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        @endif
-                    </td>
-                    <td>
-                        @if(auth()->user()->is_superadmin)
-                            <select class="search">
-                                <option value>{{ trans('global.all') }}</option>
-                                @foreach($agencies as $key => $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        @endif
+                        <select class="search">
+                            <option value>{{ trans('global.all') }}</option>
+                            @foreach($campaigns as $key => $item)
+                                <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
+                            @endforeach
+                        </select>
                     </td>
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
@@ -90,11 +68,11 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@if(auth()->user()->is_superadmin)
+@can('source_delete')
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,
-    url: "{{ route('admin.campaigns.massDestroy') }}",
+    url: "{{ route('admin.sources.massDestroy') }}",
     className: 'btn-danger',
     action: function (e, dt, node, config) {
       var ids = $.map(dt.rows({ selected: true }).data(), function (entry) {
@@ -118,7 +96,7 @@
     }
   }
   dtButtons.push(deleteButton)
-@endif
+@endcan
 
   let dtOverrideGlobals = {
     buttons: dtButtons,
@@ -126,22 +104,19 @@
     serverSide: true,
     retrieve: true,
     aaSorting: [],
-    ajax: "{{ route('admin.campaigns.index') }}",
+    ajax: "{{ route('admin.sources.index') }}",
     columns: [
       { data: 'placeholder', name: 'placeholder' },
-{ data: 'campaign_name', name: 'campaign_name' },
-{ data: 'start_date', name: 'start_date' },
-{ data: 'end_date', name: 'end_date' },
 { data: 'project_name', name: 'project.name' },
-{ data: 'agency_name', name: 'agency.name' },
-{ data: 'created_at', name: 'created_at' },
+{ data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
+{ data: 'name', name: 'name' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 1, 'desc' ]],
+    order: [[ 3, 'desc' ]],
     pageLength: 100,
   };
-  let table = $('.datatable-Campaign').DataTable(dtOverrideGlobals);
+  let table = $('.datatable-Source').DataTable(dtOverrideGlobals);
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();

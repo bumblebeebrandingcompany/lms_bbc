@@ -25,9 +25,6 @@
                                 {{ trans('cruds.campaign.fields.end_date') }}
                             </th>
                             <th>
-                                {{ trans('cruds.campaign.fields.source') }}
-                            </th>
-                            <th>
                                 {{ trans('cruds.campaign.fields.project') }}
                             </th>
                             <th>
@@ -55,9 +52,6 @@
                                 </td>
                                 <td>
                                     {{ $campaign->end_date ?? '' }}
-                                </td>
-                                <td>
-                                    {{ App\Models\Campaign::SOURCE_SELECT[$campaign->source] ?? '' }}
                                 </td>
                                 <td>
                                     {{ $campaign->project->name ?? '' }}

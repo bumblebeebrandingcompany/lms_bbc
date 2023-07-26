@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Spatie\WebhookServer\WebhookCall;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
+use App\Models\Source;
 class Util
 {
     public function getUserProjects($user)
@@ -53,11 +54,17 @@ class Util
         return $webhookSecret;
     }
     
-    public function createLead($campaign, $payload)
+    public function createLead($source, $payload)
     {
+        $email = $payload[$source->email_key] ?? '';
+        $phone = $payload[$source->phone_key] ?? '';
+        
         $lead = Lead::create([
-            'project_id' => $campaign->project_id,
-            'campaign_id' => $campaign->id,
+            'source_id' => $source->id,
+            'email' => $email ?? '',
+            'phone' => $phone ?? '',
+            'project_id' => $source->project_id,
+            'campaign_id' => $source->campaign_id,
             'lead_details' => $payload
         ]);
         
@@ -72,15 +79,15 @@ class Util
         try {
 
             $lead = Lead::findOrFail($id);
-            $campaign = Campaign::findOrFail($lead->campaign_id);
+            $source = Source::findOrFail($lead->source_id);
 
             if(
-                !empty($campaign) &&
-                !empty($campaign->outgoing_webhook) &&
+                !empty($source) &&
+                !empty($source->outgoing_webhook) &&
                 !empty($lead) &&
                 !empty($lead->lead_details)
             ) {
-                foreach ($campaign->outgoing_webhook as $webhook) {
+                foreach ($source->outgoing_webhook as $webhook) {
                     if(!empty($webhook['url'])) {
                         if(!empty($webhook['secret_key'])) {
                             WebhookCall::create()
@@ -115,15 +122,15 @@ class Util
         try {
 
             $lead = Lead::findOrFail($id);
-            $campaign = Campaign::findOrFail($lead->campaign_id);
+            $source = Source::findOrFail($lead->source_id);
 
             if(
-                !empty($campaign) &&
-                !empty($campaign->outgoing_apis) &&
+                !empty($source) &&
+                !empty($source->outgoing_apis) &&
                 !empty($lead) &&
                 !empty($lead->lead_details)
             ) {
-                foreach ($campaign->outgoing_apis as $api) {
+                foreach ($source->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
                     $request_body = $this->replaceTags($lead, $api['request_body']);
                     if(!empty($api['url'])) {

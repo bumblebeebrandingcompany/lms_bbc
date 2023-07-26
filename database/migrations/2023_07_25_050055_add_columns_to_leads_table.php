@@ -11,10 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('campaigns', function (Blueprint $table) {
-            $table->string('webhook_secret')
-                ->comment('incoming webhook details')
-                ->after('id');
+        Schema::table('leads', function (Blueprint $table) {
+            $table->string('email')
+                ->after('id')
+                ->nullable();
+
+            $table->string('phone')
+                ->after('email')
+                ->nullable();
+
+            $table->bigInteger('created_by')
+                ->after('lead_details')
+                ->nullable();
         });
     }
 

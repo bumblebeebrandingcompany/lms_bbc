@@ -17,7 +17,7 @@ class Lead extends Model
     protected $appends = ['lead_info'];
 
     public static $searchable = [
-        'lead_details',
+        'email',
     ];
 
     protected $dates = [
@@ -25,15 +25,13 @@ class Lead extends Model
         'updated_at',
         'deleted_at',
     ];
-
-    protected $fillable = [
-        'project_id',
-        'campaign_id',
-        'lead_details',
-        'created_at',
-        'updated_at',
-        'deleted_at',
-    ];
+    
+    /**
+     * The attributes that aren't mass assignable.
+     *
+     * @var array
+     */
+    protected $guarded = ['id'];
 
     /**
      * The attributes that should be cast to native types.
@@ -52,6 +50,16 @@ class Lead extends Model
     public function project()
     {
         return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function source()
+    {
+        return $this->belongsTo(Source::class, 'source_id');
     }
 
     public function campaign()

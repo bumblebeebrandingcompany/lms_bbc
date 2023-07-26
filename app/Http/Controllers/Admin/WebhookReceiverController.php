@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Campaign;
+use App\Models\Source;
 use App\Utils\Util;
 
 class WebhookReceiverController extends Controller
@@ -26,11 +26,11 @@ class WebhookReceiverController extends Controller
 
     public function processor(Request $request, $secret)
     {
-        $campaign = Campaign::where('webhook_secret', $secret)
-                        ->firstOrFail();
-
-        if(!empty($campaign) && !empty($request->all())) {
-            $this->util->createLead($campaign, $request->all());
+        $source = Source::where('webhook_secret', $secret)
+                    ->firstOrFail();
+                    
+        if(!empty($source) && !empty($request->all())) {
+            $this->util->createLead($source, $request->all());
         }
         
         return response()->json('ok'); 

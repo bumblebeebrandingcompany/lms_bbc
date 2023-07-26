@@ -23,13 +23,22 @@
 
                     </th>
                     <th>
+                        @lang('messages.email')
+                    </th>
+                    <th>
+                        @lang('messages.phone')
+                    </th>
+                    <th>
                         {{ trans('cruds.lead.fields.project') }}
                     </th>
                     <th>
                         {{ trans('cruds.lead.fields.campaign') }}
                     </th>
                     <th>
-                        {{ trans('cruds.lead.fields.lead_details') }}
+                        {{ trans('messages.source') }}
+                    </th>
+                    <th>
+                        {{ trans('messages.added_by') }}
                     </th>
                     <th>
                         {{ trans('messages.created_at') }}
@@ -42,6 +51,10 @@
                     </th>
                 </tr>
                 <tr>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
                     <td>
                     </td>
                     <td>
@@ -62,8 +75,8 @@
                             @endforeach
                         </select>
                     </td>
+                    <td></td>
                     <td>
-                        <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
                     <td></td>
                     <td></td>
@@ -121,17 +134,20 @@
     aaSorting: [],
     ajax: "{{ route('admin.leads.index') }}",
     columns: [
-      { data: 'placeholder', name: 'placeholder' },
-{ data: 'project_name', name: 'project.name' },
-{ data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
-{ data: 'lead_details', name: 'lead_details' },
-{ data: 'campaign.created_at', name: 'campaign.created_at' },
-{ data: 'campaign.updated_at', name: 'campaign.updated_at' },
-{ data: 'actions', name: '{{ trans('global.actions') }}' }
+        { data: 'placeholder', name: 'placeholder' },
+        { data: 'email', name: 'email' },
+        { data: 'phone', name: 'phone' },
+        { data: 'project_name', name: 'project.name' },
+        { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
+        { data: 'source_name', name: 'source.name' },
+        { data: 'added_by', name: 'added_by' },
+        { data: 'created_at', name: 'leads.created_at' },
+        { data: 'updated_at', name: 'leads.updated_at' },
+        { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 4, 'desc' ]],
-    pageLength: 100,
+    order: [[ 7, 'desc' ]],
+    pageLength: 50,
   };
   let table = $('.datatable-Lead').DataTable(dtOverrideGlobals);
   $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e){

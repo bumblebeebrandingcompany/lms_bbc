@@ -33,5 +33,15 @@ return [
     'request_body' => 'Request body',
     'available_tags' => 'Available Tags',
     'request_body_help_text' => 'Request body as a key value pair in JSON format. request body is optional, if not provided default body as per incoming request will be sent',
-    'send_webhook_request_to_view_tags' => 'Send webhook request to view tags.'
+    'send_webhook_request_to_view_tags' => 'Send webhook request to view tags.',
+    'add_outgoing_webhook' => 'Add outgoing webhook',
+    'add_outgoing_api' => 'Add outgoing api',
+    'email' => 'Email',
+    'phone' => 'Phone No.',
+    'source' => 'Source',
+    'please_select' => 'Please select',
+    'add_lead_detail' => 'Add lead detail',
+    'email_and_phone_key' => 'Email & phone key',
+    'save' => 'Save',
+    'added_by' => 'Added by',
 ];

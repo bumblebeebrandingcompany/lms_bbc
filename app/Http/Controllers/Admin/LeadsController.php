@@ -40,7 +40,8 @@ class LeadsController extends Controller
 
             $user = auth()->user();
 
-            $query = Lead::with(['project', 'campaign'])->select(sprintf('%s.*', (new Lead)->table));
+            $query = Lead::with(['project', 'campaign', 'source', 'createdBy'])
+                        ->select(sprintf('%s.*', (new Lead)->table));
 
             $query = $query->where(function ($q) use($project_ids, $campaign_ids) {
                         $q->whereIn('leads.project_id', $project_ids)
@@ -66,6 +67,15 @@ class LeadsController extends Controller
                     'row'
                 ));
             });
+
+            $table->addColumn('email', function ($row) {
+                return $row->email ? $row->email : '';
+            });
+
+            $table->addColumn('phone', function ($row) {
+                return $row->phone ? $row->phone : '';
+            });
+
             $table->addColumn('project_name', function ($row) {
                 return $row->project ? $row->project->name : '';
             });
@@ -74,14 +84,12 @@ class LeadsController extends Controller
                 return $row->campaign ? $row->campaign->campaign_name : '';
             });
 
-            $table->editColumn('lead_details', function ($row) {
-                $html = '';
-                if(!empty($row->lead_info)) {
-                    foreach ($row->lead_info as $key => $value) {
-                        $html .= $key.': '.$value.'<br>';
-                    }
-                }
-                return  $html;
+            $table->addColumn('source_name', function ($row) {
+                return $row->source ? $row->source->name : '';
+            });
+
+            $table->addColumn('added_by', function ($row) {
+                return $row->createdBy ? $row->createdBy->name : '';
             });
 
             $table->addColumn('created_at', function ($row) {
@@ -92,7 +100,7 @@ class LeadsController extends Controller
                 return $row->updated_at;
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'project', 'campaign', 'lead_details', 'created_at', 'updated_at']);
+            $table->rawColumns(['actions', 'email', 'phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by']);
 
             return $table->make(true);
         }
@@ -119,8 +127,9 @@ class LeadsController extends Controller
     public function store(StoreLeadRequest $request)
     {
         $input = $request->except(['_method', '_token']);
-        $input['lead_details'] = (!empty($input['lead_details']) && is_string($input['lead_details'])) ? json_decode($input['lead_details'], true) : [];
-        
+        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details']);
+        $input['created_by'] = auth()->user()->id;
+
         $lead = Lead::create($input);
 
         $this->util->sendWebhook($lead->id);
@@ -143,12 +152,7 @@ class LeadsController extends Controller
     public function update(UpdateLeadRequest $request, Lead $lead)
     {
         $input = $request->except(['_method', '_token']);
-        
-        if(!empty($input['lead_details']) && is_string($input['lead_details'])) {
-            $input['lead_details'] = json_decode($input['lead_details'], true);
-        } else if(!empty($input['lead_details']) && is_array($input['lead_details'])) {
-            $input['lead_details'] = $input['lead_details'];
-        }
+        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details']);
 
         $lead->update($input);
 
@@ -157,7 +161,7 @@ class LeadsController extends Controller
 
     public function show(Lead $lead)
     {
-        $lead->load('project', 'campaign');
+        $lead->load('project', 'campaign', 'source', 'createdBy');
 
         return view('admin.leads.show', compact('lead'));
     }
@@ -182,5 +186,26 @@ class LeadsController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function getLeadDetailHtml(Request $request)
+    {
+        if($request->ajax()) {
+            $index = $request->get('index') + 1;
+            return view('admin.leads.partials.lead_detail')
+                ->with(compact('index'));
+        }
+    }
+
+    public function getLeadDetailsKeyValuePair($lead_details_arr)
+    {
+        if(!empty($lead_details_arr)) {
+            $lead_details = [];
+            foreach ($lead_details_arr as $lead_detail) {
+                $lead_details[$lead_detail['key']] = $lead_detail['value'];
+            }
+            return $lead_details;
+        }
+        return [];
     }
 }

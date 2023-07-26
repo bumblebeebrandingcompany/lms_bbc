@@ -129,6 +129,14 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="{{ route("admin.sources.index") }}" class="nav-link {{ request()->is("admin/sources") || request()->is("admin/sources/*") ? "active" : "" }}">
+                        <i class="fa-fw nav-icon fas fa-external-link-alt"></i>
+                        <p>
+                            {{ trans('cruds.source.title') }}
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="{{ route("admin.leads.index") }}" class="nav-link {{ request()->is("admin/leads") || request()->is("admin/leads/*") ? "active" : "" }}">
                         <i class="fa-fw nav-icon fas fa-handshake">
 

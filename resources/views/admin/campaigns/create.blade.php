@@ -36,19 +36,6 @@
                 <span class="help-block">{{ trans('cruds.campaign.fields.end_date_helper') }}</span>
             </div>
             <div class="form-group">
-                <label class="required">{{ trans('cruds.campaign.fields.source') }}</label>
-                <select class="form-control {{ $errors->has('source') ? 'is-invalid' : '' }}" name="source" id="source" required>
-                    <option value disabled {{ old('source', null) === null ? 'selected' : '' }}>{{ trans('global.pleaseSelect') }}</option>
-                    @foreach(App\Models\Campaign::SOURCE_SELECT as $key => $label)
-                        <option value="{{ $key }}" {{ old('source', '') === (string) $key ? 'selected' : '' }}>{{ $label }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('source'))
-                    <span class="text-danger">{{ $errors->first('source') }}</span>
-                @endif
-                <span class="help-block">{{ trans('cruds.campaign.fields.source_helper') }}</span>
-            </div>
-            <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.campaign.fields.project') }}</label>
                 <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
                     @foreach($projects as $id => $entry)

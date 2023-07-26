@@ -61,7 +61,8 @@ class HomeController
                     }
                 }
             })
-                ->{$settings1['aggregate_function'] ?? 'count'}($settings1['aggregate_field'] ?? '*');
+            ->where('user_type', 'Superadmin')
+            ->{$settings1['aggregate_function'] ?? 'count'}($settings1['aggregate_field'] ?? '*');
         }
 
         $settings2 = [
@@ -99,7 +100,8 @@ class HomeController
                     }
                 }
             })
-                ->{$settings2['aggregate_function'] ?? 'count'}($settings2['aggregate_field'] ?? '*');
+            ->where('user_type', 'Client')
+            ->{$settings2['aggregate_function'] ?? 'count'}($settings2['aggregate_field'] ?? '*');
         }
 
         $settings3 = [
@@ -137,7 +139,8 @@ class HomeController
                     }
                 }
             })
-                ->{$settings3['aggregate_function'] ?? 'count'}($settings3['aggregate_field'] ?? '*');
+            ->where('user_type', 'Agency')
+            ->{$settings3['aggregate_function'] ?? 'count'}($settings3['aggregate_field'] ?? '*');
         }
 
         $settings4 = [
@@ -383,11 +386,12 @@ class HomeController
             'filter_field'          => 'created_at',
             'group_by_field_format' => 'd-m-Y H:i:s',
             'column_class'          => 'col-md-6',
-            'entries_number'        => '20',
+            'entries_number'        => '10',
             'fields'                => [
                 'project'      => 'name',
                 'campaign'     => 'campaign_name',
-                'lead_details' => '',
+                'email' => '',
+                'phone' => '',
                 'created_at'   => '',
             ],
             'translation_key' => 'lead',

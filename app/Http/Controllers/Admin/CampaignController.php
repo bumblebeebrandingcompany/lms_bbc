@@ -54,24 +54,18 @@ class CampaignController extends Controller
                 $viewGate      = true;
                 $editGate      = true;
                 $deleteGate    = $user->is_superadmin;
-                $webhookSecretGate = $user->is_superadmin;
                 $crudRoutePart = 'campaigns';
 
                 return view('partials.datatablesActions', compact(
                     'viewGate',
                     'editGate',
                     'deleteGate',
-                    'webhookSecretGate',
                     'crudRoutePart',
                     'row'
                 ));
             });
             $table->editColumn('campaign_name', function ($row) {
                 return $row->campaign_name ? $row->campaign_name : '';
-            });
-
-            $table->editColumn('source', function ($row) {
-                return $row->source ? Campaign::SOURCE_SELECT[$row->source] : '';
             });
             $table->addColumn('project_name', function ($row) {
                 return $row->project ? $row->project->name : '';
@@ -108,7 +102,6 @@ class CampaignController extends Controller
     {
         
         $campaign_details = $request->except('_token');
-        $campaign_details['webhook_secret'] = $this->util->generateWebhookSecret();
         $campaign = Campaign::create($campaign_details);
 
         return redirect()->route('admin.campaigns.index');
@@ -134,7 +127,7 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign)
     {
-        $campaign->load('project', 'agency', 'campaignLeads');
+        $campaign->load('project', 'agency', 'campaignLeads', 'campaignSources');
 
         return view('admin.campaigns.show', compact('campaign'));
     }
@@ -159,29 +152,23 @@ class CampaignController extends Controller
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function getWebhookDetails($id)
+    public function getCampaigns(Request $request)
     {
-        $campaign = Campaign::findOrFail($id);
+        if($request->ajax()) {
+            $campaigns = Campaign::where('project_id', $request->input('project_id'))
+                            ->pluck('campaign_name', 'id')
+                            ->toArray();
 
-        $lead =  Lead::where('campaign_id', $id)
-                    ->latest()
-                    ->first();
-                    
-        return view('admin.campaigns.webhook', compact('campaign', 'lead'));
-    }
-
-    public function saveOutgoingWebhookInfo(Request $request)
-    {
-
-        $id = $request->input('campaign_id');
-        $webhook = $request->input('webhook');
-        $api = $request->input('api');
-
-        $campaign = Campaign::findOrFail($id);
-        $campaign->outgoing_webhook = $webhook;
-        $campaign->outgoing_apis = $api;
-        $campaign->save();
-
-        return redirect()->route('admin.campaigns.webhook', $campaign->id);
+            $campaigns_arr = [['id' => '', 'text' => __('messages.please_select')]];
+            if(!empty($campaigns)) {
+                foreach ($campaigns as $id => $text) {
+                    $campaigns_arr[] = [
+                        'id' => $id,
+                        'text' =>$text
+                    ];
+                }
+            }
+            return $campaigns_arr;
+        }
     }
 }

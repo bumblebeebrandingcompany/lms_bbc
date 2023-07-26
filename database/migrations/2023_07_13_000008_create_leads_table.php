@@ -10,6 +10,7 @@ class CreateLeadsTable extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->bigInteger('source_id');
             $table->longText('lead_details');
             $table->timestamps();
             $table->softDeletes();

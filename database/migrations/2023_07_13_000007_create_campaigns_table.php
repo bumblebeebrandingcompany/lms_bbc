@@ -13,7 +13,6 @@ class CreateCampaignsTable extends Migration
             $table->string('campaign_name');
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
-            $table->string('source');
             $table->timestamps();
             $table->softDeletes();
         });

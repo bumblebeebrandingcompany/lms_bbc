@@ -11,7 +11,7 @@ class SystemCalendarController extends Controller
         [
             'model'      => '\App\Models\Lead',
             'date_field' => 'created_at',
-            'field'      => 'lead_details',
+            'field'      => 'email',
             'prefix'     => 'New Lead -',
             'suffix'     => '',
             'route'      => 'admin.leads.show',

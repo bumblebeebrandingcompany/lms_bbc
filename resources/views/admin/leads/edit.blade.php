@@ -12,6 +12,19 @@
         <form method="POST" action="{{ route("admin.leads.update", [$lead->id]) }}" enctype="multipart/form-data">
             @method('PUT')
             @csrf
+            <input type="hidden" name="lead_id" value="{{$lead->id}}">
+            <div class="form-group">
+                <label for="email" class="required">
+                    @lang('messages.email')
+                </label>
+                <input type="email" name="email" id="email" value="{{ old('email') ?? $lead->email }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone" class="required">
+                    @lang('messages.phone')
+                </label>
+                <input type="number" name="phone" id="phone" value="{{ old('phone') ?? $lead->phone }}" class="form-control" required>
+            </div>
             <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
                 <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
@@ -36,38 +49,115 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
             </div>
-            @if(empty($lead->lead_info))
-                <div class="form-group">
-                    <label class="required" for="lead_details">{{ trans('cruds.lead.fields.lead_details') }}</label>
-                    <textarea class="form-control {{ $errors->has('lead_details') ? 'is-invalid' : '' }}" name="lead_details" id="lead_details" required>{{ old('lead_details', json_encode($lead->lead_info)) }}</textarea>
-                    @if($errors->has('lead_details'))
-                        <span class="text-danger">{{ $errors->first('lead_details') }}</span>
-                    @endif
-                    <span class="help-block">{{ trans('cruds.lead.fields.lead_details_helper') }}</span>
-                </div>
-            @else
-                <h4>
-                    {{ trans('cruds.lead.fields.lead_details') }}
-                </h4>
-                <div class="row">
+            <div class="form-group">
+                <label class="required" for="source_id">{{ trans('messages.source') }}</label>
+                <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}" name="source_id" id="source_id" required>
+                    
+                </select>
+                @if($errors->has('source_id'))
+                    <span class="text-danger">{{ $errors->first('source_id') }}</span>
+                @endif
+            </div>
+            <h4>
+                {{ trans('cruds.lead.fields.lead_details') }}
+            </h4>
+            <div class="lead_details">
+                @php
+                    $index_count = 0;
+                @endphp
+                @if(empty($lead->lead_info))
+                    @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
+                @else
                     @foreach($lead->lead_info as $key => $value)
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label>
-                                    {{ $key }}
-                                </label>
-                                <input type="text" name="lead_details[{{$key}}]" value="{{$value}}" class="form-control">
-                            </div>
-                        </div>
+                        @php
+                            $index_count = $loop->index;
+                        @endphp
+                        @includeIf('admin.leads.partials.lead_detail', ['key' => $key, 'value' => $value, $index = $loop->index])
                     @endforeach
-                </div>
-            @endif
+                @endif
+            </div>
             <div class="form-group">
                 <button class="btn btn-primary" type="submit">
                     {{ trans('global.update') }}
+                </button>
+                <button type="button" class="btn btn-outline-primary float-right add_lead_detail"
+                    data-total="{{$index_count}}">
+                    @lang('messages.add_lead_detail')
                 </button>
             </div>
         </form>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(function() {
+        function getCampaigns() {
+            let data = {
+                project_id: $('#project_id').val()
+            };
+
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.get.campaigns')}}",
+                data: data,
+                dataType: "json",
+                success: function(response) {
+                    $('#campaign_id').select2('destroy').empty().select2({data: response});
+                    $('#campaign_id').val("{{$lead->campaign_id}}").change();
+                    getSource();
+                }
+            });
+        }
+
+        function getSource() {
+            let data = {
+                project_id: $('#project_id').val(),
+                campaign_id: $('#campaign_id').val(),
+            };
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.get.sources')}}",
+                data: data,
+                dataType: "json",
+                success: function(response) {
+                    $('#source_id').select2('destroy').empty().select2({data: response});
+                    $('#source_id').val("{{$lead->source_id}}").change();
+                }
+            });
+        }
+
+        $(document).on('change', '#project_id', function() {
+            getCampaigns();
+        });
+
+        $(document).on('change', '#campaign_id', function() {
+            getSource();
+        });
+
+        $(document).on('click', '.add_lead_detail', function() {
+            let index = $(this).attr('data-total');
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.lead.detail.html')}}",
+                data: {
+                    index: index
+                },
+                dataType: "html",
+                success: function(response) {
+                    $("div.lead_details").append(response);
+                    $(".add_lead_detail").attr('data-total', +index + 1);
+                }
+            });
+        });
+
+        $(document).on('click', '.delete_lead_detail_row', function() {
+            if(confirm('Do you want to remove?')) {
+                $(this).closest('.row').remove();
+            }
+        });
+
+        getCampaigns();
+    });
+</script>
 @endsection

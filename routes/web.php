@@ -37,13 +37,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('projects', 'ProjectController');
 
     // Campaign
-    Route::post('store-campaign-outgoing-webhook', 'CampaignController@saveOutgoingWebhookInfo')
-        ->name('campaigns.outgoing.webhook.store');
-    Route::get('campaigns/{id}/webhook', 'CampaignController@getWebhookDetails')->name('campaigns.webhook');
+    Route::get('get-campaigns', 'CampaignController@getCampaigns')->name('get.campaigns');
     Route::delete('campaigns/destroy', 'CampaignController@massDestroy')->name('campaigns.massDestroy');
     Route::resource('campaigns', 'CampaignController');
 
     // Leads
+    Route::get('lead-detail-html', 'LeadsController@getLeadDetailHtml')->name('lead.detail.html');
     Route::delete('leads/destroy', 'LeadsController@massDestroy')->name('leads.massDestroy');
     Route::resource('leads', 'LeadsController');
 
@@ -60,6 +59,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('agencies/destroy', 'AgencyController@massDestroy')->name('agencies.massDestroy');
     Route::resource('agencies', 'AgencyController');
 
+    // Source
+    Route::post('update-email-and-phone-key', 'SourceController@updatePhoneAndEmailKey')->name('update.email.and.phone.key');
+    Route::get('get-sources', 'SourceController@getSource')->name('get.sources');
+    Route::get('source-webhook-html', 'SourceController@getWebhookHtml')->name('source.webhook.html');
+    Route::post('store-source-outgoing-webhook', 'SourceController@saveOutgoingWebhookInfo')
+    ->name('source.outgoing.webhook.store');
+    Route::get('source/{id}/webhook', 'SourceController@getWebhookDetails')->name('sources.webhook');
+    Route::delete('sources/destroy', 'SourceController@massDestroy')->name('sources.massDestroy');
+    Route::resource('sources', 'SourceController');
+    
     Route::get('system-calendar', 'SystemCalendarController@index')->name('systemCalendar');
     Route::get('global-search', 'GlobalSearchController@search')->name('globalSearch');
 });

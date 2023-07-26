@@ -12,6 +12,18 @@
         <form method="POST" action="{{ route("admin.leads.store") }}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
+                <label for="email" class="required">
+                    @lang('messages.email')
+                </label>
+                <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="phone" class="required">
+                    @lang('messages.phone')
+                </label>
+                <input type="number" name="phone" id="phone" value="{{ old('phone') }}" class="form-control" required>
+            </div>
+            <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
                 <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
                     @foreach($projects as $id => $entry)
@@ -36,19 +48,99 @@
                 <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
             </div>
             <div class="form-group">
-                <label class="required" for="lead_details">{{ trans('cruds.lead.fields.lead_details') }}</label>
-                <textarea class="form-control {{ $errors->has('lead_details') ? 'is-invalid' : '' }}" name="lead_details" id="lead_details" required>{{ old('lead_details') }}</textarea>
-                @if($errors->has('lead_details'))
-                    <span class="text-danger">{{ $errors->first('lead_details') }}</span>
+                <label class="required" for="source_id">{{ trans('messages.source') }}</label>
+                <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}" name="source_id" id="source_id" required>
+                   
+                </select>
+                @if($errors->has('source_id'))
+                    <span class="text-danger">{{ $errors->first('source_id') }}</span>
                 @endif
-                <span class="help-block">{{ trans('cruds.lead.fields.lead_details_helper') }}</span>
             </div>
+            <h4>
+                {{ trans('cruds.lead.fields.lead_details') }}
+            </h4>
+            <div class="lead_details">
+                @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
+            </div>
+            <input type="hidden" id="index_count" value="1">
             <div class="form-group">
-                <button class="btn btn-danger" type="submit">
+                <button class="btn btn-primary" type="submit">
                     {{ trans('global.save') }}
+                </button>
+                <button type="button" class="btn btn-outline-primary float-right add_lead_detail"
+                    data-total="0">
+                    @lang('messages.add_lead_detail')
                 </button>
             </div>
         </form>
     </div>
 </div>
+@endsection
+@section('scripts')
+<script>
+    $(function() {
+        function getCampaigns() {
+            let data = {
+                project_id: $('#project_id').val()
+            };
+
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.get.campaigns')}}",
+                data: data,
+                dataType: "json",
+                success: function(response) {
+                    $('#campaign_id').select2('destroy').empty().select2({data: response});
+                    getSource();
+                }
+            });
+        }
+
+        function getSource() {
+            let data = {
+                project_id: $('#project_id').val(),
+                campaign_id: $('#campaign_id').val(),
+            };
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.get.sources')}}",
+                data: data,
+                dataType: "json",
+                success: function(response) {
+                    $('#source_id').select2('destroy').empty().select2({data: response});
+                }
+            });
+        }
+
+        $(document).on('change', '#project_id', function() {
+            getCampaigns();
+        });
+
+        $(document).on('change', '#campaign_id', function() {
+            getSource();
+        });
+
+        $(document).on('click', '.add_lead_detail', function() {
+            let index = $(this).attr('data-total');
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.lead.detail.html')}}",
+                data: {
+                    index: index
+                },
+                dataType: "html",
+                success: function(response) {
+                    $("div.lead_details").append(response);
+                    $(".add_lead_detail").attr('data-total', +index + 1);
+                }
+            });
+        });
+
+        $(document).on('click', '.delete_lead_detail_row', function() {
+            if(confirm('Do you want to remove?')) {
+                $(this).closest('.row').remove();
+            }
+        });
+    });
+</script>
 @endsection

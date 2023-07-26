@@ -4,31 +4,27 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateSourcesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     */
-    public function up(): void
+    public function up()
     {
-        Schema::table('campaigns', function (Blueprint $table) {
+        Schema::create('sources', function (Blueprint $table) {
+            $table->bigIncrements('id');
+
+            $table->string('name');
+
+            $table->string('webhook_secret')
+                ->comment('incoming webhook secret key');
+
             $table->longText('outgoing_webhook')
                 ->comment('outgoing webhook details')
-                ->after('webhook_secret')
                 ->nullable();
             
             $table->longText('outgoing_apis')
                 ->comment('outgoing api details')
-                ->after('outgoing_webhook')
                 ->nullable();
+
+            $table->timestamps();
         });
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        //
-    }
-};
+}

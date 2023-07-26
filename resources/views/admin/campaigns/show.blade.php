@@ -46,14 +46,6 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.campaign.fields.source') }}
-                        </th>
-                        <td>
-                            {{ App\Models\Campaign::SOURCE_SELECT[$campaign->source] ?? '' }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
                             {{ trans('cruds.campaign.fields.project') }}
                         </th>
                         <td>
@@ -101,10 +93,18 @@
                 {{ trans('cruds.lead.title') }}
             </a>
         </li>
+        <li class="nav-item">
+            <a class="nav-link" href="#campaign_sources" role="tab" data-toggle="tab">
+                {{ trans('cruds.source.title') }}
+            </a>
+        </li>
     </ul>
     <div class="tab-content">
         <div class="tab-pane active show" role="tabpanel" id="campaign_leads">
             @includeIf('admin.campaigns.relationships.campaignLeads', ['leads' => $campaign->campaignLeads])
+        </div>
+        <div class="tab-pane" role="tabpanel" id="campaign_sources">
+            @includeIf('admin.campaigns.relationships.campaignSources', ['sources' => $campaign->campaignSources])
         </div>
     </div>
 </div>

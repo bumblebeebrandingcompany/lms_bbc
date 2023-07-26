@@ -1,4 +1,4 @@
-<div class="card border-secondary">
+<div class="card border-secondary" data-key="{{$key}}">
     <div class="card-body">
         <div class="row">
             <div class="col-md-7">
@@ -48,5 +48,8 @@
                 </div>
             </div>
         </div>
+        <button type="button" class="btn btn-danger btn-sm float-right delete_webhook">
+            <i class="fas fa-trash-alt"></i>
+        </button>
     </div>
 </div>

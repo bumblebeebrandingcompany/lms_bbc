@@ -20,6 +20,22 @@
                 <tbody>
                     <tr>
                         <th>
+                            @lang('messages.email')
+                        </th>
+                        <td>
+                            {{ $lead->email ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @lang('messages.phone')
+                        </th>
+                        <td>
+                            {{ $lead->phone ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             {{ trans('cruds.lead.fields.project') }}
                         </th>
                         <td>
@@ -36,12 +52,48 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('cruds.lead.fields.lead_details') }}
+                            {{ trans('messages.source') }}
                         </th>
                         <td>
-                            @foreach($lead->lead_info as $key => $value)
-                                {{$key}} : {{$value}} <br>
-                            @endforeach
+                            {{ $lead->source->name ?? '' }}
+                        </td>
+                    </tr>
+                    @php
+                        $lead_info = $lead->lead_info;
+                        if (
+                            !empty($lead->source) && 
+                            !empty($lead->source->email_key) && 
+                            isset($lead_info[$lead->source->email_key]) &&
+                            !empty($lead_info[$lead->source->email_key])
+                        ) {
+                            unset($lead_info[$lead->source->email_key]);
+                        }
+
+                        if (
+                            !empty($lead->source) && 
+                            !empty($lead->source->phone_key) &&
+                            isset($lead_info[$lead->source->phone_key]) &&
+                            !empty($lead_info[$lead->source->phone_key])
+                        ) {
+                            unset($lead_info[$lead->source->phone_key]);
+                        }
+                    @endphp
+                    @foreach($lead_info as $key => $value)
+                        <tr>
+                            <th>
+                                {{$key}}
+                            </th>
+                            <td>
+                                {{$value}}
+                            </td>
+                        </tr>
+                    @endforeach
+                    <tr>
+                        <th>
+                            @lang('messages.added_by')
+                        </th>
+                        <td>
+                            {{ $lead->createdBy ? $lead->createdBy->name : ''}}
                         </td>
                     </tr>
                 </tbody>
@@ -49,7 +101,4 @@
         </div>
     </div>
 </div>
-
-
-
 @endsection

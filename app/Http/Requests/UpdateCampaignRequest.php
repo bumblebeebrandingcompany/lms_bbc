@@ -29,9 +29,6 @@ class UpdateCampaignRequest extends FormRequest
                 'date_format:' . config('panel.date_format'),
                 'nullable',
             ],
-            'source' => [
-                'required',
-            ],
             'project_id' => [
                 'required',
                 'integer',

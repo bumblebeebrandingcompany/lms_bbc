@@ -19,13 +19,16 @@
                                 {{ trans('cruds.lead.fields.id') }}
                             </th>
                             <th>
+                                {{ trans('messages.email') }}
+                            </th>
+                            <th>
+                                {{ trans('messages.phone') }}
+                            </th>
+                            <th>
                                 {{ trans('cruds.lead.fields.project') }}
                             </th>
                             <th>
                                 {{ trans('cruds.lead.fields.campaign') }}
-                            </th>
-                            <th>
-                                {{ trans('cruds.lead.fields.lead_details') }}
                             </th>
                             <th>
                                 &nbsp;
@@ -42,17 +45,16 @@
                                     {{ $lead->id ?? '' }}
                                 </td>
                                 <td>
+                                    {{ $lead->email ?? '' }}
+                                </td>
+                                <td>
+                                    {{ $lead->phone ?? '' }}
+                                </td>
+                                <td>
                                     {{ $lead->project->name ?? '' }}
                                 </td>
                                 <td>
                                     {{ $lead->campaign->campaign_name ?? '' }}
-                                </td>
-                                <td>
-                                    @if(!empty($lead->lead_info) && is_array($lead->lead_info))
-                                        @foreach($lead->lead_info as $key => $value)
-                                            {{$key}} : {{$value}} <br>
-                                        @endforeach
-                                    @endif
                                 </td>
                                 <td>
                                     <a class="btn btn-xs btn-primary" href="{{ route('admin.leads.show', $lead->id) }}">
