@@ -68,7 +68,7 @@ class Util
             'lead_details' => $payload
         ]);
         
-        $this->sendWebhook($lead->id);
+        // $this->sendWebhook($lead->id);
         $this->sendApiWebhook($lead->id);
 
         return $lead;
@@ -164,16 +164,40 @@ class Util
         return $output;
     }
 
-    public function replaceTags($lead, $str)
+    public function replaceTags($lead, $request_body)
     {
-        if(empty($str)) {
+        if(empty($request_body)) {
             return $lead->lead_details;
         }
 
-        foreach ($lead->lead_info as $key => $value) {
-            $str = str_replace('{' . $key . '}', $value, $str);
+        $tag_replaced_req_body = [];
+        foreach ($request_body as $value) {
+            if(!empty($value['key']) && !empty($value['value'])) {
+                if(count($value['value']) > 1) {
+                    $arr_value = [];
+                    foreach ($value['value'] as $field) {
+                        if(isset($lead->lead_info[$field]) && !empty($lead->lead_info[$field])) {
+                            $arr_value[] = $lead->lead_info[$field];
+                        }
+                    }
+                    $tag_replaced_req_body[$value['key']] = implode(', ', $arr_value);
+                } else {
+                    $tag_replaced_req_body[$value['key']] = $lead->lead_info[$value['value'][0]] ?? '';
+                }
+            }
         }
 
-        return json_decode($str, true) ?? [];
+        return $tag_replaced_req_body;
+    }
+
+    public function getLeadTags($id)
+    {
+        $lead =  Lead::where('source_id', $id)
+                    ->latest()
+                    ->first();
+
+        $tags = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
+
+        return $tags;
     }
 }

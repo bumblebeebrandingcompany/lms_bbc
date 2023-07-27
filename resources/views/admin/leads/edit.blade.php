@@ -77,12 +77,12 @@
                 @endif
             </div>
             <div class="form-group">
-                <button class="btn btn-primary" type="submit">
-                    {{ trans('global.update') }}
-                </button>
-                <button type="button" class="btn btn-outline-primary float-right add_lead_detail"
+                <button type="button" class="btn btn-outline-primary add_lead_detail"
                     data-total="{{$index_count}}">
                     @lang('messages.add_lead_detail')
+                </button>
+                <button class="btn btn-primary float-right" type="submit">
+                    {{ trans('global.update') }}
                 </button>
             </div>
         </form>

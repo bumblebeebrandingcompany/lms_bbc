@@ -2,7 +2,7 @@
     <div class="card">
         @if(auth()->user()->is_superadmin)
             <div class="card-header">
-                <a class="btn btn-success float-right" href="{{ route('admin.leads.create') }}">
+                <a class="btn btn-success float-right" href="{{ route('admin.leads.create', ['project_id' => $project->id]) }}">
                     {{ trans('global.add') }} {{ trans('cruds.lead.title_singular') }}
                 </a>
             </div>

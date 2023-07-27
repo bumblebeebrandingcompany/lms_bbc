@@ -27,7 +27,7 @@
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
                 <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
                     @foreach($projects as $id => $entry)
-                        <option value="{{ $id }}" {{ old('project_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                        <option value="{{ $id }}" {{ (old('project_id') == $id) || ($project_id == $id) ? 'selected' : '' }}>{{ $entry }}</option>
                     @endforeach
                 </select>
                 @if($errors->has('project'))
@@ -64,12 +64,12 @@
             </div>
             <input type="hidden" id="index_count" value="1">
             <div class="form-group">
-                <button class="btn btn-primary" type="submit">
-                    {{ trans('global.save') }}
-                </button>
-                <button type="button" class="btn btn-outline-primary float-right add_lead_detail"
+                <button type="button" class="btn btn-outline-primary add_lead_detail"
                     data-total="0">
                     @lang('messages.add_lead_detail')
+                </button>
+                <button class="btn btn-primary float-right" type="submit">
+                    {{ trans('global.save') }}
                 </button>
             </div>
         </form>
@@ -141,6 +141,8 @@
                 $(this).closest('.row').remove();
             }
         });
+
+        getCampaigns();
     });
 </script>
 @endsection

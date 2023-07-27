@@ -191,10 +191,12 @@ class SourceController extends Controller
     {
         if($request->ajax()) {
             $type = $request->get('type');
-            $key = $request->get('key') + 1;
+            $key = $request->get('key');
+            $source_id = $request->input('source_id');
             if($type == 'api') {
+                $tags = $this->util->getLeadTags($source_id);
                 return view('admin.sources.partials.api_card')
-                    ->with(compact('key'));
+                    ->with(compact('key', 'tags'));
             } else {
                 return view('admin.sources.partials.webhook_card')
                     ->with(compact('key'));
@@ -231,5 +233,17 @@ class SourceController extends Controller
         $source->save();
 
         return redirect()->route('admin.sources.webhook', $source->id);
+    }
+
+    public function getRequestBodyRow(Request $request)
+    {
+        if($request->ajax()) {
+            $source_id = $request->input('source_id');
+            $webhook_key = $request->get('webhook_key');
+            $rb_key = $request->get('rb_key');
+            $tags = $this->util->getLeadTags($source_id);
+            return view('admin.sources.partials.request_body_input')
+                ->with(compact('webhook_key', 'rb_key', 'tags'));
+        }
     }
 }

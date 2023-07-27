@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'name' => 'Name',
     'webhook' => 'Webhook',
     'webhook_details' => 'Webhook details',
     'webhook_url' => 'Webhook url',
@@ -44,4 +45,6 @@ return [
     'email_and_phone_key' => 'Email & phone key',
     'save' => 'Save',
     'added_by' => 'Added by',
+    'remove_webhook' => 'Remove webhook',
+    'add_request_body_detail' => 'Add request body detail',
 ];

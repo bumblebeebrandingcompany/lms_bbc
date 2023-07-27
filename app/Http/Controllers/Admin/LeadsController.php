@@ -121,7 +121,9 @@ class LeadsController extends Controller
 
         $campaigns = Campaign::pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.leads.create', compact('campaigns', 'projects'));
+        $project_id = request()->get('project_id', null);
+
+        return view('admin.leads.create', compact('campaigns', 'projects', 'project_id'));
     }
 
     public function store(StoreLeadRequest $request)
@@ -132,7 +134,7 @@ class LeadsController extends Controller
 
         $lead = Lead::create($input);
 
-        $this->util->sendWebhook($lead->id);
+        // $this->util->sendWebhook($lead->id);
         $this->util->sendApiWebhook($lead->id);
         
         return redirect()->route('admin.leads.index');

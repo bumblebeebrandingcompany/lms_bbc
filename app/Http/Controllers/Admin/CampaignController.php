@@ -42,7 +42,7 @@ class CampaignController extends Controller
 
             $user = auth()->user();
 
-            $query = Campaign::whereIn('id', $campaign_ids)
+            $query = Campaign::whereIn('campaigns.id', $campaign_ids)
                         ->with(['project', 'agency'])->select(sprintf('%s.*', (new Campaign)->table));
                         
             $table = Datatables::of($query);
@@ -95,7 +95,9 @@ class CampaignController extends Controller
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.campaigns.create', compact('agencies', 'projects'));
+        $project_id = request()->get('project_id', null);
+
+        return view('admin.campaigns.create', compact('agencies', 'projects', 'project_id'));
     }
 
     public function store(StoreCampaignRequest $request)

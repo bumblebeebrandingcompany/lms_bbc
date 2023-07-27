@@ -169,7 +169,7 @@
                             <div class="col-md-12">
                                 <form action="{{route('admin.update.email.and.phone.key')}}" method="post" enctype="multipart/form-data">
                                     @csrf
-                                    <input type="hidden" name="source_id" value="{{$source->id}}">
+                                    <input type="hidden" name="source_id" value="{{$source->id}}" id="source_id">
                                     <div class="row">
                                         <div class="col-md-6">
                                             <div class="form-group">
@@ -235,7 +235,8 @@
             <form action="{{route('admin.source.outgoing.webhook.store')}}" method="post" enctype="multipart/form-data">
                 @csrf
                 <div class="card-body">
-                    <h4>
+                    <input type="hidden" name="source_id" value="{{$source->id}}">
+                    <!-- <h4>
                         {{trans('messages.outgoing_webhook')}}
                     </h4>
                     <div class="row">
@@ -243,9 +244,8 @@
                             <div class="form-group outgoing_webhook">
                                 @php
                                     $webhooks = $source->outgoing_webhook ?? [];
-                                    $total_webhook = !empty($webhooks) ? count($webhooks) : 0;
+                                    $total_webhook = !empty($webhooks) ? count($webhooks) : 1;
                                 @endphp
-                                <input type="hidden" name="source_id" value="{{$source->id}}">
                                 @forelse($webhooks as $key => $webhook)
                                     @includeIf('admin.sources.partials.webhook_card', ['key' => $key, 'webhook' => $webhook])
                                 @empty
@@ -264,21 +264,27 @@
                             </button>
                         </div>
                     </div>
-                    <hr>
+                    <hr> -->
                     <h4>
-                        {{trans('messages.api')}}
+                        {{trans('messages.outgoing_webhook')}}
                     </h4>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group outgoing_api">
                                 @php
                                     $apis = $source->outgoing_apis ?? [];
-                                    $total_api_webhook = !empty($apis) ? count($apis) : 0;
+                                    $api_webhook_key = 0;
                                 @endphp
                                 @forelse($apis as $key => $api)
+                                    @php
+                                        $api_webhook_key = $key;
+                                    @endphp
                                     @includeIf('admin.sources.partials.api_card', ['key' => $key, 'api' => $api, 'tags' => $tags])
                                 @empty
                                     @for($i = 0; $i<=0 ; $i++)
+                                        @php
+                                            $api_webhook_key = $i;
+                                        @endphp
                                         @includeIf('admin.sources.partials.api_card', ['key' => $i, 'api' => [], 'tags' => $tags])
                                     @endfor
                                 @endforelse
@@ -287,12 +293,12 @@
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-primary">
-                                Save
+                            <button type="button" class="btn btn-outline-primary add_outgoing_api"
+                                data-api_webhook_key="{{$api_webhook_key}}">
+                                @lang('messages.add_outgoing_webhook')
                             </button>
-                            <button type="button" class="btn btn-outline-primary float-right add_outgoing_api"
-                                data-total="{{$total_api_webhook}}">
-                                @lang('messages.add_outgoing_api')
+                            <button type="submit" class="btn btn-primary float-right">
+                                Save
                             </button>
                         </div>
                     </div>
@@ -329,36 +335,39 @@
             location.reload();
         });
 
-        $(document).on('click', '.add_outgoing_webhook', function() {
-            let key = $(this).attr('data-total');
-            $.ajax({
-                method:"GET",
-                url: "{{route('admin.source.webhook.html')}}",
-                data: {
-                    type: 'webhook',
-                    key: key,
-                },
-                dataType: "html",
-                success: function(response) {
-                    $("div.outgoing_webhook").append(response);
-                    $(".add_outgoing_webhook").attr('data-total', +key + 1);
-                }
-            });
-        });
+        // $(document).on('click', '.add_outgoing_webhook', function() {
+        //     let key = $(this).attr('data-total');
+        //     $.ajax({
+        //         method:"GET",
+        //         url: "{{route('admin.source.webhook.html')}}",
+        //         data: {
+        //             type: 'webhook',
+        //             key: key,
+        //         },
+        //         dataType: "html",
+        //         success: function(response) {
+        //             $("div.outgoing_webhook").append(response);
+        //             $(".add_outgoing_webhook").attr('data-total', +key + 1);
+        //         }
+        //     });
+        // });
 
         $(document).on('click', '.add_outgoing_api', function() {
-            let key = $(this).attr('data-total');
+            let key = $(this).attr('data-api_webhook_key');
+            let source_id = $("#source_id").val();
             $.ajax({
                 method:"GET",
                 url: "{{route('admin.source.webhook.html')}}",
                 data: {
                     type: 'api',
-                    key: key,
+                    key: parseInt(key)+1,
+                    source_id: source_id
                 },
                 dataType: "html",
                 success: function(response) {
                     $("div.outgoing_api").append(response);
-                    $(".add_outgoing_api").attr('data-total', +key + 1);
+                    $(".add_outgoing_api").attr('data-api_webhook_key', +key + 1);
+                    $(".select-tags").select2();
                 }
             });
         });
@@ -366,6 +375,35 @@
         $(document).on('click', '.delete_api_webhook, .delete_webhook', function() {
             if(confirm('Do you want to remove?')) {
                 $(this).closest('.card').remove();
+            }
+        });
+
+        $(document).on('click', '.add_request_body_row', function() {
+            let webhook_key = $(this).attr('data-webhook_key');
+            let request_body_div = $(this).closest('.card').find('.request_body');
+            let btn = $(this);
+            let source_id = $("#source_id").val();
+            let rb_key = $(this).attr('data-rb_key');
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.get.req.body.row.html')}}",
+                data: {
+                    source_id: source_id,
+                    webhook_key: webhook_key,
+                    rb_key: parseInt(rb_key)+1
+                },
+                dataType: "html",
+                success: function(response) {
+                    request_body_div.append(response);
+                    btn.attr('data-rb_key', +rb_key + 1);
+                    $(".select-tags").select2();
+                }
+            });
+        });
+
+        $(document).on('click', '.delete_request_body_row', function() {
+            if(confirm('Do you want to remove?')) {
+                $(this).closest('.row').remove();
             }
         });
     });
