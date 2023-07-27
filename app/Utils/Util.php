@@ -132,7 +132,7 @@ class Util
             ) {
                 foreach ($source->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
-                    $request_body = $this->replaceTags($lead, $api['request_body']);
+                    $request_body = $this->replaceTags($lead, $api);
                     if(!empty($api['url'])) {
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         if(in_array($api['method'], ['get'])) {
@@ -164,8 +164,9 @@ class Util
         return $output;
     }
 
-    public function replaceTags($lead, $request_body)
+    public function replaceTags($lead, $api)
     {
+        $request_body = $api['request_body'] ?? [];
         if(empty($request_body)) {
             return $lead->lead_details;
         }
