@@ -35,6 +35,10 @@ class CampaignController extends Controller
 
     public function index(Request $request)
     {
+        if(auth()->user()->is_channel_partner) {
+            abort(403, 'Unauthorized.');
+        }
+
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
@@ -111,6 +115,10 @@ class CampaignController extends Controller
 
     public function edit(Campaign $campaign)
     {
+        if(auth()->user()->is_channel_partner) {
+            abort(403, 'Unauthorized.');
+        }
+
         $projects = Project::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
@@ -122,6 +130,10 @@ class CampaignController extends Controller
 
     public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
+        if(auth()->user()->is_channel_partner) {
+            abort(403, 'Unauthorized.');
+        }
+
         $campaign->update($request->all());
 
         return redirect()->route('admin.campaigns.index');
@@ -129,6 +141,10 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign)
     {
+        if(auth()->user()->is_channel_partner) {
+            abort(403, 'Unauthorized.');
+        }
+        
         $campaign->load('project', 'agency', 'campaignLeads', 'campaignSources');
 
         return view('admin.campaigns.show', compact('campaign'));
@@ -157,7 +173,12 @@ class CampaignController extends Controller
     public function getCampaigns(Request $request)
     {
         if($request->ajax()) {
-            $campaigns = Campaign::where('project_id', $request->input('project_id'))
+
+            $project_ids = $this->util->getUserProjects(auth()->user());
+            $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+
+            $campaigns = Campaign::whereIn('id', $campaign_ids)
+                            ->where('project_id', $request->input('project_id'))
                             ->pluck('campaign_name', 'id')
                             ->toArray();
 

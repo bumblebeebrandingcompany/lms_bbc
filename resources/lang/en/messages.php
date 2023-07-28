@@ -47,4 +47,6 @@ return [
     'added_by' => 'Added by',
     'remove_webhook' => 'Remove webhook',
     'add_request_body_detail' => 'Add request body detail',
+    'sources' => 'Sources',
+    'source_help_text' => 'Assign multiple lead source to channel partner.'
 ];

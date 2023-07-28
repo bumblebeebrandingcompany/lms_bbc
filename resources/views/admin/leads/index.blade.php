@@ -8,7 +8,7 @@
    </div>
 </div>
 <div class="card card-primary card-outline">
-    @if(auth()->user()->is_superadmin)
+    @if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)
         <div class="card-header">
             <a class="btn btn-success float-right" href="{{ route('admin.leads.create') }}">
                 {{ trans('global.add') }} {{ trans('cruds.lead.title_singular') }}
@@ -58,7 +58,7 @@
                     <td>
                     </td>
                     <td>
-                        @if(!auth()->user()->is_agency)
+                        @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner))
                             <select class="search">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach($projects as $key => $item)
@@ -68,12 +68,14 @@
                         @endif
                     </td>
                     <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($campaigns as $key => $item)
-                                <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
-                            @endforeach
-                        </select>
+                        @if(!auth()->user()->is_channel_partner)
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($campaigns as $key => $item)
+                                    <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td></td>
                     <td>
@@ -96,7 +98,7 @@
 <script>
     $(function () {
   let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-@if(auth()->user()->is_superadmin)
+@if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)
   let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
   let deleteButton = {
     text: deleteButtonTrans,

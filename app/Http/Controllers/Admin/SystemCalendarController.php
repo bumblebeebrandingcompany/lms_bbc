@@ -51,6 +51,10 @@ class SystemCalendarController extends Controller
 
     public function index()
     {
+        if(auth()->user()->is_channel_partner) {
+            abort(403, 'Unauthorized.');
+        }
+
         $events = [];
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);

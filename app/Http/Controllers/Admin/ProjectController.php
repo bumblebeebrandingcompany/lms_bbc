@@ -24,7 +24,7 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        abort_if($user->is_agency, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(($user->is_agency || $user->is_channel_partner), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
 
@@ -115,7 +115,7 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        abort_if(auth()->user()->is_agency, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if((auth()->user()->is_agency || auth()->user()->is_channel_partner), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $created_bies = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -128,7 +128,7 @@ class ProjectController extends Controller
 
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        abort_if(auth()->user()->is_agency, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if((auth()->user()->is_agency || auth()->user()->is_channel_partner), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $project->update($request->all());
 
@@ -137,7 +137,7 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        abort_if(auth()->user()->is_agency, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if((auth()->user()->is_agency || auth()->user()->is_channel_partner), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $project->load('created_by', 'client', 'projectLeads', 'projectCampaigns');
 
@@ -168,7 +168,7 @@ class ProjectController extends Controller
 
     public function storeCKEditorImages(Request $request)
     {
-        abort_if(auth()->user()->is_agency, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if((auth()->user()->is_agency || auth()->user()->is_channel_partner), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $model         = new Project();
         $model->id     = $request->input('crud_id', 0);

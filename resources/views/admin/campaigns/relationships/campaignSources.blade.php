@@ -1,10 +1,12 @@
 <div class="m-3">
     <div class="card">
-        <div class="card-header">
-            <a class="btn btn-success float-right" href="{{ route('admin.sources.create') }}">
-                {{ trans('global.add') }} {{ trans('cruds.source.title_singular') }}
-            </a>
-        </div>
+        @if(auth()->user()->is_superadmin)
+            <div class="card-header">
+                <a class="btn btn-success float-right" href="{{ route('admin.sources.create') }}">
+                    {{ trans('global.add') }} {{ trans('cruds.source.title_singular') }}
+                </a>
+            </div>
+        @endif
         <div class="card-body">
             <div class="table-responsive">
                 <table class=" table table-bordered table-striped table-hover datatable datatable-campaignSources">
@@ -49,16 +51,16 @@
                                     {{ $source->name ?? '' }}
                                 </td>
                                 <td>
-                                    <a class="btn btn-xs btn-primary" href="{{ route('admin.sources.show', $source->id) }}">
-                                        {{ trans('global.view') }}
-                                    </a>
-                                    <a class="btn btn-xs btn-info" href="{{ route('admin.sources.edit', $source->id) }}">
-                                        {{ trans('global.edit') }}
-                                    </a>
-                                    <a class="btn btn-xs btn-dark" href="{{ route('admin.sources.webhook', $source->id) }}">
-                                        {{ trans('messages.webhook') }}
-                                    </a>
                                     @if(auth()->user()->is_superadmin)
+                                        <a class="btn btn-xs btn-primary" href="{{ route('admin.sources.show', $source->id) }}">
+                                            {{ trans('global.view') }}
+                                        </a>
+                                        <a class="btn btn-xs btn-info" href="{{ route('admin.sources.edit', $source->id) }}">
+                                            {{ trans('global.edit') }}
+                                        </a>
+                                        <a class="btn btn-xs btn-dark" href="{{ route('admin.sources.webhook', $source->id) }}">
+                                            {{ trans('messages.webhook') }}
+                                        </a>
                                         <form action="{{ route('admin.sources.destroy', $source->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                             <input type="hidden" name="_method" value="DELETE">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">

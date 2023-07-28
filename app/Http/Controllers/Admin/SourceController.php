@@ -34,6 +34,10 @@ class SourceController extends Controller
 
     public function index(Request $request)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+
         if ($request->ajax()) {
             $query = Source::with(['project', 'campaign'])->select(sprintf('%s.*', (new Source)->table));
             $table = Datatables::of($query);
@@ -89,6 +93,10 @@ class SourceController extends Controller
 
     public function create()
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
@@ -103,6 +111,10 @@ class SourceController extends Controller
 
     public function store(StoreSourceRequest $request)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $source_details = $request->except('_token');
         $source_details['webhook_secret'] = $this->util->generateWebhookSecret();
         $source = Source::create($source_details);
@@ -112,6 +124,10 @@ class SourceController extends Controller
 
     public function edit(Source $source)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
@@ -128,6 +144,10 @@ class SourceController extends Controller
 
     public function update(UpdateSourceRequest $request, Source $source)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $source->update($request->all());
 
         return redirect()->route('admin.sources.index');
@@ -135,6 +155,9 @@ class SourceController extends Controller
 
     public function show(Source $source)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
 
         $source->load('project', 'campaign');
 
@@ -152,6 +175,10 @@ class SourceController extends Controller
 
     public function massDestroy(MassDestroySourceRequest $request)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+        
         $sources = Source::find(request('ids'));
 
         foreach ($sources as $source) {
@@ -163,6 +190,10 @@ class SourceController extends Controller
 
     public function getWebhookDetails($id)
     {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+        
         $source = Source::findOrFail($id);
 
         $lead =  Lead::where('source_id', $id)
@@ -207,10 +238,17 @@ class SourceController extends Controller
     public function getSource(Request $request)
     {
         if($request->ajax()) {
-            $sources = Source::where('project_id', $request->input('project_id'))
-                    ->where('campaign_id', $request->input('campaign_id'))
-                    ->pluck('name', 'id')
-                    ->toArray();
+            
+            $query = Source::where('project_id', $request->input('project_id'))
+                    ->where('campaign_id', $request->input('campaign_id'));
+
+            if(auth()->user()->is_channel_partner) {
+                $assigned_sources = auth()->user()->sources;
+                $query->whereIn('id', $assigned_sources);
+            }
+            
+            $sources = $query->pluck('name', 'id')
+                        ->toArray();
                     
             $sources_arr = [['id' => '', 'text' => __('messages.please_select')]];
             if(!empty($sources)) {

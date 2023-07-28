@@ -11,7 +11,7 @@ class UpdateProjectRequest extends FormRequest
 {
     public function authorize()
     {
-        return !auth()->user()->is_agency;
+        return true;
     }
 
     public function rules()

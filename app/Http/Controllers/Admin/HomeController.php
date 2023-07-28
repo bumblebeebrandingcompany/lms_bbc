@@ -23,6 +23,10 @@ class HomeController
 
     public function index()
     {
+        if(auth()->user()->is_channel_partner) {
+            abort(403, 'Unauthorized.');
+        }
+        
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 

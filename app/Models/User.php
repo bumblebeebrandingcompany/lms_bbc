@@ -22,7 +22,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['is_superadmin', 'is_client', 'is_agency'];
+    protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_channel_partner'];
     
     public $table = 'users';
 
@@ -47,6 +47,16 @@ class User extends Authenticatable
         'Superadmin' => 'Superadmin',
         'Client'     => 'Client',
         'Agency'     => 'Agency',
+        'ChannelPartner' => 'Channel Partner'
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'sources' => 'array'
     ];
 
     protected $fillable = [
@@ -56,6 +66,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'user_type',
+        'sources',
         'address',
         'contact_number_1',
         'contact_number_2',
@@ -152,5 +163,15 @@ class User extends Authenticatable
     public function getIsAgencyAttribute()
     {
         return $this->user_type == 'Agency';
+    }
+
+    /**
+     * is user channel partner?
+     *
+     * @return boolean
+     */
+    public function getIsChannelPartnerAttribute()
+    {
+        return $this->user_type == 'ChannelPartner';
     }
 }

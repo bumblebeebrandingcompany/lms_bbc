@@ -43,10 +43,14 @@ class LeadsController extends Controller
             $query = Lead::with(['project', 'campaign', 'source', 'createdBy'])
                         ->select(sprintf('%s.*', (new Lead)->table));
 
-            $query = $query->where(function ($q) use($project_ids, $campaign_ids) {
-                        $q->whereIn('leads.project_id', $project_ids)
-                            ->orWhereIn('leads.campaign_id', $campaign_ids);
-                    })->groupBy('id');
+            $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
+                if($user->is_channel_partner) {
+                    $q->where('leads.created_by', $user->id);
+                } else {
+                    $q->whereIn('leads.project_id', $project_ids)
+                        ->orWhereIn('leads.campaign_id', $campaign_ids);
+                }
+            })->groupBy('id');
             
             $table = Datatables::of($query);
 
@@ -56,7 +60,7 @@ class LeadsController extends Controller
             $table->editColumn('actions', function ($row) use($user) {
                 $viewGate      = true;
                 $editGate      = true;
-                $deleteGate    = $user->is_superadmin;
+                $deleteGate    = $user->is_superadmin || $user->is_channel_partner;
                 $crudRoutePart = 'leads';
 
                 return view('partials.datatablesActions', compact(
@@ -115,11 +119,18 @@ class LeadsController extends Controller
 
     public function create()
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+            abort(403, 'Unauthorized.');
+        }
+        
+        $project_ids = $this->util->getUserProjects(auth()->user());
+        $campaign_ids = $this->util->getCampaigns(auth()->user());
 
-        $projects = Project::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $projects = Project::whereIn('id', $project_ids)
+                        ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $campaigns = Campaign::pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $campaigns = Campaign::whereIn('id', $campaign_ids)
+                        ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $project_id = request()->get('project_id', null);
 
@@ -142,9 +153,14 @@ class LeadsController extends Controller
 
     public function edit(Lead $lead)
     {
-        $projects = Project::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $project_ids = $this->util->getUserProjects(auth()->user());
+        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
-        $campaigns = Campaign::pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $projects = Project::whereIn('id', $project_ids)
+                        ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+
+        $campaigns = Campaign::whereIn('id', $campaign_ids)
+                        ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $lead->load('project', 'campaign');
 
@@ -163,6 +179,13 @@ class LeadsController extends Controller
 
     public function show(Lead $lead)
     {
+        if(
+            auth()->user()->is_channel_partner && 
+            ($lead->created_by != auth()->user()->id)
+        ) {
+            abort(403, 'Unauthorized.');
+        }
+
         $lead->load('project', 'campaign', 'source', 'createdBy');
 
         return view('admin.leads.show', compact('lead'));
@@ -170,7 +193,9 @@ class LeadsController extends Controller
 
     public function destroy(Lead $lead)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+            abort(403, 'Unauthorized.');
+        }
 
         $lead->delete();
 
@@ -179,7 +204,9 @@ class LeadsController extends Controller
 
     public function massDestroy(MassDestroyLeadRequest $request)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+            abort(403, 'Unauthorized.');
+        }
 
         $leads = Lead::find(request('ids'));
 

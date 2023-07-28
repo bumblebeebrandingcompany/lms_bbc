@@ -16,9 +16,14 @@ class Util
         $query = new Project();
 
         if (!$user->is_superadmin) {
-            $query = $query->where(function ($q) use($user) {
-                        $q->where('created_by_id', $user->id)
-                        ->orWhere('client_id', $user->client_id);
+            $cp_project_ids = $this->getCpProjectsAndCampaignsAssigned($user);
+            $query = $query->where(function ($q) use($user, $cp_project_ids) {
+                        if($user->is_channel_partner) {
+                            $q->whereIn('id', $cp_project_ids);
+                        } else {
+                            $q->where('created_by_id', $user->id)
+                                ->orWhere('client_id', $user->client_id);
+                        }
                     });
         }
 
@@ -40,6 +45,13 @@ class Util
         if (!$user->is_superadmin && $user->is_client) {
             $query = $query->where(function ($q) use($project_ids) {
                     $q->whereIn('project_id', $project_ids);
+                });
+        }
+
+        if ($user->is_channel_partner) {
+            $cp_campaign_ids = $this->getCpProjectsAndCampaignsAssigned($user, 'campaign');
+            $query = $query->where(function ($q) use($cp_campaign_ids) {
+                    $q->whereIn('id', $cp_campaign_ids);
                 });
         }
 
@@ -200,5 +212,43 @@ class Util
         $tags = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
 
         return $tags;
+    }
+
+    /*
+    * return sources
+    *
+    * @param $for_cp: is channel partner
+    *
+    * @return array
+    */
+    public function getSources($for_cp=false)
+    {
+        $sources = Source::with(['project', 'campaign'])
+                    ->get();
+
+        if($for_cp) {
+            $sources_arr = [];
+            foreach ($sources as $source) {
+                $sources_arr[$source->id] = $source->project->name.' | '.$source->campaign->campaign_name.' | '.$source->name;
+            }
+            return $sources_arr;
+        }
+
+        return $sources->pluck('name', 'id')->toArray();
+    }
+
+    public function getCpProjectsAndCampaignsAssigned($user, $type='project')
+    {
+        if(empty($user->sources)) {
+            return [];
+        }
+        
+        $query = Source::whereIn('id', $user->sources);
+
+        if($type == 'project') {
+            return $query->groupBy('project_id')->pluck('project_id')->toArray();
+        } else {
+            return $query->groupBy('campaign_id')->pluck('campaign_id')->toArray();
+        }
     }
 }

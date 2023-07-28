@@ -25,7 +25,7 @@
                         </h3>
                     </div>
                     <div class="col-md-6">
-                        <a class="btn btn-default float-right" href="{{ route('admin.campaigns.index') }}">
+                        <a class="btn btn-default float-right" href="{{ route('admin.sources.index') }}">
                             <i class="fas fa-chevron-left"></i>
                             {{ trans('global.back_to_list') }}
                         </a>

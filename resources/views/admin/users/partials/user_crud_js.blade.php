@@ -1,11 +1,11 @@
 $(function() {
     function toggleAgencyAndClient(userType, resetValue=false) {
 
-        $("#agency_id, #client_id").parent('div').hide();
-        $("#agency_id, #client_id").prop('required', false);
+        $("#agency_id, #client_id, #sources").parent('div').hide();
+        $("#agency_id, #client_id, #sources").prop('required', false);
 
         if(resetValue) {
-            $("#agency_id, #client_id").val('').change();
+            $("#agency_id, #client_id, #sources").val('').change();
         }
 
         if(userType == 'Client') {
@@ -14,6 +14,9 @@ $(function() {
         } else if(userType == 'Agency') {
             $("#agency_id").parent('div').show();
             $("#agency_id").prop('required', true);
+        } else if(userType == 'ChannelPartner') {
+            $("#sources").parent('div').show();
+            $("#sources").prop('required', true);
         }
     }
 

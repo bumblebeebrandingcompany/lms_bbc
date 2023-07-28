@@ -11,8 +11,6 @@ class MassDestroyLeadRequest extends FormRequest
 {
     public function authorize()
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         return true;
     }
 

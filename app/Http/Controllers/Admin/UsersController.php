@@ -14,14 +14,33 @@ use Gate;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use App\Utils\Util;
 
 class UsersController extends Controller
 {
+    /**
+    * All Utils instance.
+    *
+    */
+    protected $util;
+
+    /**
+    * Constructor
+    *
+    */
+    public function __construct(Util $util)
+    {
+        $this->util = $util;
+    }
+
     public function index(Request $request)
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
+
+            $sources = $this->util->getSources(true);
+
             $query = User::with(['roles', 'client', 'agency'])->select(sprintf('%s.*', (new User)->table));
             $table = Datatables::of($query);
 
@@ -42,8 +61,25 @@ class UsersController extends Controller
                     'row'
                 ));
             });
-            $table->editColumn('name', function ($row) {
-                return $row->name ? $row->name : '';
+            $table->editColumn('name', function ($row) use($sources) {
+
+                $assigned_source = [];
+                if(
+                    !empty($row->sources) && !empty($sources)
+                ) {
+                    foreach($row->sources as $id) {
+                        if(isset($sources[$id])) {
+                            $assigned_source[] = $sources[$id];
+                        }
+                    }
+                }
+
+                $assigned_source_html = '';
+                if(!empty($assigned_source)) {
+                    $assigned_source_html = '<br>Assigned sources : '.implode(', ', $assigned_source);
+                }
+
+                return ($row->name ? $row->name : ''). $assigned_source_html;
             });
             $table->editColumn('email', function ($row) {
                 return $row->email ? $row->email : '';
@@ -66,7 +102,7 @@ class UsersController extends Controller
                 return $row->agency ? $row->agency->name : '';
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'client', 'agency']);
+            $table->rawColumns(['actions', 'name', 'placeholder', 'client', 'agency']);
 
             return $table->make(true);
         }
@@ -87,7 +123,9 @@ class UsersController extends Controller
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        return view('admin.users.create', compact('agencies', 'clients', 'roles'));
+        $sources = $this->util->getSources(true);
+
+        return view('admin.users.create', compact('agencies', 'clients', 'roles', 'sources'));
     }
 
     public function store(StoreUserRequest $request)
@@ -110,7 +148,9 @@ class UsersController extends Controller
 
         $user->load('roles', 'client', 'agency');
 
-        return view('admin.users.edit', compact('agencies', 'clients', 'roles', 'user'));
+        $sources = $this->util->getSources(true);
+
+        return view('admin.users.edit', compact('agencies', 'clients', 'roles', 'user', 'sources'));
     }
 
     public function update(UpdateUserRequest $request, User $user)
