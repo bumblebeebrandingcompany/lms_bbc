@@ -75,6 +75,7 @@
                 <div class="form-group request_body">
                     <label>
                         {{trans('messages.request_body')}}
+                        <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.request_body_help_text')}}"></i>
                     </label>
                     @php
                         $rb_key = 0;

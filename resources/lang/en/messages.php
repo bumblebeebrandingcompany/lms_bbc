@@ -33,7 +33,7 @@ return [
     'api_to_send_webhook' => 'API to send webhook',
     'request_body' => 'Request body',
     'available_tags' => 'Available Tags',
-    'request_body_help_text' => 'Request body as a key value pair in JSON format. request body is optional, if not provided default body as per incoming request will be sent',
+    'request_body_help_text' => 'Request body is optional, if not provided default body as per incoming request will be sent. remove all row(key/value field) of request body to make it optional.',
     'send_webhook_request_to_view_tags' => 'Send webhook request to view tags.',
     'add_outgoing_webhook' => 'Add outgoing webhook',
     'add_outgoing_api' => 'Add outgoing api',
