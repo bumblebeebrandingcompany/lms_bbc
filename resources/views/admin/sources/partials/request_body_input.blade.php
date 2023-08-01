@@ -4,7 +4,7 @@
             <label class="required">
                 @lang('messages.key')
             </label>
-            <input type="text" name="api[{{$webhook_key}}][request_body][{{$rb_key}}][key]" value="{{$rb['key'] ?? ''}}" class="form-control" required>
+            <input type="text" name="api[{{$webhook_key}}][request_body][{{$rb_key}}][key]" value="{{$rb['key'] ?? ''}}" class="form-control input" required>
         </div>
     </div>
     <div class="col-md-6">
@@ -12,7 +12,7 @@
             <label class="required">
                 @lang('messages.value')
             </label>
-            <select class="form-control select2 select-tags" name="api[{{$webhook_key}}][request_body][{{$rb_key}}][value][]" required multiple>
+            <select class="form-control select2 select-tags input" name="api[{{$webhook_key}}][request_body][{{$rb_key}}][value][]" required multiple>
                 @foreach($tags as $tag)
                     <option value="{{ $tag }}"
                         @if(!empty($rb['value']) && is_array($rb['value']) && in_array($tag, $rb['value']))

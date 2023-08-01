@@ -39,7 +39,7 @@ class UsersController extends Controller
 
         if ($request->ajax()) {
 
-            $sources = $this->util->getSources(true);
+            $projects = $this->util->getProjectDropdown(true);
 
             $query = User::with(['roles', 'client', 'agency'])->select(sprintf('%s.*', (new User)->table));
             $table = Datatables::of($query);
@@ -61,25 +61,25 @@ class UsersController extends Controller
                     'row'
                 ));
             });
-            $table->editColumn('name', function ($row) use($sources) {
+            $table->editColumn('name', function ($row) use($projects) {
 
-                $assigned_source = [];
+                $project_assigned = [];
                 if(
-                    !empty($row->sources) && !empty($sources)
+                    !empty($row->project_assigned) && !empty($projects)
                 ) {
-                    foreach($row->sources as $id) {
-                        if(isset($sources[$id])) {
-                            $assigned_source[] = $sources[$id];
+                    foreach($row->project_assigned as $id) {
+                        if(isset($projects[$id])) {
+                            $project_assigned[] = $projects[$id];
                         }
                     }
                 }
 
-                $assigned_source_html = '';
-                if(!empty($assigned_source)) {
-                    $assigned_source_html = '<br>Assigned sources : '.implode(', ', $assigned_source);
+                $project_assigned_html = '';
+                if(!empty($project_assigned)) {
+                    $project_assigned_html = '<br>Assigned projects : '.implode(', ', $project_assigned);
                 }
 
-                return ($row->name ? $row->name : ''). $assigned_source_html;
+                return ($row->name ? $row->name : ''). $project_assigned_html;
             });
             $table->editColumn('email', function ($row) {
                 return $row->email ? $row->email : '';
@@ -123,9 +123,9 @@ class UsersController extends Controller
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $sources = $this->util->getSources(true);
-
-        return view('admin.users.create', compact('agencies', 'clients', 'roles', 'sources'));
+        $projects = $this->util->getProjectDropdown(true);
+        
+        return view('admin.users.create', compact('agencies', 'clients', 'roles', 'projects'));
     }
 
     public function store(StoreUserRequest $request)
@@ -148,9 +148,9 @@ class UsersController extends Controller
 
         $user->load('roles', 'client', 'agency');
 
-        $sources = $this->util->getSources(true);
+        $projects = $this->util->getProjectDropdown(true);
 
-        return view('admin.users.edit', compact('agencies', 'clients', 'roles', 'user', 'sources'));
+        return view('admin.users.edit', compact('agencies', 'clients', 'roles', 'user', 'projects'));
     }
 
     public function update(UpdateUserRequest $request, User $user)

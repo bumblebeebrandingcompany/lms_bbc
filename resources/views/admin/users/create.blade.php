@@ -121,15 +121,15 @@
                 <span class="help-block">{{ trans('cruds.user.fields.agency_helper') }}</span>
             </div>
             <div class="form-group">
-                <label class="required" for="sources">{{ trans('messages.sources') }}</label>
-                <select class="form-control select2" name="sources[]" id="sources" multiple>
-                    @foreach($sources as $id => $entry)
+                <label class="required" for="projects">{{ trans('messages.projects') }}</label>
+                <select class="form-control select2" name="project_assigned[]" id="projects" multiple>
+                    @foreach($projects as $id => $entry)
                         <option value="{{ $id }}">
                             {{ $entry }}
                         </option>
                     @endforeach
                 </select>
-                <span class="help-block">{{ trans('messages.source_help_text') }}</span>
+                <span class="help-block">{{ trans('messages.project_help_text') }}</span>
             </div>
             <div class="form-group">
                 <button class="btn btn-danger" type="submit">

@@ -16,7 +16,7 @@ class Util
         $query = new Project();
 
         if (!$user->is_superadmin) {
-            $cp_project_ids = $this->getCpProjectsAndCampaignsAssigned($user);
+            $cp_project_ids = $user->project_assigned ?? [];
             $query = $query->where(function ($q) use($user, $cp_project_ids) {
                         if($user->is_channel_partner) {
                             $q->whereIn('id', $cp_project_ids);
@@ -45,13 +45,6 @@ class Util
         if (!$user->is_superadmin && $user->is_client) {
             $query = $query->where(function ($q) use($project_ids) {
                     $q->whereIn('project_id', $project_ids);
-                });
-        }
-
-        if ($user->is_channel_partner) {
-            $cp_campaign_ids = $this->getCpProjectsAndCampaignsAssigned($user, 'campaign');
-            $query = $query->where(function ($q) use($cp_campaign_ids) {
-                    $q->whereIn('id', $cp_campaign_ids);
                 });
         }
 
@@ -129,12 +122,15 @@ class Util
         return $output;
     }
 
-    public function sendApiWebhook($id)
+    public function sendApiWebhook($id, $source=null)
     {
         try {
 
             $lead = Lead::findOrFail($id);
-            $source = Source::findOrFail($lead->source_id);
+
+            if(empty($source)) {
+                $source = Source::findOrFail($lead->source_id);
+            }
 
             if(
                 !empty($source) &&
@@ -147,25 +143,7 @@ class Util
                     $request_body = $this->replaceTags($lead, $api);
                     if(!empty($api['url'])) {
                         $headers['secret-key'] = $api['secret_key'] ?? '';
-                        if(in_array($api['method'], ['get'])) {
-                            $client = new Client();
-                            $response = $client->get($api['url'], [
-                                'query' => $request_body,
-                                'headers' => $headers,
-                            ]);
-                            //Response check
-                            // $data = json_decode($response->getBody(), true);
-                        }
-                        if(in_array($api['method'], ['post'])) {
-                            $client = new Client();
-                            $response = $client->post($api['url'], [
-                                'headers' => $headers,
-                                'json' => $request_body,
-                            ]);
-
-                            //Response check
-                            // $data = json_decode($response->getBody(), true);
-                        }
+                        $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
                     }
                 }
             }
@@ -237,18 +215,50 @@ class Util
         return $sources->pluck('name', 'id')->toArray();
     }
 
-    public function getCpProjectsAndCampaignsAssigned($user, $type='project')
+    public function postWebhook($url, $method, $headers=[], $body=[])
     {
-        if(empty($user->sources)) {
-            return [];
-        }
-        
-        $query = Source::whereIn('id', $user->sources);
+        if(in_array($method, ['get'])) {
 
-        if($type == 'project') {
-            return $query->groupBy('project_id')->pluck('project_id')->toArray();
-        } else {
-            return $query->groupBy('campaign_id')->pluck('campaign_id')->toArray();
+            $client = new Client();
+            $response = $client->get($url, [
+                'query' => $body,
+                'headers' => $headers,
+            ]);
+            
+            return json_decode($response->getBody(), true);
         }
+        if(in_array($method, ['post'])) {
+
+            $client = new Client();
+            $response = $client->post($url, [
+                'headers' => $headers,
+                'json' => $body,
+            ]);
+
+            return json_decode($response->getBody(), true);
+        }
+    }
+
+    /*
+    * return project dropdown
+    *
+    * @param $for_cp: is channel partner
+    *
+    * @return array
+    */
+    public function getProjectDropdown($for_cp=false)
+    {
+        $projects = Project::with(['client'])
+                    ->get();
+
+        if($for_cp) {
+            $projects_arr = [];
+            foreach ($projects as $project) {
+                $projects_arr[$project->id] = $project->client->name.' | '.$project->name;
+            }
+            return $projects_arr;
+        }
+
+        return $projects->pluck('name', 'id')->toArray();
     }
 }

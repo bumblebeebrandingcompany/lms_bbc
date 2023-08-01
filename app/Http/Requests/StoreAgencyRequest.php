@@ -11,7 +11,7 @@ class StoreAgencyRequest extends FormRequest
 {
     public function authorize()
     {
-        return Gate::allows('agency_create');
+        return auth()->user()->is_superadmin;
     }
 
     public function rules()
@@ -19,11 +19,9 @@ class StoreAgencyRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'required',
-                'unique:agencies',
+                'required'
             ],
             'email' => [
-                'required',
                 'unique:agencies',
             ],
             'contact_number_1' => [

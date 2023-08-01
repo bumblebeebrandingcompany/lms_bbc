@@ -19,11 +19,9 @@ class StoreClientRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'required',
-                'unique:clients',
+                'required'
             ],
             'email' => [
-                'required',
                 'unique:clients',
             ],
             'website' => [

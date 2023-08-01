@@ -19,11 +19,9 @@ class UpdateAgencyRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'required',
-                'unique:agencies,name,' . request()->route('agency')->id,
+                'required'
             ],
             'email' => [
-                'required',
                 'unique:agencies,email,' . request()->route('agency')->id,
             ],
             'contact_number_1' => [

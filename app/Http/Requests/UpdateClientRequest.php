@@ -19,11 +19,9 @@ class UpdateClientRequest extends FormRequest
         return [
             'name' => [
                 'string',
-                'required',
-                'unique:clients,name,' . request()->route('client')->id,
+                'required'
             ],
             'email' => [
-                'required',
                 'unique:clients,email,' . request()->route('client')->id,
             ],
             'website' => [

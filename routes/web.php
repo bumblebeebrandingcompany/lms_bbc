@@ -60,6 +60,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('agencies', 'AgencyController');
 
     // Source
+    Route::post('test-webhook', 'SourceController@postTestWebhook')->name('sources.test.webhook');
     Route::get('get-request-body-row', 'SourceController@getRequestBodyRow')->name('get.req.body.row.html');
     Route::post('update-email-and-phone-key', 'SourceController@updatePhoneAndEmailKey')->name('update.email.and.phone.key');
     Route::get('get-sources', 'SourceController@getSource')->name('get.sources');

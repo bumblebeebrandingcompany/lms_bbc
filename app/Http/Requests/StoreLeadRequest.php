@@ -19,6 +19,9 @@ class StoreLeadRequest extends FormRequest
     {
         $project_id = request()->input('project_id');
         return [
+            'name' => [
+                'required'
+            ],
             'email' => [
                 'required',
                 'email',
@@ -27,21 +30,15 @@ class StoreLeadRequest extends FormRequest
                 }),
             ],
             'phone' => [
+                'required',
                 Rule::unique('leads')->where(function ($query) use ($project_id) {
                     return $query->where('project_id', $project_id);
                 }),
             ],
-            'source_id' => [
-                'required',
-                'integer',
-            ],
             'project_id' => [
                 'required',
                 'integer',
-            ],
-            'lead_details' => [
-                'required',
-            ],
+            ]
         ];
     }
 }

@@ -56,7 +56,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $casts = [
-        'sources' => 'array'
+        'sources' => 'array',
+        'project_assigned' => 'array'
     ];
 
     protected $fillable = [
@@ -67,6 +68,7 @@ class User extends Authenticatable
         'remember_token',
         'user_type',
         'sources',
+        'project_assigned',
         'address',
         'contact_number_1',
         'contact_number_2',

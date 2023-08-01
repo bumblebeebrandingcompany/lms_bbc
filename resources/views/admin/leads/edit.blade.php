@@ -14,6 +14,12 @@
             @csrf
             <input type="hidden" name="lead_id" value="{{$lead->id}}">
             <div class="form-group">
+                <label for="name" class="required">
+                    @lang('messages.name')
+                </label>
+                <input type="text" name="name" id="name" value="{{ old('name') ?? $lead->name }}" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
+            </div>
+            <div class="form-group">
                 <label for="email" class="required">
                     @lang('messages.email')
                 </label>
@@ -37,29 +43,41 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.lead.fields.project_helper') }}</span>
             </div>
+            @if(!auth()->user()->is_channel_partner)
+                <div class="form-group">
+                    <label for="campaign_id">{{ trans('cruds.lead.fields.campaign') }}</label>
+                    <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}" name="campaign_id" id="campaign_id">
+                        @foreach($campaigns as $id => $entry)
+                            <option value="{{ $id }}" {{ (old('campaign_id') ? old('campaign_id') : $lead->campaign->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                        @endforeach
+                    </select>
+                    @if($errors->has('campaign'))
+                        <span class="text-danger">{{ $errors->first('campaign') }}</span>
+                    @endif
+                    <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
+                </div>
+                <div class="form-group">
+                    <label class="required" for="source_id">{{ trans('messages.source') }}</label>
+                    <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}" name="source_id" id="source_id" required>
+                        
+                    </select>
+                    @if($errors->has('source_id'))
+                        <span class="text-danger">{{ $errors->first('source_id') }}</span>
+                    @endif
+                </div>
+            @endif
             <div class="form-group">
-                <label for="campaign_id">{{ trans('cruds.lead.fields.campaign') }}</label>
-                <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}" name="campaign_id" id="campaign_id">
-                    @foreach($campaigns as $id => $entry)
-                        <option value="{{ $id }}" {{ (old('campaign_id') ? old('campaign_id') : $lead->campaign->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
-                    @endforeach
-                </select>
-                @if($errors->has('campaign'))
-                    <span class="text-danger">{{ $errors->first('campaign') }}</span>
-                @endif
-                <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
+                <label for="comments">{{ trans('messages.comments') }}</label>
+                <textarea name="comments" class="form-control" id="comments" rows="2">{!! old('comments') ?? $lead->comments !!}</textarea>
             </div>
-            <div class="form-group">
-                <label class="required" for="source_id">{{ trans('messages.source') }}</label>
-                <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}" name="source_id" id="source_id" required>
-                    
-                </select>
-                @if($errors->has('source_id'))
-                    <span class="text-danger">{{ $errors->first('source_id') }}</span>
-                @endif
-            </div>
+            @if(auth()->user()->is_channel_partner)
+                <div class="form-group">
+                    <label for="cp_comments">{{ trans('messages.cp_comments') }}</label>
+                    <textarea name="cp_comments" class="form-control" id="cp_comments" rows="2">{!! old('comments') ?? $lead->cp_comments !!}</textarea>
+                </div>
+            @endif
             <h4>
-                {{ trans('cruds.lead.fields.lead_details') }}
+                {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
             </h4>
             <div class="lead_details">
                 @php

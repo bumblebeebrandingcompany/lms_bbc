@@ -20,6 +20,14 @@
                 <tbody>
                     <tr>
                         <th>
+                            @lang('messages.name')
+                        </th>
+                        <td>
+                            {{ $lead->name ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             @lang('messages.email')
                         </th>
                         <td>
@@ -88,6 +96,22 @@
                             </td>
                         </tr>
                     @endforeach
+                    <tr>
+                        <th>
+                            @lang('messages.customer_comments')
+                        </th>
+                        <td>
+                            {!! $lead->comments ?? '' !!}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @lang('messages.cp_comments')
+                        </th>
+                        <td>
+                            {!! $lead->cp_comments ?? '' !!}
+                        </td>
+                    </tr>
                     <tr>
                         <th>
                             @lang('messages.added_by')

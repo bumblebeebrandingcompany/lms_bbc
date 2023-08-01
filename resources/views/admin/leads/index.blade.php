@@ -16,11 +16,42 @@
         </div>
     @endif
     <div class="card-body">
+        <div class="row mb-3">
+            @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner))
+                <div class="col-md-4">
+                    <label for="project_id">
+                        @lang('messages.projects')
+                    </label>
+                    <select class="search form-control" id="project_id">
+                        <option value>{{ trans('global.all') }}</option>
+                        @foreach($projects as $key => $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+            @if(!auth()->user()->is_channel_partner)
+                <div class="col-md-4">
+                    <label for="campaign_id">
+                        @lang('messages.campaigns')
+                    </label>
+                    <select class="search form-control" id="campaign_id">
+                        <option value>{{ trans('global.all') }}</option>
+                        @foreach($campaigns as $key => $item)
+                            <option value="{{ $item->id }}">{{ $item->campaign_name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            @endif
+        </div>
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Lead">
             <thead>
                 <tr>
                     <th width="10">
 
+                    </th>
+                    <th>
+                        @lang('messages.name')
                     </th>
                     <th>
                         @lang('messages.email')
@@ -49,41 +80,6 @@
                     <th>
                         &nbsp;
                     </th>
-                </tr>
-                <tr>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                    </td>
-                    <td>
-                        @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner))
-                            <select class="search">
-                                <option value>{{ trans('global.all') }}</option>
-                                @foreach($projects as $key => $item)
-                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
-                                @endforeach
-                            </select>
-                        @endif
-                    </td>
-                    <td>
-                        @if(!auth()->user()->is_channel_partner)
-                            <select class="search">
-                                <option value>{{ trans('global.all') }}</option>
-                                @foreach($campaigns as $key => $item)
-                                    <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
-                                @endforeach
-                            </select>
-                        @endif
-                    </td>
-                    <td></td>
-                    <td>
-                    </td>
-                    <td></td>
-                    <td></td>
-                    <td>
-                    </td>
                 </tr>
             </thead>
         </table>
@@ -134,9 +130,16 @@
     serverSide: true,
     retrieve: true,
     aaSorting: [],
-    ajax: "{{ route('admin.leads.index') }}",
+    ajax: {
+        url: "{{ route('admin.leads.index') }}",
+        data: function (d) {
+            d.project_id = $("#project_id").val(),
+            d.campaign_id = $("#campaign_id").val()
+        }
+    },
     columns: [
         { data: 'placeholder', name: 'placeholder' },
+        { data: 'name', name: 'name' },
         { data: 'email', name: 'email' },
         { data: 'phone', name: 'phone' },
         { data: 'project_name', name: 'project.name' },
@@ -148,7 +151,7 @@
         { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 7, 'desc' ]],
+    order: [[ 8, 'desc' ]],
     pageLength: 50,
   };
   let table = $('.datatable-Lead').DataTable(dtOverrideGlobals);
@@ -158,20 +161,9 @@
   });
   
 let visibleColumnsIndexes = null;
-$('.datatable thead').on('input', '.search', function () {
-      let strict = $(this).attr('strict') || false
-      let value = strict && this.value ? "^" + this.value + "$" : this.value
-
-      let index = $(this).parent().index()
-      if (visibleColumnsIndexes !== null) {
-        index = visibleColumnsIndexes[index]
-      }
-
-      table
-        .column(index)
-        .search(value, strict)
-        .draw()
-  });
+$(document).on('input', '.search', function () {
+      table.ajax.reload();
+});
 table.on('column-visibility.dt', function(e, settings, column, state) {
       visibleColumnsIndexes = []
       table.columns(":visible").every(function(colIdx) {

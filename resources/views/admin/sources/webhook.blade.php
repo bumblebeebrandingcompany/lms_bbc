@@ -406,6 +406,25 @@
                 $(this).closest('.row').remove();
             }
         });
+
+        $(document).on('click', '.test_webhook', function() {
+            let card_id = $(this).attr('data-card_id');
+            let data = {};
+            $(`#${card_id} .input`).each(function() {
+                data[$(this).attr('name')] = $(this).val();
+            });
+            $.ajax({
+                method:"POST",
+                url:"{{route('admin.sources.test.webhook')}}",
+                data:data,
+                dataType: "JSON",
+                success: function(response) {
+                    if(response.msg) {
+                        alert(decodeURIComponent(response.msg));
+                    }
+                }
+            })
+        });
     });
 </script>
 @endsection

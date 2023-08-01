@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
+use App\Models\Source;
 class LeadsController extends Controller
 {
     /**
@@ -52,6 +53,16 @@ class LeadsController extends Controller
                 }
             })->groupBy('id');
             
+
+            //filter leads
+            if(!empty($request->input('project_id'))) {
+                $query->where('leads.project_id', $request->input('project_id'));
+            }
+
+            if(!empty($request->input('campaign_id'))) {
+                $query->where('leads.campaign_id', $request->input('campaign_id'));
+            }
+
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -145,9 +156,13 @@ class LeadsController extends Controller
 
         $lead = Lead::create($input);
 
+        $source = null;
+        if(auth()->user()->is_channel_partner) {
+            $source = Source::where('project_id', $lead->project_id)
+                    ->first();
+        }
         // $this->util->sendWebhook($lead->id);
-        $this->util->sendApiWebhook($lead->id);
-        
+        $this->util->sendApiWebhook($lead->id, $source);
         return redirect()->route('admin.leads.index');
     }
 
@@ -231,7 +246,9 @@ class LeadsController extends Controller
         if(!empty($lead_details_arr)) {
             $lead_details = [];
             foreach ($lead_details_arr as $lead_detail) {
-                $lead_details[$lead_detail['key']] = $lead_detail['value'];
+                if(isset($lead_detail['key']) && !empty($lead_detail['key'])) {
+                    $lead_details[$lead_detail['key']] = $lead_detail['value'] ?? '';
+                }
             }
             return $lead_details;
         }

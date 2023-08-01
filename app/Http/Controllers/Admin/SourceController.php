@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
+use GuzzleHttp\Exception\RequestException;
 class SourceController extends Controller
 {
     /**
@@ -283,5 +284,46 @@ class SourceController extends Controller
             return view('admin.sources.partials.request_body_input')
                 ->with(compact('webhook_key', 'rb_key', 'tags'));
         }
+    }
+
+    public function postTestWebhook(Request $request)
+    {
+        try {
+            $api = $request->input('api');
+            $response = null;
+            foreach ($api as $api_detail) {
+                if(
+                    !empty($api_detail['url'])
+                ) {
+                    $body = $this->getDummyDataForApi($api_detail);
+                    $headers['secret-key'] = $api_detail['secret_key'] ?? '';
+                    $response = $this->util->postWebhook($api_detail['url'], $api_detail['method'], $headers, $body);
+                } else {
+                    return ['success' => false, 'msg' => __('messages.url_is_required')];
+                }
+            }
+            $output = ['success' => true, 'msg' => __('messages.success'), 'response' => $response];
+        } catch (RequestException $e) {
+            $msg = $e->getMessage() ?? __('messages.something_went_wrong');
+            $output = ['success' => false, 'msg' => $msg];
+        }
+        return $output;
+    }
+
+    public function getDummyDataForApi($api)
+    {
+        $request_body = $api['request_body'] ?? [];
+        if(empty($request_body)) {
+            return [];
+        }
+
+        $dummy_data = [];
+        foreach ($request_body as $value) {
+            if(!empty($value['key'])) {
+                $dummy_data[$value['key']] = $value['key'] . ' - test data';
+            }
+        }
+
+        return $dummy_data;
     }
 }
