@@ -74,9 +74,9 @@ class Util
         ]);
         
         // $this->sendWebhook($lead->id);
-        $this->sendApiWebhook($lead->id);
+        $response = $this->sendApiWebhook($lead->id);
 
-        return $lead;
+        return $response;
     }
 
     public function sendWebhook($id)
@@ -217,6 +217,10 @@ class Util
 
     public function postWebhook($url, $method, $headers=[], $body=[])
     {
+        $queryString = parse_url($url, PHP_URL_QUERY);
+        parse_str($queryString, $queryArray);
+        $body = array_merge($body, $queryArray);
+
         if(in_array($method, ['get'])) {
 
             $client = new Client();
@@ -224,7 +228,6 @@ class Util
                 'query' => $body,
                 'headers' => $headers,
             ]);
-            
             return json_decode($response->getBody(), true);
         }
         if(in_array($method, ['post'])) {

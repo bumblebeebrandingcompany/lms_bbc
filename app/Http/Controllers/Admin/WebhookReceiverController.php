@@ -30,9 +30,9 @@ class WebhookReceiverController extends Controller
                     ->firstOrFail();
                     
         if(!empty($source) && !empty($request->all())) {
-            $this->util->createLead($source, $request->all());
+            $response = $this->util->createLead($source, $request->all());
+            return response()->json($response['msg']); 
         }
         
-        return response()->json('ok'); 
     }
 }
