@@ -124,13 +124,12 @@ class Util
 
     public function sendApiWebhook($id, $source=null)
     {
+        $webhook_responses = [];
+        $lead = Lead::findOrFail($id);
+        if(empty($source)) {
+            $source = Source::findOrFail($lead->source_id);
+        }
         try {
-
-            $lead = Lead::findOrFail($id);
-
-            if(empty($source)) {
-                $source = Source::findOrFail($lead->source_id);
-            }
 
             if(
                 !empty($source) &&
@@ -145,14 +144,22 @@ class Util
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         $constants = $this->getApiConstants($api);
                         $request_body = array_merge($request_body, $constants);
-                        $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
+                        $webhook_responses[] = $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
                     }
                 }
             }
             $output = ['success' => true, 'msg' => __('messages.success')];
         } catch (RequestException $e) {
+            $webhook_responses[] = $e->getMessage();
             $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
         }
+
+        /*
+        * Save webhook responses
+        */
+        $lead->webhook_response = $webhook_responses;
+        $lead->save();
+
         return $output;
     }
 

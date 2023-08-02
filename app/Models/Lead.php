@@ -39,7 +39,8 @@ class Lead extends Model
      * @var array
      */
     protected $casts = [
-        'lead_details' => 'array'
+        'lead_details' => 'array',
+        'webhook_response' => 'array',
     ];
     
     protected function serializeDate(DateTimeInterface $date)

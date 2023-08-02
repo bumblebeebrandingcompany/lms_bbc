@@ -123,6 +123,33 @@
                 </tbody>
             </table>
         </div>
+        <!-- webhook response -->
+        @if(!empty($lead->webhook_response))
+            <h3>Webhook responses</h3>
+            <div class="form-group">
+                <table class="table table-bordered table-striped">
+                    <tbody>
+                        @foreach($lead->webhook_response as $response)
+                            <tr>
+                                <th>
+                                    {{$loop->iteration}}
+                                </th>
+                                <td>
+                                    @if(is_string($response))
+                                        {{$response}}
+                                    @else
+                                        <pre>
+                                            {!! print_r($response, true) !!}
+                                        </pre>
+                                    @endif
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @endif
+        <!-- /webhook response -->
     </div>
 </div>
 @endsection
