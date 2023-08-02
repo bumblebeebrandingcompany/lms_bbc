@@ -57,4 +57,6 @@ return [
     'customer_comments' => 'Customer comments',
     'cp_comments' => 'Channel partner comments',
     'url_is_required' => 'URL to send webhook is required.',
+    'constants' => 'Constants',
+    'constants_help_text' => 'Constants fields are optional. use it for constants like api_key, project_id etc.',
 ];

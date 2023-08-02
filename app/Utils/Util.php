@@ -143,6 +143,8 @@ class Util
                     $request_body = $this->replaceTags($lead, $api);
                     if(!empty($api['url'])) {
                         $headers['secret-key'] = $api['secret_key'] ?? '';
+                        $constants = $this->getApiConstants($api);
+                        $request_body = array_merge($request_body, $constants);
                         $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
                     }
                 }
@@ -228,6 +230,7 @@ class Util
                 'query' => $body,
                 'headers' => $headers,
             ]);
+            
             return json_decode($response->getBody(), true);
         }
         if(in_array($method, ['post'])) {
@@ -263,5 +266,19 @@ class Util
         }
 
         return $projects->pluck('name', 'id')->toArray();
+    }
+
+    public function getApiConstants($api)
+    {
+        if(isset($api['constants']) && !empty($api['constants'])) {
+            $constants = [];
+            foreach ($api['constants'] as $value) {
+                if(!empty($value['key']) && !empty($value['value'])) {
+                    $constants[$value['key']] = $value['value'];
+                }
+            }
+            return $constants;
+        }
+        return [];
     }
 }

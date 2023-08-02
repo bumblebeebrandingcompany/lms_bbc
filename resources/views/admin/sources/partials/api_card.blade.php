@@ -72,6 +72,36 @@
         </div> -->
         <div class="row">
             <div class="col-md-12">
+                <div class="form-group">
+                    <label>
+                        {{trans('messages.constants')}}
+                        <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.constants_help_text')}}"></i>
+                    </label>
+                    @if(!empty($api['constants']))
+                        @foreach($api['constants'] as $value)
+                            @php
+                                $constant_key = $loop->index;
+                            @endphp
+                            @includeIf('admin.sources.partials.constants', [
+                                'webhook_key' => $key,
+                                'constant_key' => $constant_key,
+                                'constant' => $value
+                            ])
+                        @endforeach
+                    @else
+                        @for($i=0; $i<3; $i++)
+                            @includeIf('admin.sources.partials.constants', [
+                                'webhook_key' => $key,
+                                'constant_key' => $i,
+                                'constant' => []
+                            ])
+                        @endfor
+                    @endif
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
                 <div class="form-group request_body">
                     <label>
                         {{trans('messages.request_body')}}

@@ -296,6 +296,8 @@ class SourceController extends Controller
                     !empty($api_detail['url'])
                 ) {
                     $body = $this->getDummyDataForApi($api_detail);
+                    $constants = $this->util->getApiConstants($api_detail);
+                    $body = array_merge($body, $constants);
                     $headers['secret-key'] = $api_detail['secret_key'] ?? '';
                     $response = $this->util->postWebhook($api_detail['url'], $api_detail['method'], $headers, $body);
                 } else {
@@ -320,7 +322,7 @@ class SourceController extends Controller
         $dummy_data = [];
         foreach ($request_body as $value) {
             if(!empty($value['key'])) {
-                $dummy_data[$value['key']] = $value['key'] . ' - test data';
+                $dummy_data[$value['key']] = 'test data';
             }
         }
 

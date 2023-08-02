@@ -156,13 +156,18 @@ class LeadsController extends Controller
 
         $lead = Lead::create($input);
 
-        $source = null;
-        if(auth()->user()->is_channel_partner) {
-            $source = Source::where('project_id', $lead->project_id)
-                    ->first();
+        $source = Source::where('project_id', $lead->project_id)->first();
+        if(
+            (
+                auth()->user()->is_channel_partner && !empty($source)
+            ) ||
+            (
+                !empty($lead->source_id)
+            )
+        ) {    
+            // $this->util->sendWebhook($lead->id);
+            $this->util->sendApiWebhook($lead->id, $source);
         }
-        // $this->util->sendWebhook($lead->id);
-        $this->util->sendApiWebhook($lead->id, $source);
         return redirect()->route('admin.leads.index');
     }
 
