@@ -140,7 +140,7 @@ class Util
             ) {
                 foreach ($source->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
-                    $request_body = $this->replaceTags($lead, $api);
+                    $request_body = $this->replaceTags($lead, $source, $api);
                     if(!empty($api['url'])) {
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         $constants = $this->getApiConstants($api);
@@ -156,7 +156,7 @@ class Util
         return $output;
     }
 
-    public function replaceTags($lead, $api)
+    public function replaceTags($lead, $source, $api)
     {
         $request_body = $api['request_body'] ?? [];
         if(empty($request_body)) {
@@ -171,11 +171,39 @@ class Util
                     foreach ($value['value'] as $field) {
                         if(isset($lead->lead_info[$field]) && !empty($lead->lead_info[$field])) {
                             $arr_value[] = $lead->lead_info[$field];
+                        } else if(
+                            !empty($source->email_key) &&
+                            !empty($field) &&
+                            ($source->email_key == $field)
+                        ) {
+                            $arr_value[] = $lead->email ?? '';
+                        } else if(
+                            !empty($source->phone_key) &&
+                            !empty($field) &&
+                            ($source->phone_key == $field)
+                        ) {
+                            $arr_value[] = $lead->phone ?? '';
                         }
                     }
                     $tag_replaced_req_body[$value['key']] = implode(', ', $arr_value);
                 } else {
-                    $tag_replaced_req_body[$value['key']] = $lead->lead_info[$value['value'][0]] ?? '';
+                    if(
+                        !empty($source->email_key) &&
+                        !empty($value['value']) &&
+                        !empty($value['value'][0]) &&
+                        ($source->email_key == $value['value'][0])
+                    ) {
+                        $tag_replaced_req_body[$value['key']] = $lead->email ?? '';
+                    } else if(
+                        !empty($source->phone_key) &&
+                        !empty($value['value']) &&
+                        !empty($value['value'][0]) &&
+                        ($source->phone_key == $value['value'][0])
+                    ) {
+                        $tag_replaced_req_body[$value['key']] = $lead->phone ?? '';
+                    } else {
+                        $tag_replaced_req_body[$value['key']] = $lead->lead_info[$value['value'][0]] ?? '';
+                    }
                 }
             }
         }
