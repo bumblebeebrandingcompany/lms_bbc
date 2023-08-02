@@ -8,9 +8,15 @@
 @endsection
 @section('content')
 <div class="row mb-2">
-   <div class="col-sm-6">
+   <div class="col-sm-12">
         <h2>
-            {{ trans('global.show') }} {{ trans('messages.webhook_details') }}
+            @lang('messages.configure_webhook_details')
+            <small>
+                <strong>Source:</strong> 
+                <span class="text-primary">{{$source->name}}</span> 
+                <strong>Project:</strong>
+                <span class="text-primary">{{optional($source->project)->name}}</span>
+            </small>
         </h2>
    </div>
 </div>

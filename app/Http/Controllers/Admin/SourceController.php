@@ -195,7 +195,8 @@ class SourceController extends Controller
             abort(403, 'Unauthorized.');
         }
         
-        $source = Source::findOrFail($id);
+        $source = Source::with(['project'])
+                    ->findOrFail($id);
 
         $lead =  Lead::where('source_id', $id)
                     ->latest()

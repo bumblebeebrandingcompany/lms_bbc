@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 @section('content')
 <div class="row mb-2">
-   <div class="col-sm-6">
+   <div class="col-sm-12">
         <h2>
-        {{ trans('global.show') }} {{ trans('cruds.campaign.title') }}
+            {{ trans('cruds.campaign.title') }} <span class="text-primary">{{ $campaign->campaign_name }}</span>
         </h2>
    </div>
 </div>
