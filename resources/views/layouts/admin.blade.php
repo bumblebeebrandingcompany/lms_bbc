@@ -339,7 +339,7 @@
 
         timer_id = setTimeout(() => {
             storeGlobalClientsFilter();
-        }, 2000);
+        }, 1400);
     });
 });
 
