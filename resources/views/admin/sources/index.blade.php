@@ -37,20 +37,24 @@
                     <td>
                     </td>
                     <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($projects as $key => $item)
-                                <option value="{{ $item->name }}">{{ $item->name }}</option>
-                            @endforeach
-                        </select>
+                        @if(empty($__global_clients_filter))
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($projects as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
-                        <select class="search">
-                            <option value>{{ trans('global.all') }}</option>
-                            @foreach($campaigns as $key => $item)
-                                <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
-                            @endforeach
-                        </select>
+                        @if(empty($__global_clients_filter))
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($campaigns as $key => $item)
+                                    <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
                     </td>
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">

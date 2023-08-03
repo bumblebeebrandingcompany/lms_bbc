@@ -41,6 +41,17 @@ class SourceController extends Controller
 
         if ($request->ajax()) {
             $query = Source::with(['project', 'campaign'])->select(sprintf('%s.*', (new Source)->table));
+
+            $__global_clients_filter = $this->util->getGlobalClientsFilter();
+            if(!empty($__global_clients_filter)) {
+                $project_ids = $this->util->getClientsProjects($__global_clients_filter);
+                $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
+                $query->where(function ($q) use($project_ids, $campaign_ids) {
+                    $q->whereIn('sources.project_id', $project_ids)
+                        ->orWhereIn('sources.campaign_id', $campaign_ids);
+                })->groupBy('sources.id');
+            }
+            
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');

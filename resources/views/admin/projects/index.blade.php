@@ -72,7 +72,7 @@
                         @endif
                     </td>
                     <td>
-                        @if(auth()->user()->is_superadmin)
+                        @if(empty($__global_clients_filter) && auth()->user()->is_superadmin)
                             <select class="search">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach($clients as $key => $item)

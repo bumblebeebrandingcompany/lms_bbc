@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use LaravelDaily\LaravelCharts\Classes\LaravelChart;
 use App\Utils\Util;
+use Illuminate\Http\Request;
+
 class HomeController
 {
     /**
@@ -27,8 +29,14 @@ class HomeController
             abort(403, 'Unauthorized.');
         }
         
-        $project_ids = $this->util->getUserProjects(auth()->user());
-        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        $__global_clients_filter = $this->util->getGlobalClientsFilter();
+        if(!empty($__global_clients_filter)) {
+            $project_ids = $this->util->getClientsProjects($__global_clients_filter);
+            $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
+        } else {
+            $project_ids = $this->util->getUserProjects(auth()->user());
+            $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        }
 
         $settings1 = [
             'chart_title'           => 'Admin Users',
@@ -435,5 +443,18 @@ class HomeController
         $chart11 = new LaravelChart($settings11);
         
         return view('home', compact('chart11', 'settings1', 'settings10', 'settings2', 'settings3', 'settings4', 'settings5', 'settings6', 'settings7', 'settings8', 'settings9'));
+    }
+
+    public function storeGlobalClientFilters(Request $request)
+    {
+        if($request->ajax()) {
+            $client_ids = $request->input('client_ids');
+            session(['__global_clients_filter' => $client_ids]);
+            return [
+                'success' => true,
+                'msg' => __('messages.success')
+            ];
+        }
+        
     }
 }

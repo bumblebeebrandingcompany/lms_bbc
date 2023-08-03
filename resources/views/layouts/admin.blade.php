@@ -304,6 +304,43 @@
         var url = $(this).attr('href');
         window.location = url;
     });
+
+    /**
+     *  global client filters
+    */
+    if($("#__global_clients_filter")) {
+        $("#__global_clients_filter").select2({
+            placeholder: "{{__('messages.pls_select_clients')}}"
+        });
+    }
+
+    function storeGlobalClientsFilter() {
+        $.ajax({
+            method:"POST",
+            url:"{{route('admin.store.global.client.filter')}}",
+            data:{
+                client_ids: $("#__global_clients_filter").val()
+            },
+            dataType: "json",
+            success: function(response) {
+                if(response.success) {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    let timer_id = null;
+    $(document).on('change', '#__global_clients_filter', function() {
+        
+        if(timer_id) {
+            clearTimeout(timer_id);
+        }
+
+        timer_id = setTimeout(() => {
+            storeGlobalClientsFilter();
+        }, 2000);
+    });
 });
 
     </script>

@@ -19,6 +19,18 @@
 
                         </select>
                     </li>
+                    <li class="mt-2 mb-2">
+                        <select class="form-control mt-2" multiple name="__global_clients_filter" id="__global_clients_filter">
+                            @foreach($__global_clients_drpdwn as $id => $name)
+                                <option value="{{$id}}"
+                                    @if(!empty($__global_clients_filter) && in_array($id, $__global_clients_filter))
+                                        selected
+                                    @endif>
+                                    {{$name}}
+                                </option>
+                            @endforeach
+                        </select>
+                    </li>
                 @endif
                 @if(!auth()->user()->is_channel_partner)
                     <li class="nav-item">

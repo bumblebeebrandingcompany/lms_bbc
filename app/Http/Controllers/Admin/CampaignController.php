@@ -39,8 +39,13 @@ class CampaignController extends Controller
             abort(403, 'Unauthorized.');
         }
 
+        $__global_clients_filter = $this->util->getGlobalClientsFilter();
         $project_ids = $this->util->getUserProjects(auth()->user());
-        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        if(!empty($__global_clients_filter)) {
+            $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
+        } else {
+            $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        }
 
         if ($request->ajax()) {
 

@@ -16,10 +16,26 @@ use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use App\Utils\Util;
 
 class ProjectController extends Controller
 {
     use MediaUploadingTrait, CsvImportTrait;
+
+    /**
+    * All Utils instance.
+    *
+    */
+    protected $util;
+
+    /**
+    * Constructor
+    *
+    */
+    public function __construct(Util $util)
+    {
+        $this->util = $util;
+    }
 
     public function index(Request $request)
     {
@@ -28,6 +44,8 @@ class ProjectController extends Controller
 
         if ($request->ajax()) {
 
+            $__global_clients_filter = $this->util->getGlobalClientsFilter();
+
             $query = Project::with(['created_by', 'client'])->select(sprintf('%s.*', (new Project)->table));
 
             if (!$user->is_superadmin) {
@@ -35,6 +53,10 @@ class ProjectController extends Controller
                     $q->where('created_by_id', $user->id)
                         ->orWhere('client_id', $user->client_id);
                 });
+            }
+
+            if(!empty($__global_clients_filter)) {
+                $query->whereIn('projects.client_id', $__global_clients_filter);
             }
 
             $table = Datatables::of($query);

@@ -316,4 +316,50 @@ class Util
         }
         return [];
     }
+
+    public function getGlobalClientsFilter()
+    {
+        $__global_clients_filter = session('__global_clients_filter');
+
+        return $__global_clients_filter ?? [];
+    }
+
+    /*
+    * return project ids for
+    * clients
+    *
+    * @return array
+    */
+    public function getClientsProjects($client_ids=[])
+    {
+        $client_ids = empty($client_ids) ? $this->getGlobalClientsFilter() : $client_ids;
+        if(empty($client_ids)) {
+            return [];
+        }
+
+        $projects = Project::whereIn('client_id', $client_ids)
+                    ->pluck('id')->toArray();
+
+        return $projects;
+    }
+
+    /*
+    * return campaign ids for
+    * clients
+    *
+    * @return array
+    */
+    public function getClientsCampaigns($client_ids=[])
+    {
+        $project_ids = $this->getClientsProjects($client_ids);
+        
+        if (empty($project_ids)) {
+            return [];
+        }
+
+        $campaign_ids = Campaign::whereIn('project_id', $project_ids)
+                        ->pluck('id')->toArray();
+
+        return $campaign_ids;
+    }
 }

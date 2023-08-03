@@ -34,8 +34,14 @@ class LeadsController extends Controller
 
     public function index(Request $request)
     {
-        $project_ids = $this->util->getUserProjects(auth()->user());
-        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        $__global_clients_filter = $this->util->getGlobalClientsFilter();
+        if(!empty($__global_clients_filter)) {
+            $project_ids = $this->util->getClientsProjects($__global_clients_filter);
+            $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
+        } else {
+            $project_ids = $this->util->getUserProjects(auth()->user());
+            $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        }
 
         if ($request->ajax()) {
 

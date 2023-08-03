@@ -55,7 +55,7 @@
                     <td>
                     </td>
                     <td>
-                        @if(!auth()->user()->is_agency)
+                        @if(empty($__global_clients_filter) && !auth()->user()->is_agency)
                             <select class="search">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach($projects as $key => $item)

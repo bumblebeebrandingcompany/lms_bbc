@@ -56,8 +56,14 @@ class SystemCalendarController extends Controller
         }
 
         $events = [];
-        $project_ids = $this->util->getUserProjects(auth()->user());
-        $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        $__global_clients_filter = $this->util->getGlobalClientsFilter();
+        if(!empty($__global_clients_filter)) {
+            $project_ids = $this->util->getClientsProjects($__global_clients_filter);
+            $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
+        } else {
+            $project_ids = $this->util->getUserProjects(auth()->user());
+            $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+        }
         foreach ($this->sources as $source) {
             if($source['model'] == '\App\Models\Lead') {
                 $models = $source['model']::where(function ($q) use($project_ids, $campaign_ids) {

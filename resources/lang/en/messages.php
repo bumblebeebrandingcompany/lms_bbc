@@ -60,4 +60,5 @@ return [
     'constants' => 'Constants',
     'constants_help_text' => 'Constants fields are optional. use it for constants like api_key, project_id etc.',
     'configure_webhook_details' => "Configure webhook details",
+    'pls_select_clients' => 'Please select clients',
 ];

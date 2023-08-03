@@ -15,6 +15,10 @@ Auth::routes(['register' => false]);
 Route::any('webhook/{secret}', 'Admin\WebhookReceiverController@processor')->name('webhook.processor');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
+
+    Route::post('store-global-client-filters', 'HomeController@storeGlobalClientFilters')
+        ->name('store.global.client.filter');
+        
     Route::get('/', 'HomeController@index')->name('home');
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
