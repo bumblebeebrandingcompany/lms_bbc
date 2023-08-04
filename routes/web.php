@@ -33,6 +33,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('users', 'UsersController');
 
     // Project
+    Route::post('test-webhook', 'ProjectController@postTestWebhook')
+        ->name('projects.test.webhook');
+    Route::get('get-request-body-row', 'ProjectController@getRequestBodyRow')
+        ->name('get.req.body.row.html');
+    Route::get('project-webhook-html', 'ProjectController@getWebhookHtml')
+        ->name('projects.webhook.html');
+    Route::post('store-project-outgoing-webhook', 'ProjectController@saveOutgoingWebhookInfo')
+        ->name('project.outgoing.webhook.store');
+    Route::get('project/{id}/webhook', 'ProjectController@getWebhookDetails')
+        ->name('projects.webhook');
     Route::delete('projects/destroy', 'ProjectController@massDestroy')->name('projects.massDestroy');
     Route::post('projects/media', 'ProjectController@storeMedia')->name('projects.storeMedia');
     Route::post('projects/ckmedia', 'ProjectController@storeCKEditorImages')->name('projects.storeCKEditorImages');
@@ -46,6 +56,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('campaigns', 'CampaignController');
 
     // Leads
+    Route::post('send-mass-webhook', 'LeadsController@sendMassWebhook')->name('lead.send.mass.webhook');
+    Route::get('lead-details-rows-html', 'LeadsController@getLeadDetailsRows')->name('lead.details.rows');
     Route::get('lead-detail-html', 'LeadsController@getLeadDetailHtml')->name('lead.detail.html');
     Route::delete('leads/destroy', 'LeadsController@massDestroy')->name('leads.massDestroy');
     Route::resource('leads', 'LeadsController');
@@ -64,14 +76,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('agencies', 'AgencyController');
 
     // Source
-    Route::post('test-webhook', 'SourceController@postTestWebhook')->name('sources.test.webhook');
-    Route::get('get-request-body-row', 'SourceController@getRequestBodyRow')->name('get.req.body.row.html');
+    Route::get('source/{id}/webhook', 'SourceController@getWebhookDetails')
+        ->name('sources.webhook');
     Route::post('update-email-and-phone-key', 'SourceController@updatePhoneAndEmailKey')->name('update.email.and.phone.key');
     Route::get('get-sources', 'SourceController@getSource')->name('get.sources');
-    Route::get('source-webhook-html', 'SourceController@getWebhookHtml')->name('source.webhook.html');
-    Route::post('store-source-outgoing-webhook', 'SourceController@saveOutgoingWebhookInfo')
-    ->name('source.outgoing.webhook.store');
-    Route::get('source/{id}/webhook', 'SourceController@getWebhookDetails')->name('sources.webhook');
     Route::delete('sources/destroy', 'SourceController@massDestroy')->name('sources.massDestroy');
     Route::resource('sources', 'SourceController');
     

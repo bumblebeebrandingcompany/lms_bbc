@@ -39,9 +39,21 @@ class Project extends Model implements HasMedia
         'client_id',
         'location',
         'description',
+        'webhook_fields',
+        'outgoing_apis',
         'created_at',
         'updated_at',
         'deleted_at',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'webhook_fields' => 'array',
+        'outgoing_apis' => 'array',
     ];
 
     protected function serializeDate(DateTimeInterface $date)

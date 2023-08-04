@@ -22,16 +22,6 @@ class Source extends Model
         'updated_at',
         'deleted_at',
     ];
-
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'outgoing_webhook' => 'array',
-        'outgoing_apis' => 'array',
-    ];
     
     /**
      * The attributes that aren't mass assignable.

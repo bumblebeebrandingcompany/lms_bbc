@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
-use GuzzleHttp\Exception\RequestException;
 class SourceController extends Controller
 {
     /**
@@ -200,54 +199,6 @@ class SourceController extends Controller
         return response(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function getWebhookDetails($id)
-    {
-        if(!auth()->user()->is_superadmin) {
-            abort(403, 'Unauthorized.');
-        }
-        
-        $source = Source::with(['project'])
-                    ->findOrFail($id);
-
-        $lead =  Lead::where('source_id', $id)
-                    ->latest()
-                    ->first();
-                    
-        return view('admin.sources.webhook', compact('source', 'lead'));
-    }
-
-    public function saveOutgoingWebhookInfo(Request $request)
-    {
-
-        $id = $request->input('source_id');
-        $webhook = $request->input('webhook');
-        $api = $request->input('api');
-
-        $source = Source::findOrFail($id);
-        $source->outgoing_webhook = $webhook;
-        $source->outgoing_apis = $api;
-        $source->save();
-
-        return redirect()->route('admin.sources.webhook', $source->id);
-    }
-
-    public function getWebhookHtml(Request $request)
-    {
-        if($request->ajax()) {
-            $type = $request->get('type');
-            $key = $request->get('key');
-            $source_id = $request->input('source_id');
-            if($type == 'api') {
-                $tags = $this->util->getLeadTags($source_id);
-                return view('admin.sources.partials.api_card')
-                    ->with(compact('key', 'tags'));
-            } else {
-                return view('admin.sources.partials.webhook_card')
-                    ->with(compact('key'));
-            }
-        }
-    }
-
     public function getSource(Request $request)
     {
         if($request->ajax()) {
@@ -276,6 +227,22 @@ class SourceController extends Controller
         }
     }
 
+    public function getWebhookDetails($id)
+    {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+        
+        $source = Source::with(['project'])
+                    ->findOrFail($id);
+
+        $lead =  Lead::where('source_id', $id)
+                    ->latest()
+                    ->first();
+                    
+        return view('admin.sources.webhook', compact('source', 'lead'));
+    }
+
     public function updatePhoneAndEmailKey(Request $request)
     {
         $source = Source::findOrFail($request->input('source_id'));
@@ -284,60 +251,5 @@ class SourceController extends Controller
         $source->save();
 
         return redirect()->route('admin.sources.webhook', $source->id);
-    }
-
-    public function getRequestBodyRow(Request $request)
-    {
-        if($request->ajax()) {
-            $source_id = $request->input('source_id');
-            $webhook_key = $request->get('webhook_key');
-            $rb_key = $request->get('rb_key');
-            $tags = $this->util->getLeadTags($source_id);
-            return view('admin.sources.partials.request_body_input')
-                ->with(compact('webhook_key', 'rb_key', 'tags'));
-        }
-    }
-
-    public function postTestWebhook(Request $request)
-    {
-        try {
-            $api = $request->input('api');
-            $response = null;
-            foreach ($api as $api_detail) {
-                if(
-                    !empty($api_detail['url'])
-                ) {
-                    $body = $this->getDummyDataForApi($api_detail);
-                    $constants = $this->util->getApiConstants($api_detail);
-                    $body = array_merge($body, $constants);
-                    $headers['secret-key'] = $api_detail['secret_key'] ?? '';
-                    $response = $this->util->postWebhook($api_detail['url'], $api_detail['method'], $headers, $body);
-                } else {
-                    return ['success' => false, 'msg' => __('messages.url_is_required')];
-                }
-            }
-            $output = ['success' => true, 'msg' => __('messages.success'), 'response' => $response];
-        } catch (RequestException $e) {
-            $msg = $e->getMessage() ?? __('messages.something_went_wrong');
-            $output = ['success' => false, 'msg' => $msg];
-        }
-        return $output;
-    }
-
-    public function getDummyDataForApi($api)
-    {
-        $request_body = $api['request_body'] ?? [];
-        if(empty($request_body)) {
-            return [];
-        }
-
-        $dummy_data = [];
-        foreach ($request_body as $value) {
-            if(!empty($value['key'])) {
-                $dummy_data[$value['key']] = 'test data';
-            }
-        }
-
-        return $dummy_data;
     }
 }

@@ -61,85 +61,86 @@ class Util
     
     public function createLead($source, $payload)
     {
-        $email = $payload[$source->email_key] ?? '';
-        $phone = $payload[$source->phone_key] ?? '';
-        
+        $name = $payload['name'] ?? '';
+        $email = !empty($source->email_key) ? ($payload[$source->email_key] ?? '') : ($payload['email'] ?? '');
+        $phone = !empty($source->phone_key) ? ($payload[$source->phone_key] ?? '') : ($payload['phone'] ?? '');
+
         $lead = Lead::create([
             'source_id' => $source->id,
+            'name' => $name ?? '',
             'email' => $email ?? '',
             'phone' => $phone ?? '',
             'project_id' => $source->project_id,
             'campaign_id' => $source->campaign_id,
             'lead_details' => $payload
         ]);
-        
-        // $this->sendWebhook($lead->id);
+
+        $this->storeUniqueWebhookFields($lead);
+
         $response = $this->sendApiWebhook($lead->id);
 
         return $response;
     }
 
-    public function sendWebhook($id)
-    {
-        try {
+    // public function sendWebhook($id)
+    // {
+    //     try {
 
-            $lead = Lead::findOrFail($id);
-            $source = Source::findOrFail($lead->source_id);
+    //         $lead = Lead::findOrFail($id);
+    //         $source = Source::findOrFail($lead->source_id);
 
-            if(
-                !empty($source) &&
-                !empty($source->outgoing_webhook) &&
-                !empty($lead) &&
-                !empty($lead->lead_details)
-            ) {
-                foreach ($source->outgoing_webhook as $webhook) {
-                    if(!empty($webhook['url'])) {
-                        if(!empty($webhook['secret_key'])) {
-                            WebhookCall::create()
-                                ->useSecret($webhook['secret_key'])
-                                ->useHttpVerb($webhook['method'])
-                                ->url($webhook['url'])
-                                ->payload($lead->lead_details)
-                                ->dispatch();
-                        }
+    //         if(
+    //             !empty($source) &&
+    //             !empty($source->outgoing_webhook) &&
+    //             !empty($lead) &&
+    //             !empty($lead->lead_details)
+    //         ) {
+    //             foreach ($source->outgoing_webhook as $webhook) {
+    //                 if(!empty($webhook['url'])) {
+    //                     if(!empty($webhook['secret_key'])) {
+    //                         WebhookCall::create()
+    //                             ->useSecret($webhook['secret_key'])
+    //                             ->useHttpVerb($webhook['method'])
+    //                             ->url($webhook['url'])
+    //                             ->payload($lead->lead_details)
+    //                             ->dispatch();
+    //                     }
 
-                        if(empty($webhook['secret_key'])) {
-                            WebhookCall::create()
-                                ->doNotSign()
-                                ->useHttpVerb($webhook['method'])
-                                ->url($webhook['url'])
-                                ->payload($lead->lead_details)
-                                ->dispatch();
-                        }
-                    }
-                }
-            }
+    //                     if(empty($webhook['secret_key'])) {
+    //                         WebhookCall::create()
+    //                             ->doNotSign()
+    //                             ->useHttpVerb($webhook['method'])
+    //                             ->url($webhook['url'])
+    //                             ->payload($lead->lead_details)
+    //                             ->dispatch();
+    //                     }
+    //                 }
+    //             }
+    //         }
 
-            $output = ['success' => true, 'msg' => __('messages.success')];
-        } catch (\Exception $e) {
-            $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
-        }
-        return $output;
-    }
+    //         $output = ['success' => true, 'msg' => __('messages.success')];
+    //     } catch (\Exception $e) {
+    //         $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
+    //     }
+    //     return $output;
+    // }
 
-    public function sendApiWebhook($id, $source=null)
+    public function sendApiWebhook($id)
     {
         $webhook_responses = [];
         $lead = Lead::findOrFail($id);
-        if(empty($source)) {
-            $source = Source::findOrFail($lead->source_id);
-        }
+        $project = Project::findOrFail($lead->project_id);
         try {
 
             if(
-                !empty($source) &&
-                !empty($source->outgoing_apis) &&
+                !empty($project) &&
+                !empty($project->outgoing_apis) &&
                 !empty($lead) &&
                 !empty($lead->lead_details)
             ) {
-                foreach ($source->outgoing_apis as $api) {
+                foreach ($project->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
-                    $request_body = $this->replaceTags($lead, $source, $api);
+                    $request_body = $this->replaceTags($lead, $api);
                     if(!empty($api['url'])) {
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         $constants = $this->getApiConstants($api);
@@ -157,13 +158,16 @@ class Util
         /*
         * Save webhook responses
         */
+        if(!empty($lead->webhook_response) && is_array($lead->webhook_response)) {
+            $webhook_responses =  array_merge($lead->webhook_response, $webhook_responses);
+        }
         $lead->webhook_response = $webhook_responses;
         $lead->save();
 
         return $output;
     }
 
-    public function replaceTags($lead, $source, $api)
+    public function replaceTags($lead, $api)
     {
         $request_body = $api['request_body'] ?? [];
         if(empty($request_body)) {
@@ -171,6 +175,7 @@ class Util
         }
 
         $tag_replaced_req_body = [];
+        $source = $lead->source;
         foreach ($request_body as $value) {
             if(!empty($value['key']) && !empty($value['value'])) {
                 if(count($value['value']) > 1) {
@@ -179,35 +184,78 @@ class Util
                         if(isset($lead->lead_info[$field]) && !empty($lead->lead_info[$field])) {
                             $arr_value[] = $lead->lead_info[$field];
                         } else if(
-                            !empty($source->email_key) &&
-                            !empty($field) &&
-                            ($source->email_key == $field)
+                            (
+                                !empty($source->email_key) &&
+                                !empty($field) &&
+                                ($source->email_key == $field)
+                            ) ||
+                            (
+                                !empty($field) &&
+                                !empty($lead->email) &&
+                                in_array($field, ['email', 'Email', 'EMAIL'])
+                            )
                         ) {
                             $arr_value[] = $lead->email ?? '';
                         } else if(
-                            !empty($source->phone_key) &&
-                            !empty($field) &&
-                            ($source->phone_key == $field)
+                            (
+                                !empty($source->phone_key) &&
+                                !empty($field) &&
+                                ($source->phone_key == $field)
+                            ) ||
+                            (
+                                !empty($field) &&
+                                !empty($lead->phone) &&
+                                in_array($field, ['phone', 'Phone', 'PHONE'])
+                            )
                         ) {
                             $arr_value[] = $lead->phone ?? '';
+                        } else if(
+                            !empty($field) &&
+                            !empty($lead->name) &&
+                            in_array($field, ['name', 'Name', 'NAME'])
+                        ) {
+                            $arr_value[] = $lead->name ?? '';
                         }
                     }
                     $tag_replaced_req_body[$value['key']] = implode(', ', $arr_value);
                 } else {
                     if(
-                        !empty($source->email_key) &&
-                        !empty($value['value']) &&
-                        !empty($value['value'][0]) &&
-                        ($source->email_key == $value['value'][0])
+                        (
+                            !empty($source->email_key) &&
+                            !empty($value['value']) &&
+                            !empty($value['value'][0]) &&
+                            ($source->email_key == $value['value'][0])
+                        ) ||
+                        (
+                            !empty($value['value']) &&
+                            !empty($value['value'][0]) &&
+                            !empty($lead->email) &&
+                            in_array($value['value'][0], ['email', 'Email', 'EMAIL'])
+                        )
                     ) {
                         $tag_replaced_req_body[$value['key']] = $lead->email ?? '';
                     } else if(
-                        !empty($source->phone_key) &&
-                        !empty($value['value']) &&
-                        !empty($value['value'][0]) &&
-                        ($source->phone_key == $value['value'][0])
+                        (
+                            !empty($source->phone_key) &&
+                            !empty($value['value']) &&
+                            !empty($value['value'][0]) &&
+                            ($source->phone_key == $value['value'][0])
+                        ) ||
+                        (
+                            !empty($value['value']) &&
+                            !empty($value['value'][0]) &&
+                            !empty($lead->phone) &&
+                            in_array($value['value'][0], ['phone', 'Phone', 'PHONE'])
+                        )
                     ) {
                         $tag_replaced_req_body[$value['key']] = $lead->phone ?? '';
+                    } else if(
+                        !empty($value['value']) &&
+                        !empty($value['value'][0]) &&
+                        !empty($lead->name) &&
+                        in_array($value['value'][0], ['name', 'Name', 'NAME'])
+                    ) {
+                        $tag_replaced_req_body[$value['key']] = $lead->name ?? '';
                     } else {
                         $tag_replaced_req_body[$value['key']] = $lead->lead_info[$value['value'][0]] ?? '';
                     }
@@ -361,5 +409,26 @@ class Util
                         ->pluck('id')->toArray();
 
         return $campaign_ids;
+    }
+
+    public function getWebhookFieldsTags($id)
+    {
+        $project =  Project::findOrFail($id);
+
+        $db_fields = Lead::DEFAULT_WEBHOOK_FIELDS;
+        $tags = !empty($project->webhook_fields) ? array_merge($project->webhook_fields, $db_fields) : $db_fields;
+
+        return array_unique($tags);
+    }
+
+    public function storeUniqueWebhookFields($lead)
+    {
+        $project =  Project::findOrFail($lead->project_id);
+
+        $fields = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
+        $webhook_fields = !empty($project->webhook_fields) ? array_merge($project->webhook_fields, $fields) : $fields;
+        $unique_webhook_fields = array_unique($webhook_fields);
+        $project->webhook_fields = array_values($unique_webhook_fields);
+        $project->save();
     }
 }

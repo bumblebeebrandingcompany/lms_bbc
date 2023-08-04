@@ -17,6 +17,11 @@
 @endif
 @if(isset($webhookSecretGate) && $webhookSecretGate)
     <a class="btn btn-xs btn-dark" href="{{ route('admin.' . $crudRoutePart . '.webhook', $row->id) }}">
-        {{ trans('messages.webhook') }}
+        {{ trans('messages.incoming_webhook') }}
+    </a>
+@endif
+@if(isset($outgoingWebhookGate) && $outgoingWebhookGate)
+    <a class="btn btn-xs btn-dark" href="{{ route('admin.' . $crudRoutePart . '.webhook', $row->id) }}">
+        {{ trans('messages.outgoing_webhook') }}
     </a>
 @endif

@@ -76,6 +76,7 @@
             @endif
             <h4>
                 {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
+                <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.lead_details_help_text')}}"></i>
             </h4>
             <div class="lead_details">
                 @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
@@ -132,6 +133,7 @@
 
         $(document).on('change', '#project_id', function() {
             getCampaigns();
+            getLeadDetailsRowHtml();
         });
 
         $(document).on('change', '#campaign_id', function() {
@@ -160,7 +162,20 @@
             }
         });
 
-        getCampaigns();
+        function getLeadDetailsRowHtml() {
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.lead.details.rows')}}",
+                data: {
+                    project_id: $('#project_id').val()
+                },
+                dataType: "json",
+                success: function(response) {
+                    $("div.lead_details").html(response.html);
+                    $(".add_lead_detail").attr('data-total', response.count);
+                }
+            });
+        }
     });
 </script>
 @endsection

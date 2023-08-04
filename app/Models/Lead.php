@@ -25,6 +25,11 @@ class Lead extends Model
         'deleted_at',
     ];
     
+    public const DEFAULT_WEBHOOK_FIELDS = [
+        'name', 'email', 
+        'phone'
+    ];
+    
     /**
      * The attributes that aren't mass assignable.
      *

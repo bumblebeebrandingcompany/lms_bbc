@@ -33,7 +33,7 @@ return [
     'api_to_send_webhook' => 'API to send webhook',
     'request_body' => 'Request body',
     'available_tags' => 'Available Tags',
-    'request_body_help_text' => 'Request body is optional, if not provided default body as per incoming request will be sent. remove all row(key/value field) of request body to make it optional.',
+    'request_body_help_text' => 'Request body is optional, if not provided default body as per incoming request will be sent. remove all row of request body to make it optional.',
     'send_webhook_request_to_view_tags' => 'Send webhook request to view tags.',
     'add_outgoing_webhook' => 'Add outgoing webhook',
     'add_outgoing_api' => 'Add outgoing api',
@@ -61,4 +61,8 @@ return [
     'constants_help_text' => 'Constants fields are optional. use it for constants like api_key, project_id etc.',
     'configure_webhook_details' => "Configure webhook details",
     'pls_select_clients' => 'Please select clients',
+    'outgoing_webhook' => 'Outgoing webhook',
+    'incoming_webhook' => 'Incoming webhook',
+    'lead_details_help_text' => 'Lead details/Additional fields is optional. remove all row of lead details to make it optional.',
+    'send_outgoing_webhook' => 'Send outgoing webhook',
 ];

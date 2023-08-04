@@ -17,7 +17,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
-
+use GuzzleHttp\Exception\RequestException;
 class ProjectController extends Controller
 {
     use MediaUploadingTrait, CsvImportTrait;
@@ -68,12 +68,14 @@ class ProjectController extends Controller
                 $viewGate      = $user->is_superadmin || $user->is_client;
                 $editGate      = $user->is_superadmin || $user->is_client;
                 $deleteGate    = $user->is_superadmin;
+                $outgoingWebhookGate = $user->is_superadmin;
                 $crudRoutePart = 'projects';
 
                 return view('partials.datatablesActions', compact(
                     'viewGate',
                     'editGate',
                     'deleteGate',
+                    'outgoingWebhookGate',
                     'crudRoutePart',
                     'row'
                 ));
@@ -198,5 +200,100 @@ class ProjectController extends Controller
         $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
+    }
+
+    public function getWebhookDetails($id)
+    {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+        
+        $project = Project::findOrFail($id);
+        
+        return view('admin.projects.webhook', compact('project'));
+    }
+
+    public function saveOutgoingWebhookInfo(Request $request)
+    {
+        $id = $request->input('project_id');
+        $api = $request->input('api');
+
+        $project = Project::findOrFail($id);
+        $project->outgoing_apis = $api;
+        $project->save();
+
+        return redirect()->route('admin.projects.webhook', $project->id);
+    }
+
+    public function getWebhookHtml(Request $request)
+    {
+        if($request->ajax()) {
+            $type = $request->get('type');
+            $key = $request->get('key');
+            $project_id = $request->input('project_id');
+            if($type == 'api') {
+                $tags = $this->util->getWebhookFieldsTags($project_id);
+                return view('admin.projects.partials.api_card')
+                    ->with(compact('key', 'tags'));
+            } else {
+                return view('admin.projects.partials.webhook_card')
+                    ->with(compact('key'));
+            }
+        }
+    }
+
+    public function getRequestBodyRow(Request $request)
+    {
+        if($request->ajax()) {
+            $project_id = $request->input('project_id');
+            $webhook_key = $request->get('webhook_key');
+            $rb_key = $request->get('rb_key');
+            $tags = $this->util->getWebhookFieldsTags($project_id);
+            return view('admin.projects.partials.request_body_input')
+                ->with(compact('webhook_key', 'rb_key', 'tags'));
+        }
+    }
+
+    public function postTestWebhook(Request $request)
+    {
+        try {
+            $api = $request->input('api');
+            $response = null;
+            foreach ($api as $api_detail) {
+                if(
+                    !empty($api_detail['url'])
+                ) {
+                    $body = $this->getDummyDataForApi($api_detail);
+                    $constants = $this->util->getApiConstants($api_detail);
+                    $body = array_merge($body, $constants);
+                    $headers['secret-key'] = $api_detail['secret_key'] ?? '';
+                    $response = $this->util->postWebhook($api_detail['url'], $api_detail['method'], $headers, $body);
+                } else {
+                    return ['success' => false, 'msg' => __('messages.url_is_required')];
+                }
+            }
+            $output = ['success' => true, 'msg' => __('messages.success'), 'response' => $response];
+        } catch (RequestException $e) {
+            $msg = $e->getMessage() ?? __('messages.something_went_wrong');
+            $output = ['success' => false, 'msg' => $msg];
+        }
+        return $output;
+    }
+
+    public function getDummyDataForApi($api)
+    {
+        $request_body = $api['request_body'] ?? [];
+        if(empty($request_body)) {
+            return [];
+        }
+
+        $dummy_data = [];
+        foreach ($request_body as $value) {
+            if(!empty($value['key'])) {
+                $dummy_data[$value['key']] = 'test data';
+            }
+        }
+
+        return $dummy_data;
     }
 }

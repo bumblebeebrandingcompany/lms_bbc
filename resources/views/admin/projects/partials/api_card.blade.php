@@ -3,18 +3,18 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>
-                        {{trans('messages.name')}} *
+                    <label class="required">
+                        {{trans('messages.name')}}
                     </label>
                     <input type="text" placeholder="{{trans('messages.name')}}" value="{{$api['name'] ?? ''}}" name="api[{{$key}}][name]" class="form-control input">
                 </div>
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>
-                        {{trans('messages.url_to_send_webhook')}} *
+                    <label class="required">
+                        {{trans('messages.url_to_send_webhook')}}
                     </label>
-                    <input type="url" placeholder="{{trans('messages.api_to_send_webhook')}}" value="{{$api['url'] ?? ''}}" name="api[{{$key}}][url]" class="form-control input">
+                    <input type="url" placeholder="{{trans('messages.url_to_send_webhook')}}" value="{{$api['url'] ?? ''}}" name="api[{{$key}}][url]" class="form-control input" required>
                 </div>
             </div>
             <div class="col-md-6">
@@ -28,10 +28,10 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label>
-                        {{trans('messages.method')}} *
+                    <label class="required">
+                        {{trans('messages.method')}}
                     </label>
-                    <select name="api[{{$key}}][method]" class="form-control input">
+                    <select name="api[{{$key}}][method]" class="form-control input" required>
                         <option value="get"
                             @if(
                                 isset($api['method']) && 
@@ -82,15 +82,15 @@
                             @php
                                 $constant_key = $loop->index;
                             @endphp
-                            @includeIf('admin.sources.partials.constants', [
+                            @includeIf('admin.projects.partials.constants', [
                                 'webhook_key' => $key,
                                 'constant_key' => $constant_key,
                                 'constant' => $value
                             ])
                         @endforeach
                     @else
-                        @for($i=0; $i<3; $i++)
-                            @includeIf('admin.sources.partials.constants', [
+                        @for($i=0; $i<4; $i++)
+                            @includeIf('admin.projects.partials.constants', [
                                 'webhook_key' => $key,
                                 'constant_key' => $i,
                                 'constant' => []
@@ -110,13 +110,12 @@
                     @php
                         $rb_key = 0;
                     @endphp
-
                     @if(!empty($api['request_body']))
                         @foreach($api['request_body'] as $value)
                             @php
                                 $rb_key = $loop->index;
                             @endphp
-                            @includeIf('admin.sources.partials.request_body_input', [
+                            @includeIf('admin.projects.partials.request_body_input', [
                                 'webhook_key' => $key,
                                 'rb_key' => $rb_key,
                                 'tags' => $tags,
@@ -124,7 +123,7 @@
                             ])
                         @endforeach
                     @else
-                        @includeIf('admin.sources.partials.request_body_input', [
+                        @includeIf('admin.projects.partials.request_body_input', [
                             'webhook_key' => $key,
                             'rb_key' => $rb_key,
                             'tags' => $tags,

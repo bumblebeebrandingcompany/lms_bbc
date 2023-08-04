@@ -17,11 +17,9 @@
     </div>
     <div class="col-md-1 mt-auto mb-auto">
         <div class="form-group">
-            @if($index != 0)
-                <button type="button" class="btn btn-danger btn-sm float-right delete_lead_detail_row">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            @endif
+            <button type="button" class="btn btn-danger btn-sm float-right delete_lead_detail_row">
+                <i class="fas fa-trash-alt"></i>
+            </button>
         </div>
     </div>
 </div>

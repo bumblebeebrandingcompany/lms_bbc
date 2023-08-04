@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
 use App\Models\Source;
+use Illuminate\Support\Facades\View;
 class LeadsController extends Controller
 {
     /**
@@ -161,18 +162,9 @@ class LeadsController extends Controller
         $input['created_by'] = auth()->user()->id;
 
         $lead = Lead::create($input);
-
-        $source = Source::where('project_id', $lead->project_id)->first();
-        if(
-            (
-                auth()->user()->is_channel_partner && !empty($source)
-            ) ||
-            (
-                !empty($lead->source_id)
-            )
-        ) {    
-            // $this->util->sendWebhook($lead->id);
-            $this->util->sendApiWebhook($lead->id, $source);
+        $this->util->storeUniqueWebhookFields($lead);
+        if(!empty($lead->project->outgoing_apis)) {
+            $this->util->sendApiWebhook($lead->id);
         }
         return redirect()->route('admin.leads.index');
     }
@@ -199,7 +191,8 @@ class LeadsController extends Controller
         $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details']);
 
         $lead->update($input);
-
+        $this->util->storeUniqueWebhookFields($lead);
+        
         return redirect()->route('admin.leads.index');
     }
 
@@ -264,5 +257,44 @@ class LeadsController extends Controller
             return $lead_details;
         }
         return [];
+    }
+
+    public function getLeadDetailsRows(Request $request)
+    {
+        if($request->ajax()) {
+
+            $project_id = $request->input('project_id');
+            $lead_id = $request->input('lead_id');
+            $project = Project::findOrFail($project_id);
+            $lead_details = [];
+            
+            if(!empty($lead_id)) {
+                $lead = Lead::findOrFail($lead_id);
+                $lead_details = $lead->lead_info;
+            }
+
+            $html = View::make('admin.leads.partials.lead_details_rows')
+                        ->with(compact('project', 'lead_details'))
+                        ->render();
+
+            return [
+                'html' => $html,
+                'count' => !empty($project->webhook_fields) ? count($project->webhook_fields) - 1 : 0
+            ];
+        }
+    }
+
+    public function sendMassWebhook(Request $request)
+    {
+        if($request->ajax()) {
+            $lead_ids = $request->input('lead_ids');
+            if(!empty($lead_ids)) {
+                $response = [];
+                foreach ($lead_ids as $id) {
+                    $response = $this->util->sendApiWebhook($id);
+                }
+                return $response;
+            }
+        }
     }
 }
