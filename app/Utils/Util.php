@@ -61,7 +61,7 @@ class Util
     
     public function createLead($source, $payload)
     {
-        $name = $payload['name'] ?? '';
+        $name = !empty($source->name_key) ? ($payload[$source->name_key] ?? '') : ($payload['name'] ?? '');
         $email = !empty($source->email_key) ? ($payload[$source->email_key] ?? '') : ($payload['email'] ?? '');
         $phone = !empty($source->phone_key) ? ($payload[$source->phone_key] ?? '') : ($payload['phone'] ?? '');
 
@@ -183,87 +183,89 @@ class Util
                     foreach ($value['value'] as $field) {
                         if(isset($lead->lead_info[$field]) && !empty($lead->lead_info[$field])) {
                             $arr_value[] = $lead->lead_info[$field];
-                        } else if(
-                            (
-                                !empty($source->email_key) &&
-                                !empty($field) &&
-                                ($source->email_key == $field)
-                            ) ||
-                            (
-                                !empty($field) &&
-                                !empty($lead->email) &&
-                                in_array($field, ['email', 'Email', 'EMAIL'])
-                            )
-                        ) {
-                            $arr_value[] = $lead->email ?? '';
-                        } else if(
-                            (
-                                !empty($source->phone_key) &&
-                                !empty($field) &&
-                                ($source->phone_key == $field)
-                            ) ||
-                            (
-                                !empty($field) &&
-                                !empty($lead->phone) &&
-                                in_array($field, ['phone', 'Phone', 'PHONE'])
-                            )
-                        ) {
-                            $arr_value[] = $lead->phone ?? '';
-                        } else if(
-                            !empty($field) &&
-                            !empty($lead->name) &&
-                            in_array($field, ['name', 'Name', 'NAME'])
-                        ) {
-                            $arr_value[] = $lead->name ?? '';
+                        } else {
+                            $arr_value[] = $this->getPredefinedValue($field, $lead, $source);
                         }
                     }
                     $tag_replaced_req_body[$value['key']] = implode(', ', $arr_value);
                 } else {
+                    $data_value = '';
                     if(
-                        (
-                            !empty($source->email_key) &&
-                            !empty($value['value']) &&
-                            !empty($value['value'][0]) &&
-                            ($source->email_key == $value['value'][0])
-                        ) ||
-                        (
-                            !empty($value['value']) &&
-                            !empty($value['value'][0]) &&
-                            !empty($lead->email) &&
-                            in_array($value['value'][0], ['email', 'Email', 'EMAIL'])
-                        )
-                    ) {
-                        $tag_replaced_req_body[$value['key']] = $lead->email ?? '';
-                    } else if(
-                        (
-                            !empty($source->phone_key) &&
-                            !empty($value['value']) &&
-                            !empty($value['value'][0]) &&
-                            ($source->phone_key == $value['value'][0])
-                        ) ||
-                        (
-                            !empty($value['value']) &&
-                            !empty($value['value'][0]) &&
-                            !empty($lead->phone) &&
-                            in_array($value['value'][0], ['phone', 'Phone', 'PHONE'])
-                        )
-                    ) {
-                        $tag_replaced_req_body[$value['key']] = $lead->phone ?? '';
-                    } else if(
                         !empty($value['value']) &&
-                        !empty($value['value'][0]) &&
-                        !empty($lead->name) &&
-                        in_array($value['value'][0], ['name', 'Name', 'NAME'])
+                        !empty($value['value'][0])
                     ) {
-                        $tag_replaced_req_body[$value['key']] = $lead->name ?? '';
-                    } else {
-                        $tag_replaced_req_body[$value['key']] = $lead->lead_info[$value['value'][0]] ?? '';
+                        $data_value = $this->getPredefinedValue($value['value'][0], $lead, $source);
                     }
+                    $tag_replaced_req_body[$value['key']] = $lead->lead_info[$value['value'][0]] ?? $data_value;
                 }
             }
         }
 
         return $tag_replaced_req_body;
+    }
+
+    public function getPredefinedValue($field, $lead, $source=null)
+    {
+        if(
+            (
+                !empty($source->email_key) &&
+                !empty($field) &&
+                ($source->email_key == $field)
+            ) ||
+            (
+                !empty($field) &&
+                !empty($lead->email) &&
+                in_array($field, ['email', 'Email', 'EMAIL'])
+            )
+        ) {
+            return $lead->email ?? '';
+        } else if(
+            (
+                !empty($source->phone_key) &&
+                !empty($field) &&
+                ($source->phone_key == $field)
+            ) ||
+            (
+                !empty($field) &&
+                !empty($lead->phone) &&
+                in_array($field, ['phone', 'Phone', 'PHONE'])
+            )
+        ) {
+            return $lead->phone ?? '';
+        } else if(
+            (
+                !empty($source->name_key) &&
+                !empty($field) &&
+                ($source->name_key == $field)
+            ) ||
+            (
+                !empty($field) &&
+                !empty($lead->name) &&
+                in_array($field, ['name', 'Name', 'NAME'])
+            )
+        ) {
+            return $lead->name ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_comments'])
+        ) {
+            return $lead->comments ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_cp_comments'])
+        ) {
+            return $lead->cp_comments ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_created_by'])
+        ) {
+            return optional($lead->createdBy)->name ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_created_at'])
+        ) {
+            return $lead->created_at ?? '';
+        }
     }
 
     public function getLeadTags($id)

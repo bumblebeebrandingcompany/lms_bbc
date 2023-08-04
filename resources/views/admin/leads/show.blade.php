@@ -70,6 +70,15 @@
                         $lead_info = $lead->lead_info;
                         if (
                             !empty($lead->source) && 
+                            !empty($lead->source->name_key) && 
+                            isset($lead_info[$lead->source->name_key]) &&
+                            !empty($lead_info[$lead->source->name_key])
+                        ) {
+                            unset($lead_info[$lead->source->name_key]);
+                        }
+
+                        if (
+                            !empty($lead->source) && 
                             !empty($lead->source->email_key) && 
                             isset($lead_info[$lead->source->email_key]) &&
                             !empty($lead_info[$lead->source->email_key])

@@ -263,10 +263,11 @@ class LeadsController extends Controller
     {
         if($request->ajax()) {
 
+            $lead_details = [];
             $project_id = $request->input('project_id');
             $lead_id = $request->input('lead_id');
             $project = Project::findOrFail($project_id);
-            $lead_details = [];
+            $webhook_fields = $project->webhook_fields ?? [];
             
             if(!empty($lead_id)) {
                 $lead = Lead::findOrFail($lead_id);
@@ -274,12 +275,12 @@ class LeadsController extends Controller
             }
 
             $html = View::make('admin.leads.partials.lead_details_rows')
-                        ->with(compact('project', 'lead_details'))
+                        ->with(compact('webhook_fields', 'lead_details'))
                         ->render();
 
             return [
                 'html' => $html,
-                'count' => !empty($project->webhook_fields) ? count($project->webhook_fields) - 1 : 0
+                'count' => !empty($webhook_fields) ? count($webhook_fields) - 1 : 0
             ];
         }
     }

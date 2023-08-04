@@ -27,7 +27,9 @@ class Lead extends Model
     
     public const DEFAULT_WEBHOOK_FIELDS = [
         'name', 'email', 
-        'phone'
+        'phone', 'predefined_comments',
+        'predefined_cp_comments', 'predefined_created_by',
+        'predefined_created_at'
     ];
     
     /**

@@ -76,6 +76,14 @@
                                             @endphp
                                             <tr>
                                                 <td>
+                                                {{ trans('messages.name') }}
+                                                </td>
+                                                <td>
+                                                    {!!$lead->name ?? ''!!}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
                                                 {{ trans('messages.email') }}
                                                 </td>
                                                 <td>
@@ -92,6 +100,14 @@
                                             </tr>
                                             @php
                                                 $lead_info = $lead->lead_info;
+                                                if (
+                                                    !empty($lead->source) && 
+                                                    !empty($lead->source->name_key) && 
+                                                    isset($lead_info[$lead->source->name_key]) &&
+                                                    !empty($lead_info[$lead->source->name_key])
+                                                ) {
+                                                    unset($lead_info[$lead->source->name_key]);
+                                                }
                                                 if (
                                                     !empty($lead->source) && 
                                                     !empty($lead->source->email_key) && 
@@ -158,6 +174,7 @@
                             $tags = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
                             $email_label = __('messages.email');
                             $phone_label = __('messages.phone');
+                            $name_label = __('messages.name');
                         @endphp
                         <div class="col-md-12">
                             <h3>
@@ -170,10 +187,31 @@
                                     @csrf
                                     <input type="hidden" name="source_id" value="{{$source->id}}" id="source_id">
                                     <div class="row">
-                                        <div class="col-md-6">
+                                        <div class="col-md-4">
                                             <div class="form-group">
-                                                <label for="email_key">
-                                                    {{ trans('messages.email') }} {{trans('messages.key')}} *
+                                                <label for="name_key" class="required">
+                                                    {{ trans('messages.name') }} {{trans('messages.key')}}
+                                                </label><br>
+                                                <select class="form-control select2" name="name_key" id="name_key" required>
+                                                    <option value="">@lang('messages.please_select')</option>
+                                                    @foreach($tags as $key)
+                                                        <option value="{{$key}}"
+                                                            @if(
+                                                                ($key == $source->name_key) ||
+                                                                (soundex($key) == soundex($name_label))
+                                                            )
+                                                                selected
+                                                            @endif>
+                                                            {{$key}}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="email_key" class="required">
+                                                    {{ trans('messages.email') }} {{trans('messages.key')}}
                                                 </label><br>
                                                 <select class="form-control select2" name="email_key" id="email_key" required>
                                                     <option value="">@lang('messages.please_select')</option>
@@ -191,9 +229,9 @@
                                                 </select>
                                             </div>
                                         </div>
-                                        <div class="col-md-6">
-                                            <label for="phone_key">
-                                                {{ trans('messages.phone') }} {{trans('messages.key')}} *
+                                        <div class="col-md-4">
+                                            <label for="phone_key" class="required">
+                                                {{ trans('messages.phone') }} {{trans('messages.key')}}
                                             </label>
                                             <select class="form-control select2" name="phone_key" id="phone_key" required>
                                                 <option value="">@lang('messages.please_select')</option>
@@ -210,7 +248,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-12">
+                                        <div class="col-md-4">
                                             <button type="submit" class="btn btn-outline-primary">
                                                 {{trans('messages.save')}}
                                             </button>

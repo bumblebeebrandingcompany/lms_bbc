@@ -1,5 +1,5 @@
 @php
-    $fields = !empty($project->webhook_fields) ? $project->webhook_fields : [];
+    $fields = !empty($webhook_fields) ? $webhook_fields : [];
 @endphp
 @forelse($fields as $field)
     @php

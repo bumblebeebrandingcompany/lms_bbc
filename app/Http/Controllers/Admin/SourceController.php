@@ -248,6 +248,7 @@ class SourceController extends Controller
         $source = Source::findOrFail($request->input('source_id'));
         $source->email_key = $request->input('email_key');
         $source->phone_key = $request->input('phone_key');
+        $source->name_key = $request->input('name_key');
         $source->save();
 
         return redirect()->route('admin.sources.webhook', $source->id);
