@@ -4,7 +4,7 @@
             <label class="required">
                 @lang('messages.key')
             </label>
-            <input type="text" name="lead_details[{{$index}}][key]" value="{{$key ?? ''}}" class="form-control" required>
+            <input type="text" name="lead_details[{{$index}}][key]" value="{{$key ?? ''}}" class="form-control" required @if(isset($set_key_readonly) && $set_key_readonly) readonly @endif>
         </div>
     </div>
     <div class="col-md-6">

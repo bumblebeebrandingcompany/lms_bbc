@@ -16,9 +16,9 @@
         </div>
     @endif
     <div class="card-body">
-        <div class="row mb-3">
+        <div class="row mb-5">
             @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner))
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="project_id">
                         @lang('messages.projects')
                     </label>
@@ -31,7 +31,7 @@
                 </div>
             @endif
             @if(!auth()->user()->is_channel_partner)
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <label for="campaign_id">
                         @lang('messages.campaigns')
                     </label>
@@ -43,15 +43,28 @@
                     </select>
                 </div>
             @endif
+            <div class="col-md-3">
+                    <label for="leads_status">
+                        Status
+                    </label>
+                    <select class="search form-control" id="leads_status">
+                        <option value>{{ trans('global.all') }}</option>
+                        <option value="new">New</option>
+                        <option value="duplicate">Duplicate</option>
+                    </select>
+                </div>
             @if(auth()->user()->is_superadmin)
-                <div class="col-md-2">
+                <div class="col-md-3">
                     <label></label>
                     <button type="button" class="btn btn-block btn-outline-primary mt-2" id="send_bulk_outgoing_webhook">
                         @lang('messages.send_outgoing_webhook')
                     </button>
                 </div>
             @endif
+            
+            <div class="col-md-12"><hr></div>
         </div>
+
         <table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Lead">
             <thead>
                 <tr>
@@ -66,6 +79,9 @@
                     </th>
                     <th>
                         @lang('messages.phone')
+                    </th>
+                    <th>
+                        Status
                     </th>
                     <th>
                         {{ trans('cruds.lead.fields.project') }}
@@ -142,7 +158,8 @@
                 url: "{{ route('admin.leads.index') }}",
                 data: function (d) {
                     d.project_id = $("#project_id").val(),
-                    d.campaign_id = $("#campaign_id").val()
+                    d.campaign_id = $("#campaign_id").val(),
+                    d.leads_status = $("#leads_status").val()
                 }
             },
             columns: [
@@ -150,6 +167,7 @@
                 { data: 'name', name: 'name' },
                 { data: 'email', name: 'email' },
                 { data: 'phone', name: 'phone' },
+                { data: 'overall_status', name: 'overall_status' },
                 { data: 'project_name', name: 'project.name' },
                 { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
                 { data: 'source_name', name: 'source.name' },

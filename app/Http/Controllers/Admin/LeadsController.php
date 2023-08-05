@@ -50,6 +50,18 @@ class LeadsController extends Controller
 
             $query = Lead::with(['project', 'campaign', 'source', 'createdBy'])
                         ->select(sprintf('%s.*', (new Lead)->table));
+            
+            if ($request->has('leads_status')) {
+                $leads_status = $request->get('leads_status');
+                
+                if($leads_status == 'duplicate'){
+                    $query->where('sell_do_is_exist', 1);
+                } 
+                
+                if($leads_status == 'new'){
+                    $query->where('sell_do_is_exist', 0);
+                }
+            }
 
             $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
                 if($user->is_channel_partner) {
@@ -59,7 +71,6 @@ class LeadsController extends Controller
                         ->orWhereIn('leads.campaign_id', $campaign_ids);
                 }
             })->groupBy('id');
-            
 
             //filter leads
             if(!empty($request->input('project_id'))) {
@@ -91,7 +102,28 @@ class LeadsController extends Controller
             });
 
             $table->addColumn('email', function ($row) {
-                return $row->email ? $row->email : '';
+                $email_cell = $row->email ? $row->email : '';
+                return $email_cell;
+            });
+
+            $table->addColumn('overall_status', function ($row) {
+                $overall_status = '';
+
+                if($row->sell_do_is_exist){
+                    $overall_status .= '<b class="text-danger">Duplicate</b>';
+                } else {
+                    $overall_status .= '<b class="text-success">New</b>';
+                }
+
+                if(!empty($row->sell_do_lead_id)){
+                    $overall_status .= '<br/> Lead ID: ' . $row->sell_do_lead_id;
+                }
+
+                if(!empty($row->sell_do_lead_created_at)){
+                    $overall_status .= '<br/>Created At: ' . $row->sell_do_lead_created_at;
+                }
+
+                return $overall_status;
             });
 
             $table->addColumn('phone', function ($row) {
@@ -122,7 +154,7 @@ class LeadsController extends Controller
                 return $row->updated_at;
             });
 
-            $table->rawColumns(['actions', 'email', 'phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by']);
+            $table->rawColumns(['actions', 'email', 'phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status']);
 
             return $table->make(true);
         }

@@ -130,6 +130,10 @@ class Util
         $webhook_responses = [];
         $lead = Lead::findOrFail($id);
         $project = Project::findOrFail($lead->project_id);
+
+        //setting this to save sell do response only once in DB for a lead
+        $is_sell_do_executed = false;
+
         try {
 
             if(
@@ -145,7 +149,28 @@ class Util
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         $constants = $this->getApiConstants($api);
                         $request_body = array_merge($request_body, $constants);
-                        $webhook_responses[] = $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
+                        $response = $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
+
+                        //checking this to save sell.do response only once in DB for a lead
+                        if(!$is_sell_do_executed && empty($lead->sell_do_response)){
+                            if (strpos($api['url'], 'app.sell.do') !== false) {
+                                if(!empty($response['sell_do_lead_id'])){
+
+                                    $lead->sell_do_is_exist = isset($response['selldo_lead_details']['lead_already_exists']) ? $response['selldo_lead_details']['lead_already_exists'] : false;
+
+                                    $lead->sell_do_lead_created_at = isset($response['selldo_lead_details']['lead_created_at']) ? $response['selldo_lead_details']['lead_created_at'] : null;
+
+                                    $lead->sell_do_lead_id = isset($response['sell_do_lead_id']) ? $response['sell_do_lead_id'] : null;
+
+                                    $lead->sell_do_response = json_encode($response);
+
+                                    $lead->save();
+
+                                }
+                            }
+                        }
+
+                        $webhook_responses[] = $response;
                     }
                 }
             }
@@ -428,6 +453,24 @@ class Util
         $project =  Project::findOrFail($lead->project_id);
 
         $fields = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
+        $webhook_fields = !empty($project->webhook_fields) ? array_merge($project->webhook_fields, $fields) : $fields;
+        $unique_webhook_fields = array_unique($webhook_fields);
+        $project->webhook_fields = array_values($unique_webhook_fields);
+        $project->save();
+    }
+
+    public function storeUniqueWebhookFieldsWhenCreatingWebhook($project)
+    {
+        $outgoing_apis = $project->outgoing_apis;
+        $fields = [];
+
+        foreach($outgoing_apis as $outgoing_api){
+            $body = $outgoing_api['request_body'];
+            foreach($body as $details){
+                $fields[] = $details['key'];
+            }
+        }
+        
         $webhook_fields = !empty($project->webhook_fields) ? array_merge($project->webhook_fields, $fields) : $fields;
         $unique_webhook_fields = array_unique($webhook_fields);
         $project->webhook_fields = array_values($unique_webhook_fields);

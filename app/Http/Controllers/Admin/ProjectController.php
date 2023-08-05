@@ -222,6 +222,8 @@ class ProjectController extends Controller
         $project->outgoing_apis = $api;
         $project->save();
 
+        $this->util->storeUniqueWebhookFieldsWhenCreatingWebhook($project);
+
         return redirect()->route('admin.projects.webhook', $project->id);
     }
 
