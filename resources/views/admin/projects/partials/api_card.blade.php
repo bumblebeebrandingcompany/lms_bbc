@@ -107,6 +107,17 @@
                         {{trans('messages.request_body')}}
                         <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.request_body_help_text')}}"></i>
                     </label>
+                    <div class="row">
+    <div class="col-md-12 mb-3 bg-info p-2">
+        <small>
+
+        
+        Fields with predefined prefix are initial fields present in the system.<br/>
+        <b>predefined_source_name:</b> It will take the source name. But if lead is added by channel partner it'll take channel partner name as source
+        </small>
+    </div>
+</div>
+
                     @php
                         $rb_key = 0;
                     @endphp

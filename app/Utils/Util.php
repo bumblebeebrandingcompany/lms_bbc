@@ -226,6 +226,7 @@ class Util
             }
         }
 
+        print_r($tag_replaced_req_body);exit;
         return $tag_replaced_req_body;
     }
 
@@ -290,6 +291,15 @@ class Util
             in_array($field, ['predefined_created_at'])
         ) {
             return $lead->created_at ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_source_name'])
+        ) {
+            if(!empty($lead->createdBy) && $lead->createdBy->user_type == 'ChannelPartner'){
+                return 'Channel Partner';
+            } else {
+                return optional($lead->source)->name ?? '';
+            }
         }
     }
 

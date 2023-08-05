@@ -29,7 +29,7 @@ class Lead extends Model
         'name', 'email', 
         'phone', 'predefined_comments',
         'predefined_cp_comments', 'predefined_created_by',
-        'predefined_created_at'
+        'predefined_created_at', 'predefined_source_name'
     ];
     
     /**
