@@ -9,10 +9,12 @@
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            <label class="required">
+            <label class="@if(isset($set_key_readonly) && $set_key_readonly) @else required @endif">
                 @lang('messages.value')
             </label>
-            <input type="text" name="lead_details[{{$index}}][value]" value="{{$value ?? ''}}" class="form-control" required>
+            <input type="text" name="lead_details[{{$index}}][value]" value="{{$value ?? ''}}" class="form-control" 
+            
+            @if(isset($set_key_readonly) && $set_key_readonly) @else required @endif>
         </div>
     </div>
     <div class="col-md-1 mt-auto mb-auto">
