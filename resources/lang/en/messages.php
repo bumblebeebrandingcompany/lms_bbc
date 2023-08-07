@@ -65,4 +65,6 @@ return [
     'incoming_webhook' => 'Incoming webhook',
     'lead_details_help_text' => 'Lead details/Additional fields is optional. remove all row of lead details to make it optional.',
     'send_outgoing_webhook' => 'Send outgoing webhook',
+    'source_name' => 'Source Name',
+    'source_name_help_text' => 'This value will be used in predefined_source_name',
 ];

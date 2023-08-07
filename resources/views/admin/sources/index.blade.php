@@ -30,6 +30,13 @@
                         {{ trans('cruds.source.fields.name') }}
                     </th>
                     <th>
+                        {{ trans('messages.source_name') }}
+                        <i class="fas fa-info-circle" data-html="true" 
+                            data-toggle="tooltip" 
+                            title="{{trans('messages.source_name_help_text')}}">
+                        </i>
+                    </th>
+                    <th>
                         &nbsp;
                     </th>
                 </tr>
@@ -59,6 +66,7 @@
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
+                    <td></td>
                     <td>
                     </td>
                 </tr>
@@ -114,6 +122,7 @@
 { data: 'project_name', name: 'project.name' },
 { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
 { data: 'name', name: 'name' },
+{ data: 'source_name', name: 'source_name' },
 { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

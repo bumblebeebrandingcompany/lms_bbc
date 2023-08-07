@@ -297,8 +297,22 @@ class Util
             if(!empty($lead->createdBy) && $lead->createdBy->user_type == 'ChannelPartner'){
                 return 'Channel Partner';
             } else {
-                return optional($lead->source)->name ?? '';
+                return optional($lead->source)->source_name ?? '';
             }
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_campaign_name'])
+        ) {
+            return optional($lead->campaign)->campaign_name ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_agency_name']) &&
+            !empty($lead->campaign) &&
+            !empty($lead->campaign->agency) &&
+            !empty($lead->campaign->agency->name)
+            
+        ) {
+            return $lead->campaign->agency->name ?? '';
         }
     }
 

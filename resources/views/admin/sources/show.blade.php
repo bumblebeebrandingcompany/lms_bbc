@@ -49,6 +49,18 @@
                             {{ $source->name }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('messages.source_name') }}
+                            <i class="fas fa-info-circle" data-html="true" 
+                                data-toggle="tooltip" 
+                                title="{{trans('messages.source_name_help_text')}}">
+                            </i>
+                        </th>
+                        <td>
+                            {{ $source->source_name ?? '' }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
