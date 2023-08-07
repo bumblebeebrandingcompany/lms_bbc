@@ -76,30 +76,34 @@
                     <textarea name="cp_comments" class="form-control" id="cp_comments" rows="2">{!! old('comments') ?? $lead->cp_comments !!}</textarea>
                 </div>
             @endif
-            <h4>
-                {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
-                <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.lead_details_help_text')}}"></i>
-            </h4>
-            <div class="lead_details">
-                @php
-                    $index_count = 0;
-                @endphp
-                @if(empty($lead->lead_info))
-                    @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
-                @else
-                    @foreach($lead->lead_info as $key => $value)
-                        @php
-                            $index_count = $loop->index;
-                        @endphp
-                        @includeIf('admin.leads.partials.lead_detail', ['key' => $key, 'value' => $value, $index = $loop->index])
-                    @endforeach
-                @endif
-            </div>
+            @if(!auth()->user()->is_channel_partner)
+                <h4>
+                    {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
+                    <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.lead_details_help_text')}}"></i>
+                </h4>
+                <div class="lead_details">
+                    @php
+                        $index_count = 0;
+                    @endphp
+                    @if(empty($lead->lead_info))
+                        @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
+                    @else
+                        @foreach($lead->lead_info as $key => $value)
+                            @php
+                                $index_count = $loop->index;
+                            @endphp
+                            @includeIf('admin.leads.partials.lead_detail', ['key' => $key, 'value' => $value, $index = $loop->index])
+                        @endforeach
+                    @endif
+                </div>
+            @endif
             <div class="form-group">
-                <button type="button" class="btn btn-outline-primary add_lead_detail"
-                    data-total="{{$index_count}}">
-                    @lang('messages.add_lead_detail')
-                </button>
+                @if(!auth()->user()->is_channel_partner)
+                    <button type="button" class="btn btn-outline-primary add_lead_detail"
+                        data-total="{{$index_count ?? 0}}">
+                        @lang('messages.add_lead_detail')
+                    </button>
+                @endif
                 <button class="btn btn-primary float-right" type="submit">
                     {{ trans('global.update') }}
                 </button>

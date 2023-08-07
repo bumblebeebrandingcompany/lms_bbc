@@ -139,8 +139,7 @@ class Util
             if(
                 !empty($project) &&
                 !empty($project->outgoing_apis) &&
-                !empty($lead) &&
-                !empty($lead->lead_details)
+                !empty($lead)
             ) {
                 foreach ($project->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];

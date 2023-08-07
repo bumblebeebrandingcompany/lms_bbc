@@ -74,19 +74,23 @@
                     <textarea name="cp_comments" class="form-control" id="cp_comments" rows="2">{!! old('cp_comments') !!}</textarea>
                 </div>
             @endif
-            <h4>
-                {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
-                <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.lead_details_help_text')}}"></i>
-            </h4>
-            <div class="lead_details">
-                @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
-            </div>
+            @if(!auth()->user()->is_channel_partner)
+                <h4>
+                    {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
+                    <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.lead_details_help_text')}}"></i>
+                </h4>
+                <div class="lead_details">
+                    @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
+                </div>
+            @endif
             <input type="hidden" id="index_count" value="1">
             <div class="form-group">
-                <button type="button" class="btn btn-outline-primary add_lead_detail"
-                    data-total="0">
-                    @lang('messages.add_lead_detail')
-                </button>
+                @if(!auth()->user()->is_channel_partner)
+                    <button type="button" class="btn btn-outline-primary add_lead_detail"
+                        data-total="0">
+                        @lang('messages.add_lead_detail')
+                    </button>
+                @endif
                 <button class="btn btn-primary float-right" type="submit">
                     {{ trans('global.save') }}
                 </button>

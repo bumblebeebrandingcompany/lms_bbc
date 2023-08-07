@@ -190,7 +190,7 @@ class LeadsController extends Controller
     public function store(StoreLeadRequest $request)
     {
         $input = $request->except(['_method', '_token']);
-        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details']);
+        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
         $input['created_by'] = auth()->user()->id;
 
         $lead = Lead::create($input);
@@ -220,7 +220,7 @@ class LeadsController extends Controller
     public function update(UpdateLeadRequest $request, Lead $lead)
     {
         $input = $request->except(['_method', '_token']);
-        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details']);
+        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
 
         $lead->update($input);
         $this->util->storeUniqueWebhookFields($lead);
