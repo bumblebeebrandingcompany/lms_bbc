@@ -70,9 +70,9 @@
                 </div>
             </div>
         </div> -->
-        <div class="row">
+        <div class="row mb-3">
             <div class="col-md-12">
-                <div class="form-group">
+                <div class="form-group api_constant">
                     <label>
                         {{trans('messages.constants')}}
                         <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.constants_help_text')}}"></i>
@@ -89,15 +89,17 @@
                             ])
                         @endforeach
                     @else
-                        @for($i=0; $i<4; $i++)
-                            @includeIf('admin.projects.partials.constants', [
-                                'webhook_key' => $key,
-                                'constant_key' => $i,
-                                'constant' => []
-                            ])
-                        @endfor
+                        @includeIf('admin.projects.partials.constants', [
+                            'webhook_key' => $key,
+                            'constant_key' => 0,
+                            'constant' => []
+                        ])
                     @endif
                 </div>
+                <button type="button" class="btn btn-primary btn-sm add_constant_row"
+                    data-constant_key="{{$constant_key ?? 0}}" data-webhook_key="{{$key}}">
+                    @lang('messages.add_constant')
+                </button>
             </div>
         </div>
         <div class="row">
@@ -108,16 +110,13 @@
                         <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.request_body_help_text')}}"></i>
                     </label>
                     <div class="row">
-    <div class="col-md-12 mb-3 bg-info p-2">
-        <small>
-
-        
-        Fields with predefined prefix are initial fields present in the system.<br/>
-        <b>predefined_source_name:</b> It will take the source name. But if lead is added by channel partner it'll take channel partner name as source
-        </small>
-    </div>
-</div>
-
+                        <div class="col-md-12 mb-3 bg-info p-2">
+                            <small>
+                            Fields with predefined prefix are initial fields present in the system.<br/>
+                            <b>predefined_source_name:</b> It will take the source name. But if lead is added by channel partner it'll take channel partner name as source
+                            </small>
+                        </div>
+                    </div>
                     @php
                         $rb_key = 0;
                     @endphp

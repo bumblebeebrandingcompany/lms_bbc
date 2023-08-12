@@ -486,9 +486,8 @@ class Util
     {
         $outgoing_apis = $project->outgoing_apis;
         $fields = [];
-
         foreach($outgoing_apis as $outgoing_api){
-            $body = $outgoing_api['request_body'];
+            $body = $outgoing_api['request_body'] ?? [];
             foreach($body as $details){
                 $fields[] = $details['key'];
             }

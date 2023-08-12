@@ -33,6 +33,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('users', 'UsersController');
 
     // Project
+    Route::get('get-api-constant-row', 'ProjectController@getApiConstantRow')
+        ->name('get.api.constant.row.html');
     Route::post('test-webhook', 'ProjectController@postTestWebhook')
         ->name('projects.test.webhook');
     Route::get('get-request-body-row', 'ProjectController@getRequestBodyRow')

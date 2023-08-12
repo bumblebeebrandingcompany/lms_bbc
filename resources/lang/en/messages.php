@@ -67,4 +67,5 @@ return [
     'send_outgoing_webhook' => 'Send outgoing webhook',
     'source_name' => 'Source Name',
     'source_name_help_text' => 'This value will be used in predefined_source_name',
+    'add_constant' => 'Add constant',
 ];

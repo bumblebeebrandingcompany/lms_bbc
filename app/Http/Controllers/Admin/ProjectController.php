@@ -298,4 +298,14 @@ class ProjectController extends Controller
 
         return $dummy_data;
     }
+
+    public function getApiConstantRow(Request $request)
+    {
+        if($request->ajax()) {
+            $webhook_key = $request->get('webhook_key');
+            $constant_key = $request->get('constant_key');
+            return view('admin.projects.partials.constants')
+                ->with(compact('webhook_key', 'constant_key'));
+        }
+    }
 }

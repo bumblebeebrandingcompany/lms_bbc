@@ -156,6 +156,32 @@
                 }
             })
         });
+
+        $(document).on('click', '.add_constant_row', function() {
+            let webhook_key = $(this).attr('data-webhook_key');
+            let api_constant_div = $(this).closest('.card').find('.api_constant');
+            let btn = $(this);
+            let constant_key = $(this).attr('data-constant_key');
+            $.ajax({
+                method:"GET",
+                url: "{{route('admin.get.api.constant.row.html')}}",
+                data: {
+                    webhook_key: webhook_key,
+                    constant_key: parseInt(constant_key)+1
+                },
+                dataType: "html",
+                success: function(response) {
+                    api_constant_div.append(response);
+                    btn.attr('data-constant_key', +constant_key + 1);
+                }
+            });
+        });
+
+        $(document).on('click', '.delete_constant_row', function() {
+            if(confirm('Do you want to remove?')) {
+                $(this).closest('.row').remove();
+            }
+        });
     });
 </script>
 @endsection
