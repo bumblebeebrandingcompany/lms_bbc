@@ -24,10 +24,22 @@
                 <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control" required>
             </div>
             <div class="form-group">
+                <label for="additional_email_key">
+                    @lang('messages.additional_email_key')
+                </label>
+                <input type="email" name="additional_email" id="additional_email_key" value="{{ old('additional_email') }}" class="form-control">
+            </div>
+            <div class="form-group">
                 <label for="phone" class="required">
                     @lang('messages.phone')
                 </label>
                 <input type="number" name="phone" id="phone" value="{{ old('phone') }}" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label for="secondary_phone_key">
+                    @lang('messages.secondary_phone_key')
+                </label>
+                <input type="number" name="secondary_phone" id="secondary_phone_key" value="{{ old('secondary_phone')}}" class="form-control">
             </div>
             <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>

@@ -36,10 +36,26 @@
                     </tr>
                     <tr>
                         <th>
+                            @lang('messages.additional_email_key')
+                        </th>
+                        <td>
+                            {{ $lead->additional_email ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             @lang('messages.phone')
                         </th>
                         <td>
                             {{ $lead->phone ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @lang('messages.secondary_phone_key')
+                        </th>
+                        <td>
+                            {{ $lead->secondary_phone ?? '' }}
                         </td>
                     </tr>
                     <tr>
@@ -93,6 +109,24 @@
                             !empty($lead_info[$lead->source->phone_key])
                         ) {
                             unset($lead_info[$lead->source->phone_key]);
+                        }
+
+                        if (
+                            !empty($lead->source) && 
+                            !empty($lead->source->additional_email_key) && 
+                            isset($lead_info[$lead->source->additional_email_key]) &&
+                            !empty($lead_info[$lead->source->additional_email_key])
+                        ) {
+                            unset($lead_info[$lead->source->additional_email_key]);
+                        }
+
+                        if (
+                            !empty($lead->source) && 
+                            !empty($lead->source->secondary_phone_key) &&
+                            isset($lead_info[$lead->source->secondary_phone_key]) &&
+                            !empty($lead_info[$lead->source->secondary_phone_key])
+                        ) {
+                            unset($lead_info[$lead->source->secondary_phone_key]);
                         }
                     @endphp
                     @foreach($lead_info as $key => $value)

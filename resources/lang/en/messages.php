@@ -68,4 +68,8 @@ return [
     'source_name' => 'Source Name',
     'source_name_help_text' => 'This value will be used in predefined_source_name',
     'add_constant' => 'Add constant',
+    'additional_email_key' => 'Additional Email',
+    'secondary_phone_key' => 'Secondary Phone',
+    'source_field' => 'Source field :num',
+    'source_custom_field_help_text' => 'This value will be used in predefined_source_field:num'
 ];

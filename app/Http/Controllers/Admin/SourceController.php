@@ -159,7 +159,8 @@ class SourceController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $source->update($request->all());
+        $source_details = $request->except(['_method', '_token']);
+        $source->update($source_details);
 
         return redirect()->route('admin.sources.index');
     }
@@ -249,6 +250,8 @@ class SourceController extends Controller
         $source->email_key = $request->input('email_key');
         $source->phone_key = $request->input('phone_key');
         $source->name_key = $request->input('name_key');
+        $source->additional_email_key = $request->input('additional_email_key');
+        $source->secondary_phone_key = $request->input('secondary_phone_key');
         $source->save();
 
         return redirect()->route('admin.sources.webhook', $source->id);

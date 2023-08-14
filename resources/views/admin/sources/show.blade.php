@@ -61,6 +61,54 @@
                             {{ $source->source_name ?? '' }}
                         </td>
                     </tr>
+                    <tr>
+                        <th>
+                            {{ trans('messages.source_field', ['num' => 1]) }}
+                            <i class="fas fa-info-circle" data-html="true" 
+                                data-toggle="tooltip" 
+                                title="{{ trans('messages.source_custom_field_help_text', ['num' => 1]) }}">
+                            </i>
+                        </th>
+                        <td>
+                            {{ $source->source_field1 ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            {{ trans('messages.source_field', ['num' => 2]) }}
+                            <i class="fas fa-info-circle" data-html="true" 
+                                data-toggle="tooltip" 
+                                title="{{ trans('messages.source_custom_field_help_text', ['num' => 2]) }}">
+                            </i>
+                        </th>
+                        <td>
+                            {{ $source->source_field2 ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            {{ trans('messages.source_field', ['num' => 3]) }}
+                            <i class="fas fa-info-circle" data-html="true" 
+                                data-toggle="tooltip" 
+                                title="{{ trans('messages.source_custom_field_help_text', ['num' => 3]) }}">
+                            </i>
+                        </th>
+                        <td>
+                            {{ $source->source_field3 ?? '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            {{ trans('messages.source_field', ['num' => 4]) }}
+                            <i class="fas fa-info-circle" data-html="true" 
+                                data-toggle="tooltip" 
+                                title="{{ trans('messages.source_custom_field_help_text', ['num' => 4]) }}">
+                            </i>
+                        </th>
+                        <td>
+                            {{ $source->source_field4 ?? '' }}
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>

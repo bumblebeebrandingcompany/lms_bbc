@@ -92,10 +92,26 @@
                                             </tr>
                                             <tr>
                                                 <td>
+                                                    @lang('messages.additional_email_key')
+                                                </td>
+                                                <td>
+                                                    {{ $lead->additional_email ?? '' }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
                                                 {{ trans('messages.phone') }}
                                                 </td>
                                                 <td>
                                                 {!!$lead->phone ?? ''!!}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    @lang('messages.secondary_phone_key')
+                                                </td>
+                                                <td>
+                                                    {{ $lead->secondary_phone ?? '' }}
                                                 </td>
                                             </tr>
                                             @php
@@ -124,6 +140,24 @@
                                                     !empty($lead_info[$lead->source->phone_key])
                                                 ) {
                                                     unset($lead_info[$lead->source->phone_key]);
+                                                }
+
+                                                if (
+                                                    !empty($lead->source) && 
+                                                    !empty($lead->source->additional_email_key) && 
+                                                    isset($lead_info[$lead->source->additional_email_key]) &&
+                                                    !empty($lead_info[$lead->source->additional_email_key])
+                                                ) {
+                                                    unset($lead_info[$lead->source->additional_email_key]);
+                                                }
+
+                                                if (
+                                                    !empty($lead->source) && 
+                                                    !empty($lead->source->secondary_phone_key) &&
+                                                    isset($lead_info[$lead->source->secondary_phone_key]) &&
+                                                    !empty($lead_info[$lead->source->secondary_phone_key])
+                                                ) {
+                                                    unset($lead_info[$lead->source->secondary_phone_key]);
                                                 }
                                             @endphp
                                             @foreach($lead_info as $key => $value)
@@ -175,6 +209,8 @@
                             $email_label = __('messages.email');
                             $phone_label = __('messages.phone');
                             $name_label = __('messages.name');
+                            $addi_email_label = __('messages.additional_email');
+                            $secondary_phone_label = __('messages.secondary_phone');
                         @endphp
                         <div class="col-md-12">
                             <h3>
@@ -230,6 +266,27 @@
                                             </div>
                                         </div>
                                         <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="addi_email_label">
+                                                    {{ trans('messages.additional_email_key') }} {{trans('messages.key')}}
+                                                </label><br>
+                                                <select class="form-control select2" name="additional_email_key" id="addi_email_label">
+                                                    <option value="">@lang('messages.please_select')</option>
+                                                    @foreach($tags as $key)
+                                                        <option value="{{$key}}"
+                                                            @if(
+                                                                ($key == $source->additional_email_key) ||
+                                                                (soundex($key) == soundex($addi_email_label))
+                                                            )
+                                                                selected
+                                                            @endif>
+                                                            {{$key}}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
                                             <label for="phone_key" class="required">
                                                 {{ trans('messages.phone') }} {{trans('messages.key')}}
                                             </label>
@@ -248,6 +305,27 @@
                                                 @endforeach
                                             </select>
                                         </div>
+                                        <div class="col-md-4">
+                                            <label for="secondary_phone_key">
+                                                {{ trans('messages.secondary_phone_key') }} {{trans('messages.key')}}
+                                            </label>
+                                            <select class="form-control select2" name="secondary_phone_key" id="secondary_phone_key">
+                                                <option value="">@lang('messages.please_select')</option>
+                                                @foreach($tags as $key)
+                                                    <option value="{{$key}}"
+                                                        @if(
+                                                            ($key == $source->secondary_phone_key) ||
+                                                            (soundex($key) == soundex($secondary_phone_label))
+                                                        )
+                                                            selected
+                                                        @endif>
+                                                        {{$key}}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
                                         <div class="col-md-4">
                                             <button type="submit" class="btn btn-outline-primary">
                                                 {{trans('messages.save')}}

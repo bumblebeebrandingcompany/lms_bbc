@@ -63,13 +63,17 @@ class Util
     {
         $name = !empty($source->name_key) ? ($payload[$source->name_key] ?? '') : ($payload['name'] ?? '');
         $email = !empty($source->email_key) ? ($payload[$source->email_key] ?? '') : ($payload['email'] ?? '');
+        $additional_email = !empty($source->additional_email_key) ? ($payload[$source->additional_email_key] ?? '') : ($payload['email'] ?? '');
         $phone = !empty($source->phone_key) ? ($payload[$source->phone_key] ?? '') : ($payload['phone'] ?? '');
+        $secondary_phone = !empty($source->secondary_phone_key) ? ($payload[$source->secondary_phone_key] ?? '') : ($payload['phone'] ?? '');
 
         $lead = Lead::create([
             'source_id' => $source->id,
             'name' => $name ?? '',
             'email' => $email ?? '',
+            'additional_email' => $additional_email ?? '',
             'phone' => $phone ?? '',
+            'secondary_phone' => $secondary_phone ?? '',
             'project_id' => $source->project_id,
             'campaign_id' => $source->campaign_id,
             'lead_details' => $payload
@@ -313,6 +317,38 @@ class Util
             
         ) {
             return $lead->campaign->agency->name ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_additional_email']) &&
+            !empty($lead->additional_email)
+        ) {
+            return $lead->additional_email ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_secondary_phone']) &&
+            !empty($lead->secondary_phone)
+        ) {
+            return $lead->secondary_phone ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_source_field1'])
+        ) {
+            return optional($lead->source)->source_field1 ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_source_field2'])
+        ) {
+            return optional($lead->source)->source_field2 ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_source_field3'])
+        ) {
+            return optional($lead->source)->source_field3 ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_source_field4'])
+        ) {
+            return optional($lead->source)->source_field4 ?? '';
         }
     }
 

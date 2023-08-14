@@ -36,14 +36,6 @@
                 <span class="help-block">{{ trans('cruds.source.fields.campaign_helper') }}</span>
             </div>
             <div class="form-group">
-                <label class="required" for="source_name">{{ trans('messages.source_name') }}</label>
-                <input class="form-control {{ $errors->has('source_name') ? 'is-invalid' : '' }}" type="text" name="source_name" id="source_name" value="{{ old('source_name') }}" required>
-                @if($errors->has('source_name'))
-                    <span class="text-danger">{{ $errors->first('source_name') }}</span>
-                @endif
-                <span class="help-block">{{ trans('messages.source_name_help_text') }}</span>
-            </div>
-            <div class="form-group">
                 <label class="required" for="name">{{ trans('cruds.source.fields.name') }}</label>
                 <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" name="name" id="name" value="{{ old('name', '') }}" required>
                 @if($errors->has('name'))
@@ -51,6 +43,15 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.source.fields.name_helper') }}</span>
             </div>
+            <div class="form-group">
+                <label class="required" for="source_name">{{ trans('messages.source_name') }}</label>
+                <input class="form-control {{ $errors->has('source_name') ? 'is-invalid' : '' }}" type="text" name="source_name" id="source_name" value="{{ old('source_name') }}" required>
+                @if($errors->has('source_name'))
+                    <span class="text-danger">{{ $errors->first('source_name') }}</span>
+                @endif
+                <span class="help-block">{{ trans('messages.source_name_help_text') }}</span>
+            </div>
+            @includeIf('admin.sources.partials.custom_fields')
             <div class="form-group">
                 <button class="btn btn-danger" type="submit">
                     {{ trans('global.save') }}

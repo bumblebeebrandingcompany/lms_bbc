@@ -30,7 +30,10 @@ class Lead extends Model
         'phone', 'predefined_comments',
         'predefined_cp_comments', 'predefined_created_by',
         'predefined_created_at', 'predefined_source_name',
-        'predefined_campaign_name', 'predefined_agency_name'
+        'predefined_campaign_name', 'predefined_agency_name',
+        'predefined_additional_email', 'predefined_secondary_phone',
+        'predefined_source_field1','predefined_source_field2',
+        'predefined_source_field3','predefined_source_field4'
     ];
     
     /**
