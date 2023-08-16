@@ -193,11 +193,24 @@ class LeadsController extends Controller
         $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
         $input['created_by'] = auth()->user()->id;
 
+        /*
+        * set default source if lead
+        * added by channel partner
+        */
+        $source = Source::where('is_cp_source', 1)
+                    ->where('project_id', $input['project_id'])
+                    ->first();
+
+        if(auth()->user()->is_channel_partner && !empty($source)) {
+            $input['source_id'] = $source->id;
+        }
+
         $lead = Lead::create($input);
         $this->util->storeUniqueWebhookFields($lead);
         if(!empty($lead->project->outgoing_apis)) {
             $this->util->sendApiWebhook($lead->id);
         }
+        
         return redirect()->route('admin.leads.index');
     }
 

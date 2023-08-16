@@ -73,4 +73,6 @@ return [
     'source_field' => 'Source field :num value',
     'source_custom_field_help_text' => 'This value will be used in predefined_source_field:num',
     'source_field_description' => 'Source field :num description',
+    'source_used_for_channel_partner' => 'This source is used for channel partner',
+    'cp_source' => 'Channel partner source',
 ];

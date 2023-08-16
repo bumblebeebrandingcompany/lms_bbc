@@ -3,7 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Carbon;
 return new class extends Migration
 {
     /**
@@ -37,6 +39,22 @@ return new class extends Migration
                 ->comment('description for source_field4')
                 ->nullable();
         });
+
+        $projects = DB::table('projects')->get();
+        
+        if(count($projects) > 0) {
+            foreach ($projects as $project) {
+                DB::table('sources')->insert([
+                    'name' => 'Channel Partner',
+                    'is_cp_source' => 1,
+                    'source_name' => 'Channel Partner',
+                    'webhook_secret' => (string)Str::uuid(),
+                    'project_id' => $project->id,
+                    'created_at' => Carbon::today()->toDateTimeString(),
+                    'updated_at' => Carbon::today()->toDateTimeString()
+                ]);
+            }   
+        }
     }
 
     /**

@@ -82,10 +82,14 @@ class SourceController extends Controller
             });
 
             $table->editColumn('name', function ($row) {
-                return $row->name ? $row->name : '';
+                $html =  $row->name ? $row->name : '';
+                if($row->is_cp_source) {
+                    $html .= "<br>".'<span class="badge badge-pill badge-info">'.__('messages.cp_source').'</span>';
+                }
+                return $html;
             });
 
-            $table->rawColumns(['actions', 'placeholder', 'project', 'campaign']);
+            $table->rawColumns(['actions', 'placeholder', 'project', 'campaign', 'name']);
 
             return $table->make(true);
         }

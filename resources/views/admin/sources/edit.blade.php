@@ -3,7 +3,13 @@
 <div class="row mb-2">
    <div class="col-sm-12">
         <h2>
-        {{ trans('global.edit') }} {{ trans('cruds.source.title_singular') }}
+            {{ trans('global.edit') }} {{ trans('cruds.source.title_singular') }}
+            @if($source->is_cp_source)
+                <i class="fas fa-info-circle" data-html="true"
+                    data-toggle="tooltip"
+                    title="{{trans('messages.source_used_for_channel_partner')}}">
+                </i>
+            @endif
         </h2>
    </div>
 </div>
