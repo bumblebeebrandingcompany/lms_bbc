@@ -63,14 +63,22 @@ class LeadsController extends Controller
                 }
             }
 
-            $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
-                if($user->is_channel_partner) {
-                    $q->where('leads.created_by', $user->id);
-                } else if(!$user->is_channel_partner_manager) {
-                    $q->whereIn('leads.project_id', $project_ids)
-                        ->orWhereIn('leads.campaign_id', $campaign_ids);
-                }
-            })->groupBy('id');
+            if($user->is_channel_partner_manager) {
+                $query = $query->whereHas('createdBy', function ($q) {
+                            $q->where('user_type', '=', 'ChannelPartner');
+                        });
+            } else {
+                $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
+                    if($user->is_channel_partner) {
+                        $q->where('leads.created_by', $user->id);
+                    } else {
+                        $q->whereIn('leads.project_id', $project_ids)
+                            ->orWhereIn('leads.campaign_id', $campaign_ids);
+                    }
+                });
+            }
+
+            $query->groupBy('id');
 
             //filter leads
             if(!empty($request->input('project_id'))) {
@@ -88,8 +96,8 @@ class LeadsController extends Controller
 
             $table->editColumn('actions', function ($row) use($user) {
                 $viewGate      = true;
-                $editGate      = !$user->is_channel_partner_manager;
-                $deleteGate    = $user->is_superadmin || $user->is_channel_partner;
+                $editGate      = $user->is_superadmin;
+                $deleteGate    = $user->is_superadmin;
                 $crudRoutePart = 'leads';
 
                 return view('partials.datatablesActions', compact(
@@ -225,7 +233,7 @@ class LeadsController extends Controller
 
     public function edit(Lead $lead)
     {
-        if(auth()->user()->is_channel_partner_manager) {
+        if(!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 
@@ -270,7 +278,7 @@ class LeadsController extends Controller
 
     public function destroy(Lead $lead)
     {
-        if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+        if(!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 
@@ -281,7 +289,7 @@ class LeadsController extends Controller
 
     public function massDestroy(MassDestroyLeadRequest $request)
     {
-        if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+        if(!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 

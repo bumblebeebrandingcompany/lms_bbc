@@ -118,7 +118,7 @@
 <script>
     $(function () {
         let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
-        @if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)
+        @if(auth()->user()->is_superadmin)
             let deleteButtonTrans = '{{ trans('global.datatables.delete') }}';
             let deleteButton = {
                 text: deleteButtonTrans,
