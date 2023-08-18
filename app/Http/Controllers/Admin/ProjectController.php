@@ -286,6 +286,12 @@ class ProjectController extends Controller
                     $constants = $this->util->getApiConstants($api_detail);
                     $body = array_merge($body, $constants);
                     $headers['secret-key'] = $api_detail['secret_key'] ?? '';
+
+                    //merge query parameter into request body
+                    $queryString = parse_url($api_detail['url'], PHP_URL_QUERY);
+                    parse_str($queryString, $queryArray);
+                    $body = array_merge($body, $queryArray);
+
                     $response = $this->util->postWebhook($api_detail['url'], $api_detail['method'], $headers, $body);
                 } else {
                     return ['success' => false, 'msg' => __('messages.url_is_required')];

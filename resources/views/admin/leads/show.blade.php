@@ -186,26 +186,55 @@
         @if(!empty($lead->webhook_response))
             <h3>Webhook responses</h3>
             <div class="form-group">
-                <table class="table table-bordered table-striped">
-                    <tbody>
-                        @foreach($lead->webhook_response as $response)
-                            <tr>
-                                <th>
-                                    {{$loop->iteration}}
-                                </th>
-                                <td>
-                                    @if(is_string($response))
-                                        {{$response}}
-                                    @else
-                                        <pre>
-                                            {!! print_r($response, true) !!}
-                                        </pre>
-                                    @endif
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered text-nowrap">
+                        <tbody>
+                            @foreach($lead->webhook_response as $response)
+                                <tr>
+                                    <th>
+                                        {{$loop->iteration}}
+                                    </th>
+                                    <td>
+                                        @if(is_string($response))
+                                            {{$response}}
+                                        @else
+                                        @if(isset($response['input']) && isset($response['response']))
+                                                <div class="table-responsive">
+                                                    <table class="table table-bordered table-striped text-nowrap">
+                                                        <thead>
+                                                            <th>
+                                                                Input
+                                                            </th>
+                                                            <th>
+                                                                Output
+                                                            </th>
+                                                        </thead>
+                                                        <tbody>
+                                                            <td>
+                                                                <pre>
+                                                                    {!! print_r($response['input'], true) !!}
+                                                                </pre>
+                                                            </td>
+                                                            <td>
+                                                                <pre>
+                                                                    {!! print_r($response['response'], true) !!}
+                                                                </pre>
+                                                            </td>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            @else
+                                                <pre>
+                                                    {!! print_r($response, true) !!}
+                                                </pre>
+                                            @endif
+                                        @endif
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
         @endif
         <!-- /webhook response -->

@@ -132,6 +132,7 @@ class Util
     public function sendApiWebhook($id)
     {
         $webhook_responses = [];
+        $request_body = null;
         $lead = Lead::findOrFail($id);
         $project = Project::findOrFail($lead->project_id);
 
@@ -152,6 +153,12 @@ class Util
                         $headers['secret-key'] = $api['secret_key'] ?? '';
                         $constants = $this->getApiConstants($api);
                         $request_body = array_merge($request_body, $constants);
+
+                        //merge query parameter into request body
+                        $queryString = parse_url($api['url'], PHP_URL_QUERY);
+                        parse_str($queryString, $queryArray);
+                        $request_body = array_merge($request_body, $queryArray);
+
                         $response = $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
 
                         //checking this to save sell.do response only once in DB for a lead
@@ -173,13 +180,19 @@ class Util
                             }
                         }
 
-                        $webhook_responses[] = $response;
+                        $webhook_responses[] = [
+                            'input' => $request_body,
+                            'response' => $response
+                        ];
                     }
                 }
             }
             $output = ['success' => true, 'msg' => __('messages.success')];
         } catch (RequestException $e) {
-            $webhook_responses[] = $e->getMessage();
+            $webhook_responses[] = [
+                'input' => $request_body,
+                'response' => $e->getMessage()
+            ];
             $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
         }
 
@@ -388,10 +401,6 @@ class Util
 
     public function postWebhook($url, $method, $headers=[], $body=[])
     {
-        $queryString = parse_url($url, PHP_URL_QUERY);
-        parse_str($queryString, $queryArray);
-        $body = array_merge($body, $queryArray);
-
         if(in_array($method, ['get'])) {
 
             $client = new Client();
