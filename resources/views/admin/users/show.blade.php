@@ -30,6 +30,14 @@
                             </tr>
                             <tr>
                                 <th>
+                                    {{ trans('messages.representative_name') }}
+                                </th>
+                                <td>
+                                    {{ $user->representative_name }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
                                     {{ trans('cruds.user.fields.email') }}
                                 </th>
                                 <td>

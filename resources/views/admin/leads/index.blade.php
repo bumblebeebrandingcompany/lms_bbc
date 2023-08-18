@@ -17,7 +17,7 @@
     @endif
     <div class="card-body">
         <div class="row mb-5">
-            @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner))
+            @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
                 <div class="col-md-3">
                     <label for="project_id">
                         @lang('messages.projects')
@@ -30,7 +30,7 @@
                     </select>
                 </div>
             @endif
-            @if(!auth()->user()->is_channel_partner)
+            @if(!(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
                 <div class="col-md-3">
                     <label for="campaign_id">
                         @lang('messages.campaigns')

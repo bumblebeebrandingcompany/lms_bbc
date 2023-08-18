@@ -35,7 +35,7 @@ class CampaignController extends Controller
 
     public function index(Request $request)
     {
-        if(auth()->user()->is_channel_partner) {
+        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
@@ -111,7 +111,8 @@ class CampaignController extends Controller
 
     public function store(StoreCampaignRequest $request)
     {
-        
+        abort_if(auth()->user()->is_channel_partner_manager, Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $campaign_details = $request->except('_token');
         $campaign = Campaign::create($campaign_details);
 
@@ -120,7 +121,7 @@ class CampaignController extends Controller
 
     public function edit(Campaign $campaign)
     {
-        if(auth()->user()->is_channel_partner) {
+        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
@@ -135,7 +136,7 @@ class CampaignController extends Controller
 
     public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
-        if(auth()->user()->is_channel_partner) {
+        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
@@ -146,7 +147,7 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign)
     {
-        if(auth()->user()->is_channel_partner) {
+        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
         

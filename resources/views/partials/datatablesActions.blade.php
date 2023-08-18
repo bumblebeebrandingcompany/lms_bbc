@@ -25,3 +25,8 @@
         {{ trans('messages.outgoing_webhook') }}
     </a>
 @endif
+@if(isset($passwordEditGate) && $passwordEditGate)
+    <button class="btn btn-xs btn-dark edit_password" data-href="{{ route('admin.' . $crudRoutePart . '.edit.password', $row->id) }}">
+        {{ trans('messages.edit_password') }}
+    </button>
+@endif

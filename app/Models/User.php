@@ -22,7 +22,7 @@ class User extends Authenticatable
      *
      * @var array
      */
-    protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_channel_partner'];
+    protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_channel_partner', 'is_channel_partner_manager'];
     
     public $table = 'users';
 
@@ -47,7 +47,8 @@ class User extends Authenticatable
         'Superadmin' => 'Superadmin',
         'Client'     => 'Client',
         'Agency'     => 'Agency',
-        'ChannelPartner' => 'Channel Partner'
+        'ChannelPartner' => 'Channel Partner',
+        'ChannelPartnerManager' => 'Channel Partner Manager'
     ];
 
     /**
@@ -62,6 +63,7 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name',
+        'representative_name',
         'email',
         'email_verified_at',
         'password',
@@ -69,6 +71,7 @@ class User extends Authenticatable
         'user_type',
         'sources',
         'project_assigned',
+        'client_assigned',
         'address',
         'contact_number_1',
         'contact_number_2',
@@ -175,5 +178,15 @@ class User extends Authenticatable
     public function getIsChannelPartnerAttribute()
     {
         return $this->user_type == 'ChannelPartner';
+    }
+
+    /**
+     * is user channel partner manager?
+     *
+     * @return boolean
+     */
+    public function getIsChannelPartnerManagerAttribute()
+    {
+        return $this->user_type == 'ChannelPartnerManager';
     }
 }

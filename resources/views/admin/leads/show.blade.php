@@ -31,7 +31,11 @@
                             @lang('messages.email')
                         </th>
                         <td>
-                            {{ $lead->email ?? '' }}
+                            @if(auth()->user()->is_channel_partner_manager && !empty($lead->email))
+                                {{ maskEmail($lead->email) }}
+                            @else
+                                {{ $lead->email ?? '' }}
+                            @endif
                         </td>
                     </tr>
                     <tr>
@@ -39,7 +43,11 @@
                             @lang('messages.additional_email_key')
                         </th>
                         <td>
-                            {{ $lead->additional_email ?? '' }}
+                            @if(auth()->user()->is_channel_partner_manager && !empty($lead->additional_email))
+                                {{ maskEmail($lead->additional_email) }}
+                            @else
+                                {{ $lead->additional_email ?? '' }}
+                            @endif
                         </td>
                     </tr>
                     <tr>
@@ -47,7 +55,11 @@
                             @lang('messages.phone')
                         </th>
                         <td>
-                            {{ $lead->phone ?? '' }}
+                            @if(auth()->user()->is_channel_partner_manager && !empty($lead->phone))
+                                {{ maskNumber($lead->phone) }}
+                            @else
+                                {{ $lead->phone ?? '' }}
+                            @endif
                         </td>
                     </tr>
                     <tr>
@@ -55,7 +67,11 @@
                             @lang('messages.secondary_phone_key')
                         </th>
                         <td>
-                            {{ $lead->secondary_phone ?? '' }}
+                            @if(auth()->user()->is_channel_partner_manager && !empty($lead->secondary_phone))
+                                {{ maskNumber($lead->secondary_phone) }}
+                            @else
+                                {{ $lead->secondary_phone ?? '' }}
+                            @endif
                         </td>
                     </tr>
                     <tr>

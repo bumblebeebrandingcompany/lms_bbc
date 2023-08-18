@@ -20,6 +20,10 @@
                 <span class="help-block">{{ trans('cruds.user.fields.name_helper') }}</span>
             </div>
             <div class="form-group">
+                <label for="representative_name">{{ trans('messages.representative_name') }}</label>
+                <input class="form-control" type="text" name="representative_name" id="representative_name" value="{{ old('representative_name', '') }}">
+            </div>
+            <div class="form-group">
                 <label class="required" for="email">{{ trans('cruds.user.fields.email') }}</label>
                 <input class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" type="email" name="email" id="email" value="{{ old('email') }}" required>
                 @if($errors->has('email'))
@@ -54,10 +58,19 @@
             <div class="form-group">
                 <label class="required">{{ trans('cruds.user.fields.user_type') }}</label>
                 @foreach(App\Models\User::USER_TYPE_RADIO as $key => $label)
-                    <div class="form-check {{ $errors->has('user_type') ? 'is-invalid' : '' }}">
-                        <input class="form-check-input user_type_input" type="radio" id="user_type_{{ $key }}" name="user_type" value="{{ $key }}" {{ old('user_type', '') === (string) $key ? 'checked' : '' }} required>
-                        <label class="form-check-label" for="user_type_{{ $key }}">{{ $label }}</label>
-                    </div>
+                    @if(!auth()->user()->is_channel_partner_manager)
+                        <div class="form-check {{ $errors->has('user_type') ? 'is-invalid' : '' }}">
+                            <input class="form-check-input user_type_input" type="radio" id="user_type_{{ $key }}" name="user_type" value="{{ $key }}" {{ old('user_type', '') === (string) $key ? 'checked' : '' }} required>
+                            <label class="form-check-label" for="user_type_{{ $key }}">{{ $label }}</label>
+                        </div>
+                    @else
+                        @if($key == 'ChannelPartner')
+                            <div class="form-check {{ $errors->has('user_type') ? 'is-invalid' : '' }}">
+                                <input class="form-check-input user_type_input" type="radio" id="user_type_{{ $key }}" name="user_type" value="{{ $key }}" checked required>
+                                <label class="form-check-label" for="user_type_{{ $key }}">{{ $label }}</label>
+                            </div>
+                        @endif
+                    @endif
                 @endforeach
                 @if($errors->has('user_type'))
                     <span class="text-danger">{{ $errors->first('user_type') }}</span>
@@ -119,6 +132,14 @@
                     <span class="text-danger">{{ $errors->first('agency') }}</span>
                 @endif
                 <span class="help-block">{{ trans('cruds.user.fields.agency_helper') }}</span>
+            </div>
+            <div class="form-group">
+                <label class="required" for="assign_client">{{ trans('messages.assign_client') }}</label>
+                <select class="form-control select2" name="client_assigned" id="assign_client" required>
+                    @foreach($clients as $id => $entry)
+                        <option value="{{ $id }}" {{ old('client_assigned') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                    @endforeach
+                </select>
             </div>
             <div class="form-group">
                 <label class="required" for="projects">{{ trans('messages.projects') }}</label>

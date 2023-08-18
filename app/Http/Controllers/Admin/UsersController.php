@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
+use Exception;
 
 class UsersController extends Controller
 {
@@ -35,13 +36,19 @@ class UsersController extends Controller
 
     public function index(Request $request)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
 
             $projects = $this->util->getProjectDropdown(true);
 
-            $query = User::with(['roles', 'client', 'agency'])->select(sprintf('%s.*', (new User)->table));
+            $query = User::with(['roles', 'client', 'agency'])
+                        ->select(sprintf('%s.*', (new User)->table));
+
+            if(auth()->user()->is_channel_partner_manager) {
+                $query->where('users.user_type', 'ChannelPartner');
+            }
+
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -51,6 +58,7 @@ class UsersController extends Controller
                 $viewGate      = auth()->user()->is_superadmin;
                 $editGate      = auth()->user()->is_superadmin;
                 $deleteGate    = auth()->user()->is_superadmin;
+                $passwordEditGate    = auth()->user()->is_channel_partner_manager;
                 $crudRoutePart = 'users';
 
                 return view('partials.datatablesActions', compact(
@@ -58,28 +66,12 @@ class UsersController extends Controller
                     'editGate',
                     'deleteGate',
                     'crudRoutePart',
+                    'passwordEditGate',
                     'row'
                 ));
             });
-            $table->editColumn('name', function ($row) use($projects) {
-
-                $project_assigned = [];
-                if(
-                    !empty($row->project_assigned) && !empty($projects)
-                ) {
-                    foreach($row->project_assigned as $id) {
-                        if(isset($projects[$id])) {
-                            $project_assigned[] = $projects[$id];
-                        }
-                    }
-                }
-
-                $project_assigned_html = '';
-                if(!empty($project_assigned)) {
-                    $project_assigned_html = '<br>Assigned projects : '.implode(', ', $project_assigned);
-                }
-
-                return ($row->name ? $row->name : ''). $project_assigned_html;
+            $table->editColumn('name', function ($row) {
+                return $row->name ? $row->name : '';
             });
             $table->editColumn('email', function ($row) {
                 return $row->email ? $row->email : '';
@@ -102,7 +94,27 @@ class UsersController extends Controller
                 return $row->agency ? $row->agency->name : '';
             });
 
-            $table->rawColumns(['actions', 'name', 'placeholder', 'client', 'agency']);
+            $table->addColumn('assigned_projects', function ($row) use($projects) {
+                $project_assigned = [];
+                if(
+                    !empty($row->project_assigned) && !empty($projects)
+                ) {
+                    foreach($row->project_assigned as $id) {
+                        if(isset($projects[$id])) {
+                            $project_assigned[] = $projects[$id];
+                        }
+                    }
+                }
+
+                $project_assigned_html = '';
+                if(!empty($project_assigned)) {
+                    $project_assigned_html = implode(', ', $project_assigned);
+                }
+
+                return $project_assigned_html;
+            });
+
+            $table->rawColumns(['actions', 'name', 'placeholder', 'client', 'agency', 'assigned_projects']);
 
             return $table->make(true);
         }
@@ -115,7 +127,7 @@ class UsersController extends Controller
 
     public function create()
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $roles = Role::pluck('title', 'id');
 
@@ -123,8 +135,12 @@ class UsersController extends Controller
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $projects = $this->util->getProjectDropdown(true);
-        
+        $projects = [];
+        if(auth()->user()->is_channel_partner_manager) {
+            $projects = $this->util->getClientProjects(auth()->user()->client_assigned);
+        } else if(auth()->user()->is_superadmin) {
+            $projects = $this->util->getProjectDropdown(true);
+        }
         return view('admin.users.create', compact('agencies', 'clients', 'roles', 'projects'));
     }
 
@@ -188,5 +204,40 @@ class UsersController extends Controller
         }
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function editPassword(Request $request, $id)
+    {
+        abort_if(!auth()->user()->is_channel_partner_manager, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
+        if($request->ajax()) {
+            $user = User::findOrFail($id);
+            return view('admin.users.partials.edit_password')
+                ->with(compact('user'));
+        }
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        abort_if(!auth()->user()->is_channel_partner_manager, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        if($request->ajax()) {
+            try {
+                $user = User::findOrFail($id);
+                if(!empty($request->input('password'))) {
+                    $user->password = $request->input('password');
+                    $user->save();
+                }
+                $output = [
+                    'success' => true,
+                    'msg' => 'Success'
+                ];
+            } catch (\Exception $e) {
+                $output = [
+                    'success' => false,
+                    'msg' => 'Something went wrong.'
+                ];
+            }
+            return $output;
+        }
     }
 }

@@ -11,7 +11,7 @@ class UpdateLeadRequest extends FormRequest
 {
     public function authorize()
     {
-        return true;
+        return !auth()->user()->is_channel_partner_manager;
     }
 
     public function rules()

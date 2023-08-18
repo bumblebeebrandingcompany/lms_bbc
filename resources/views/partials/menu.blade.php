@@ -32,7 +32,7 @@
                         </select>
                     </li>
                 @endif
-                @if(!auth()->user()->is_channel_partner)
+                @if(!(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs("admin.home") ? "active" : "" }}" href="{{ route("admin.home") }}">
                             <i class="fas fa-fw fa-tachometer-alt nav-icon">
@@ -43,7 +43,7 @@
                         </a>
                     </li>
                 @endif
-                @if(auth()->user()->is_superadmin)
+                @if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager)
                     <li class="nav-item has-treeview {{ request()->is("admin/permissions*") ? "menu-open" : "" }} {{ request()->is("admin/roles*") ? "menu-open" : "" }} {{ request()->is("admin/users*") ? "menu-open" : "" }} {{ request()->is("admin/audit-logs*") ? "menu-open" : "" }}">
                         <a class="nav-link nav-dropdown-toggle {{ request()->is("admin/permissions*") ? "active" : "" }} {{ request()->is("admin/roles*") ? "active" : "" }} {{ request()->is("admin/users*") ? "active" : "" }} {{ request()->is("admin/audit-logs*") ? "active" : "" }}" href="#">
                             <i class="fa-fw nav-icon fas fa-users">
@@ -65,66 +65,70 @@
                                     </p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route("admin.audit-logs.index") }}" class="nav-link {{ request()->is("admin/audit-logs") || request()->is("admin/audit-logs/*") ? "active" : "" }}">
-                                    <i class="fa-fw nav-icon fas fa-file-alt">
+                            @if(auth()->user()->is_superadmin)
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.audit-logs.index") }}" class="nav-link {{ request()->is("admin/audit-logs") || request()->is("admin/audit-logs/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fas fa-file-alt">
 
-                                    </i>
-                                    <p>
-                                        {{ trans('cruds.auditLog.title') }}
-                                    </p>
-                                </a>
-                            </li>
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.auditLog.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            @endif
                         </ul>
                     </li>
-                    <li class="nav-item has-treeview {{ request()->is("admin/clients*") ? "menu-open" : "" }}">
-                        <a class="nav-link nav-dropdown-toggle {{ request()->is("admin/clients*") ? "active" : "" }}" href="#">
-                            <i class="fa-fw nav-icon fas fa-briefcase">
+                    @if(auth()->user()->is_superadmin)
+                        <li class="nav-item has-treeview {{ request()->is("admin/clients*") ? "menu-open" : "" }}">
+                            <a class="nav-link nav-dropdown-toggle {{ request()->is("admin/clients*") ? "active" : "" }}" href="#">
+                                <i class="fa-fw nav-icon fas fa-briefcase">
 
-                            </i>
-                            <p>
-                                {{ trans('cruds.clientManagement.title') }}
-                                <i class="right fa fa-fw fa-angle-left nav-icon"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route("admin.clients.index") }}" class="nav-link {{ request()->is("admin/clients") || request()->is("admin/clients/*") ? "active" : "" }}">
-                                    <i class="fa-fw nav-icon fas fa-briefcase">
+                                </i>
+                                <p>
+                                    {{ trans('cruds.clientManagement.title') }}
+                                    <i class="right fa fa-fw fa-angle-left nav-icon"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.clients.index") }}" class="nav-link {{ request()->is("admin/clients") || request()->is("admin/clients/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fas fa-briefcase">
 
-                                    </i>
-                                    <p>
-                                        {{ trans('cruds.client.title') }}
-                                    </p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="nav-item has-treeview {{ request()->is("admin/agencies*") ? "menu-open" : "" }}">
-                        <a class="nav-link nav-dropdown-toggle {{ request()->is("admin/agencies*") ? "active" : "" }}" href="#">
-                            <i class="fa-fw nav-icon fas fa-tv">
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.client.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="nav-item has-treeview {{ request()->is("admin/agencies*") ? "menu-open" : "" }}">
+                            <a class="nav-link nav-dropdown-toggle {{ request()->is("admin/agencies*") ? "active" : "" }}" href="#">
+                                <i class="fa-fw nav-icon fas fa-tv">
 
-                            </i>
-                            <p>
-                                {{ trans('cruds.agencyManagement.title') }}
-                                <i class="right fa fa-fw fa-angle-left nav-icon"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route("admin.agencies.index") }}" class="nav-link {{ request()->is("admin/agencies") || request()->is("admin/agencies/*") ? "active" : "" }}">
-                                    <i class="fa-fw nav-icon fas fa-tv">
+                                </i>
+                                <p>
+                                    {{ trans('cruds.agencyManagement.title') }}
+                                    <i class="right fa fa-fw fa-angle-left nav-icon"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route("admin.agencies.index") }}" class="nav-link {{ request()->is("admin/agencies") || request()->is("admin/agencies/*") ? "active" : "" }}">
+                                        <i class="fa-fw nav-icon fas fa-tv">
 
-                                    </i>
-                                    <p>
-                                        {{ trans('cruds.agency.title') }}
-                                    </p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                                        </i>
+                                        <p>
+                                            {{ trans('cruds.agency.title') }}
+                                        </p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
                 @endif
-                @if(!(auth()->user()->is_channel_partner || auth()->user()->is_agency))
+                @if(!(auth()->user()->is_channel_partner || auth()->user()->is_agency || auth()->user()->is_channel_partner_manager))
                     <li class="nav-item">
                         <a href="{{ route("admin.projects.index") }}" class="nav-link {{ request()->is("admin/projects") || request()->is("admin/projects/*") ? "active" : "" }}">
                             <i class="fa-fw nav-icon fas fa-project-diagram">
@@ -136,7 +140,7 @@
                         </a>
                     </li>
                 @endif
-                @if(!auth()->user()->is_channel_partner)
+                @if(!(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
                     <li class="nav-item">
                         <a href="{{ route("admin.campaigns.index") }}" class="nav-link {{ request()->is("admin/campaigns") || request()->is("admin/campaigns/*") ? "active" : "" }}">
                             <i class="fa-fw nav-icon fas fa-bullhorn">
@@ -168,7 +172,7 @@
                         </p>
                     </a>
                 </li>
-                @if(!auth()->user()->is_channel_partner)
+                @if(!(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
                     <li class="nav-item">
                         <a href="{{ route("admin.systemCalendar") }}" class="nav-link {{ request()->is("admin/system-calendar") || request()->is("admin/system-calendar/*") ? "active" : "" }}">
                             <i class="fas fa-fw fa-calendar nav-icon">

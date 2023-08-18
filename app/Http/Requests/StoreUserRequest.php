@@ -11,7 +11,7 @@ class StoreUserRequest extends FormRequest
 {
     public function authorize()
     {
-        return auth()->user()->is_superadmin;
+        return auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager;
     }
 
     public function rules()

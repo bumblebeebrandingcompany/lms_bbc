@@ -75,4 +75,12 @@ return [
     'source_field_description' => 'Source field :num description',
     'source_used_for_channel_partner' => 'This source is used for channel partner',
     'cp_source' => 'Channel partner source',
+    'assign_client' => 'Assign client',
+    'representative_name' => 'Representative Name',
+    'assigned_projects' => 'Assigned projects',
+    'edit_password' => 'Edit password',
+    'update' => 'Update',
+    'close' => 'Close',
+    'password' => 'Password',
+    'added_on' => 'Added on'
 ];

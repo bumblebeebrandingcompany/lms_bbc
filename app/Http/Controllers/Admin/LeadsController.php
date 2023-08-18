@@ -66,7 +66,7 @@ class LeadsController extends Controller
             $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
                 if($user->is_channel_partner) {
                     $q->where('leads.created_by', $user->id);
-                } else {
+                } else if(!$user->is_channel_partner_manager) {
                     $q->whereIn('leads.project_id', $project_ids)
                         ->orWhereIn('leads.campaign_id', $campaign_ids);
                 }
@@ -88,7 +88,7 @@ class LeadsController extends Controller
 
             $table->editColumn('actions', function ($row) use($user) {
                 $viewGate      = true;
-                $editGate      = true;
+                $editGate      = !$user->is_channel_partner_manager;
                 $deleteGate    = $user->is_superadmin || $user->is_channel_partner;
                 $crudRoutePart = 'leads';
 
@@ -101,9 +101,13 @@ class LeadsController extends Controller
                 ));
             });
 
-            $table->addColumn('email', function ($row) {
+            $table->addColumn('email', function ($row) use($user) {
                 $email_cell = $row->email ? $row->email : '';
-                return $email_cell;
+                if(!empty($email_cell) && $user->is_channel_partner_manager) {
+                    return maskEmail($email_cell);
+                } else {
+                    return $email_cell;
+                }
             });
 
             $table->addColumn('overall_status', function ($row) {
@@ -126,8 +130,13 @@ class LeadsController extends Controller
                 return $overall_status;
             });
 
-            $table->addColumn('phone', function ($row) {
-                return $row->phone ? $row->phone : '';
+            $table->addColumn('phone', function ($row) use($user) {
+                $phone =  $row->phone ? $row->phone : '';
+                if(!empty($phone) && $user->is_channel_partner_manager) {
+                    return maskNumber($phone);
+                } else {
+                    return $phone;
+                }
             });
 
             $table->addColumn('project_name', function ($row) {
@@ -216,6 +225,10 @@ class LeadsController extends Controller
 
     public function edit(Lead $lead)
     {
+        if(auth()->user()->is_channel_partner_manager) {
+            abort(403, 'Unauthorized.');
+        }
+
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 

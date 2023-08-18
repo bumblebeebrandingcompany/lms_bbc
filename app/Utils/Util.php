@@ -534,4 +534,13 @@ class Util
         $project->webhook_fields = array_values($unique_webhook_fields);
         $project->save();
     }
+
+    public function getClientProjects($id)
+    {
+        $projects = Project::where('client_id', $id)
+                    ->pluck('name', 'id')
+                    ->toArray();
+
+        return $projects;
+    }
 }
