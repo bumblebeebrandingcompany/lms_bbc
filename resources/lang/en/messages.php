@@ -82,5 +82,6 @@ return [
     'update' => 'Update',
     'close' => 'Close',
     'password' => 'Password',
-    'added_on' => 'Added on'
+    'added_on' => 'Added on',
+    'no_lead_id' => 'No Lead ID',
 ];

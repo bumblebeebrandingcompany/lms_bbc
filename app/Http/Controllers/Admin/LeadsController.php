@@ -89,6 +89,10 @@ class LeadsController extends Controller
                 $query->where('leads.campaign_id', $request->input('campaign_id'));
             }
 
+            if(!empty($request->input('no_lead_id')) && $request->input('no_lead_id') === 'true') {
+                $query->whereNull('leads.sell_do_lead_id');
+            }
+
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');

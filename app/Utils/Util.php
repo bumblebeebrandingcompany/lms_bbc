@@ -241,7 +241,7 @@ class Util
                         }
                     }
                     $empty_replaced_values = array_values(array_filter($arr_value));
-                    $tag_replaced_req_body[$value['key']] = implode(', ', $empty_replaced_values);
+                    $tag_replaced_req_body[$value['key']] = implode(' | ', $empty_replaced_values);
                 } else {
                     $data_value = '';
                     if(

@@ -54,9 +54,17 @@
                     </select>
                 </div>
             @if(auth()->user()->is_superadmin)
+                <div class="col-md-3 mt-auto mb-2">
+                    <div class="form-check">
+                        <input class="form-check-input search" type="checkbox" id="no_lead_id" value="1">
+                        <label for="no_lead_id" class="form-check-label">
+                            @lang('messages.no_lead_id')
+                        </label>
+                    </div>
+                </div>
                 <div class="col-md-3">
                     <label></label>
-                    <button type="button" class="btn btn-block btn-outline-primary mt-2" id="send_bulk_outgoing_webhook">
+                    <button type="button" class="btn btn-block btn-outline-primary" id="send_bulk_outgoing_webhook">
                         @lang('messages.send_outgoing_webhook')
                     </button>
                 </div>
@@ -160,6 +168,7 @@
                     d.project_id = $("#project_id").val(),
                     d.campaign_id = $("#campaign_id").val(),
                     d.leads_status = $("#leads_status").val()
+                    d.no_lead_id = $("#no_lead_id").is(":checked")
                 }
             },
             columns: [
