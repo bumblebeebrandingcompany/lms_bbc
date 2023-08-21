@@ -205,7 +205,7 @@
                     </div>
                     <div class="row">
                         @php
-                            $tags = !empty($lead->lead_info) ? array_keys($lead->lead_info) : [];
+                            $tags = optional($source->project)->webhook_fields ?? [];
                             $email_label = __('messages.email');
                             $phone_label = __('messages.phone');
                             $name_label = __('messages.name');

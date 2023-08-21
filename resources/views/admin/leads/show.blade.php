@@ -198,7 +198,11 @@
                                         @if(is_string($response))
                                             {{$response}}
                                         @else
-                                        @if(isset($response['input']) && isset($response['response']))
+                                        @if(
+                                            !empty($response) &&
+                                            array_key_exists('input', $response) &&
+                                            array_key_exists('response', $response)
+                                        )
                                                 <div class="table-responsive">
                                                     <table class="table table-bordered table-striped text-nowrap">
                                                         <thead>

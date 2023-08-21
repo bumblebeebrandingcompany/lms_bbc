@@ -345,6 +345,26 @@
             storeGlobalClientsFilter();
         }, 1400);
     });
+
+    //validate if entered input is number only
+    $(document).on('input', 'input.input_number', function(event) {
+        const inputValue = $(this).val();
+        // Remove all non-digit characters
+        const digitsOnly = inputValue.replace(/\D/g, '');
+        // Check if the input starts with a plus sign
+        if (inputValue.startsWith('+')) {
+            // Allow the plus sign only at the beginning
+            if (digitsOnly.length <= 12) {
+                $(this).val('+' + digitsOnly);
+            } else {
+                // Limit to 12 digits after the plus sign
+                $(this).val('+' + digitsOnly.substring(0, 12));
+            }
+        } else {
+            // Limit to 10 digits
+            $(this).val(digitsOnly.substring(0, 10));
+        }
+    })
 });
 
     </script>

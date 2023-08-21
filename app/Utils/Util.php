@@ -63,9 +63,9 @@ class Util
     {
         $name = !empty($source->name_key) ? ($payload[$source->name_key] ?? '') : ($payload['name'] ?? '');
         $email = !empty($source->email_key) ? ($payload[$source->email_key] ?? '') : ($payload['email'] ?? '');
-        $additional_email = !empty($source->additional_email_key) ? ($payload[$source->additional_email_key] ?? '') : ($payload['email'] ?? '');
+        $additional_email = !empty($source->additional_email_key) ? ($payload[$source->additional_email_key] ?? '') : '';
         $phone = !empty($source->phone_key) ? ($payload[$source->phone_key] ?? '') : ($payload['phone'] ?? '');
-        $secondary_phone = !empty($source->secondary_phone_key) ? ($payload[$source->secondary_phone_key] ?? '') : ($payload['phone'] ?? '');
+        $secondary_phone = !empty($source->secondary_phone_key) ? ($payload[$source->secondary_phone_key] ?? '') : '';
 
         $lead = Lead::create([
             'source_id' => $source->id,
@@ -146,6 +146,7 @@ class Util
                 !empty($project->outgoing_apis) &&
                 !empty($lead)
             ) {
+                $sell_do_response = !empty($lead->sell_do_response) ? json_decode($lead->sell_do_response, true) : [];
                 foreach ($project->outgoing_apis as $api) {
                     $headers = !empty($api['headers']) ? json_decode($api['headers'], true) : [];
                     $request_body = $this->replaceTags($lead, $api);
@@ -162,7 +163,18 @@ class Util
                         $response = $this->postWebhook($api['url'], $api['method'], $headers, $request_body);
 
                         //checking this to save sell.do response only once in DB for a lead
-                        if(!$is_sell_do_executed && empty($lead->sell_do_response)){
+                        // or update if any error
+                        if(
+                            (
+                                !$is_sell_do_executed && 
+                                empty($sell_do_response)
+                            ) || 
+                            (
+                                !$is_sell_do_executed && 
+                                !empty($sell_do_response) &&
+                                !empty($sell_do_response['error'])
+                            )
+                        ){
                             if (strpos($api['url'], 'app.sell.do') !== false) {
                                 if(!empty($response['sell_do_lead_id'])){
 
@@ -228,7 +240,8 @@ class Util
                             $arr_value[] = $this->getPredefinedValue($field, $lead, $source);
                         }
                     }
-                    $tag_replaced_req_body[$value['key']] = implode(', ', $arr_value);
+                    $empty_replaced_values = array_values(array_filter($arr_value));
+                    $tag_replaced_req_body[$value['key']] = implode(', ', $empty_replaced_values);
                 } else {
                     $data_value = '';
                     if(
@@ -241,8 +254,6 @@ class Util
                 }
             }
         }
-
-        // print_r($tag_replaced_req_body);exit;
         return $tag_replaced_req_body;
     }
 

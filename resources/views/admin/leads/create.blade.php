@@ -33,13 +33,13 @@
                 <label for="phone" class="required">
                     @lang('messages.phone')
                 </label>
-                <input type="number" name="phone" id="phone" value="{{ old('phone') }}" class="form-control" required>
+                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" class="form-control input_number" required>
             </div>
             <div class="form-group">
                 <label for="secondary_phone_key">
                     @lang('messages.secondary_phone_key')
                 </label>
-                <input type="number" name="secondary_phone" id="secondary_phone_key" value="{{ old('secondary_phone')}}" class="form-control">
+                <input type="text" name="secondary_phone" id="secondary_phone_key" value="{{ old('secondary_phone')}}" class="form-control input_number">
             </div>
             <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
