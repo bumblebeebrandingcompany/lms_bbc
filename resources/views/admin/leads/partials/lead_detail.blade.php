@@ -4,7 +4,21 @@
             <label class="required">
                 @lang('messages.key')
             </label>
-            <input type="text" name="lead_details[{{$index}}][key]" value="{{$key ?? ''}}" class="form-control" required @if(isset($set_key_readonly) && $set_key_readonly) readonly @endif>
+            @if(isset($webhook_fields) && !empty($webhook_fields))
+                <select name="lead_details[{{$index}}][key]" class="form-control select-tags" required>
+                    <option value="">@lang('messages.please_select')</option>
+                    @foreach($webhook_fields as $webhook_field)
+                        <option value="{{$webhook_field}}"
+                            @if(isset($key) && !empty($key) && $key == $webhook_field)
+                                selected
+                            @endif>
+                            {{$webhook_field}}
+                        </option>
+                    @endforeach
+                </select>
+            @else
+                <input type="text" name="lead_details[{{$index}}][key]" value="{{$key ?? ''}}" class="form-control" required @if(isset($set_key_readonly) && $set_key_readonly) readonly @endif>
+            @endif
         </div>
     </div>
     <div class="col-md-6">

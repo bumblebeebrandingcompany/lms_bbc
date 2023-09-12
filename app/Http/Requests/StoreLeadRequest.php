@@ -23,16 +23,16 @@ class StoreLeadRequest extends FormRequest
                 'required'
             ],
             'email' => [
-                'required',
-                'email',
+                auth()->user()->is_superadmin ? '' : 'required',
+                auth()->user()->is_superadmin ? '' : 'email',
                 Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->where('project_id', $project_id);
+                    return $query->whereNotNull('email')->where('project_id', $project_id);
                 }),
             ],
             'phone' => [
-                'required',
+                auth()->user()->is_superadmin ? '' : 'required',
                 Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->where('project_id', $project_id);
+                    return $query->whereNotNull('phone')->where('project_id', $project_id);
                 }),
             ],
             'project_id' => [

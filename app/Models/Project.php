@@ -40,6 +40,7 @@ class Project extends Model implements HasMedia
         'location',
         'description',
         'webhook_fields',
+        'ref_prefix',
         'outgoing_apis',
         'created_at',
         'updated_at',
@@ -106,4 +107,29 @@ class Project extends Model implements HasMedia
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
+
+    /**
+	* set and get ref_count of project
+	*
+	* @param  $id
+	*/
+	public static function setAndGetReferenceCount($id)
+	{
+	    $project = Project::where('id', $id)
+	                ->first();
+
+        $project->ref_count = $project->ref_count + 1;
+        $project->save();
+
+	    return $project->ref_count;
+	}
+
+    public static function getProperty($id, $column)
+	{
+		$project = Project::where('id', $id)
+	                ->firstOrFail()
+                    ->toArray();
+                    
+        return $project[$column] ?? '';
+	}
 }

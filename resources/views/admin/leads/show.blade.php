@@ -20,6 +20,14 @@
                 <tbody>
                     <tr>
                         <th>
+                            {{ trans('messages.ref_num') }}
+                        </th>
+                        <td>
+                            {{ $lead->ref_num }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
                             @lang('messages.name')
                         </th>
                         <td>
@@ -183,7 +191,10 @@
             </table>
         </div>
         <!-- webhook response -->
-        @if(!empty($lead->webhook_response))
+        @if(
+            !(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) &&
+            !empty($lead->webhook_response)
+        )
             <h3>Webhook responses</h3>
             <div class="form-group">
                 <div class="table-responsive">

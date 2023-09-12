@@ -116,6 +116,7 @@
                                             </tr>
                                             @php
                                                 $lead_info = $lead->lead_info;
+                                                $existing_keys = array_keys($lead->lead_info);
                                                 if (
                                                     !empty($lead->source) && 
                                                     !empty($lead->source->name_key) && 
@@ -239,6 +240,9 @@
                                                                 selected
                                                             @endif>
                                                             {{$key}}
+                                                            @if(!empty($existing_keys) && in_array($key, $existing_keys))
+                                                                (@lang('messages.exist_in_recent_lead'))
+                                                            @endif
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -260,6 +264,9 @@
                                                                 selected
                                                             @endif>
                                                             {{$key}}
+                                                            @if(!empty($existing_keys) && in_array($key, $existing_keys))
+                                                                (@lang('messages.exist_in_recent_lead'))
+                                                            @endif
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -281,6 +288,9 @@
                                                                 selected
                                                             @endif>
                                                             {{$key}}
+                                                            @if(!empty($existing_keys) && in_array($key, $existing_keys))
+                                                                (@lang('messages.exist_in_recent_lead'))
+                                                            @endif
                                                         </option>
                                                     @endforeach
                                                 </select>
@@ -301,6 +311,9 @@
                                                             selected
                                                         @endif>
                                                         {{$key}}
+                                                        @if(!empty($existing_keys) && in_array($key, $existing_keys))
+                                                            (@lang('messages.exist_in_recent_lead'))
+                                                        @endif
                                                     </option>
                                                 @endforeach
                                             </select>
@@ -320,6 +333,9 @@
                                                             selected
                                                         @endif>
                                                         {{$key}}
+                                                        @if(!empty($existing_keys) && in_array($key, $existing_keys))
+                                                            (@lang('messages.exist_in_recent_lead'))
+                                                        @endif
                                                     </option>
                                                 @endforeach
                                             </select>

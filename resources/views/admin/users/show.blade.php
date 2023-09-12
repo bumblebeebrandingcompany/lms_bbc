@@ -22,6 +22,14 @@
                         <tbody>
                             <tr>
                                 <th>
+                                    {{ trans('messages.ref_num') }}
+                                </th>
+                                <td>
+                                    {{ $user->ref_num }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
                                     {{ trans('cruds.user.fields.name') }}
                                 </th>
                                 <td>

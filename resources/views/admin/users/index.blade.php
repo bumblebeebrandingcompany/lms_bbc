@@ -23,6 +23,9 @@
 
                     </th>
                     <th>
+                        @lang('messages.ref_num')
+                    </th>
+                    <th>
                         {{ trans('cruds.user.fields.name') }}
                     </th>
                     <th>
@@ -57,6 +60,7 @@
                 <tr>
                     <td>
                     </td>
+                    <td></td>
                     <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
@@ -155,6 +159,7 @@
             ajax: "{{ route('admin.users.index') }}",
             columns: [
                 { data: 'placeholder', name: 'placeholder' },
+                { data: 'ref_num', name: 'ref_num' },
                 { data: 'name', name: 'name' },
                 { data: 'representative_name', name: 'representative_name' },
                 { data: 'email', name: 'email' },

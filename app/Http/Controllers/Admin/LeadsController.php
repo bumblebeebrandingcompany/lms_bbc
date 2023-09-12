@@ -15,7 +15,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
 use App\Models\Source;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
+use App\Exports\LeadsExport;
+use Maatwebsite\Excel\Facades\Excel;
 class LeadsController extends Controller
 {
     /**
@@ -48,51 +51,8 @@ class LeadsController extends Controller
 
             $user = auth()->user();
 
-            $query = Lead::with(['project', 'campaign', 'source', 'createdBy'])
-                        ->select(sprintf('%s.*', (new Lead)->table));
+            $query = $this->util->getFIlteredLeads($request);
             
-            if ($request->has('leads_status')) {
-                $leads_status = $request->get('leads_status');
-                
-                if($leads_status == 'duplicate'){
-                    $query->where('sell_do_is_exist', 1);
-                } 
-                
-                if($leads_status == 'new'){
-                    $query->where('sell_do_is_exist', 0);
-                }
-            }
-
-            if($user->is_channel_partner_manager) {
-                $query = $query->whereHas('createdBy', function ($q) {
-                            $q->where('user_type', '=', 'ChannelPartner');
-                        });
-            } else {
-                $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
-                    if($user->is_channel_partner) {
-                        $q->where('leads.created_by', $user->id);
-                    } else {
-                        $q->whereIn('leads.project_id', $project_ids)
-                            ->orWhereIn('leads.campaign_id', $campaign_ids);
-                    }
-                });
-            }
-
-            $query->groupBy('id');
-
-            //filter leads
-            if(!empty($request->input('project_id'))) {
-                $query->where('leads.project_id', $request->input('project_id'));
-            }
-
-            if(!empty($request->input('campaign_id'))) {
-                $query->where('leads.campaign_id', $request->input('campaign_id'));
-            }
-
-            if(!empty($request->input('no_lead_id')) && $request->input('no_lead_id') === 'true') {
-                $query->whereNull('leads.sell_do_lead_id');
-            }
-
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -124,22 +84,36 @@ class LeadsController extends Controller
 
             $table->addColumn('overall_status', function ($row) {
                 $overall_status = '';
-
                 if($row->sell_do_is_exist){
-                    $overall_status .= '<b class="text-danger">Duplicate</b>';
+                    $overall_status = '<b class="text-danger">Duplicate</b>';
                 } else {
-                    $overall_status .= '<b class="text-success">New</b>';
+                    $overall_status = '<b class="text-success">New</b>';
                 }
-
-                if(!empty($row->sell_do_lead_id)){
-                    $overall_status .= '<br/> Lead ID: ' . $row->sell_do_lead_id;
-                }
-
-                if(!empty($row->sell_do_lead_created_at)){
-                    $overall_status .= '<br/>Created At: ' . $row->sell_do_lead_created_at;
-                }
-
                 return $overall_status;
+            });
+
+            $table->addColumn('sell_do_date', function ($row) {
+                $date = '';
+                if(!empty($row->sell_do_lead_created_at)){
+                    $date = Carbon::parse($row->sell_do_lead_created_at)->format('d/m/Y');
+                }
+                return $date;
+            });
+
+            $table->addColumn('sell_do_time', function ($row) {
+                $time = '';
+                if(!empty($row->sell_do_lead_created_at)){
+                    $time = Carbon::parse($row->sell_do_lead_created_at)->format('h:i A');
+                }
+                return $time;
+            });
+
+            $table->addColumn('sell_do_lead_id', function ($row) {
+                $sell_do_lead_id = '';
+                if(!empty($row->sell_do_lead_id)){
+                    $sell_do_lead_id = $row->sell_do_lead_id;
+                }
+                return $sell_do_lead_id; 
             });
 
             $table->addColumn('phone', function ($row) use($user) {
@@ -148,6 +122,15 @@ class LeadsController extends Controller
                     return maskNumber($phone);
                 } else {
                     return $phone;
+                }
+            });
+
+            $table->editColumn('secondary_phone', function ($row) use($user) {
+                $secondary_phone =  $row->secondary_phone ? $row->secondary_phone : '';
+                if(!empty($secondary_phone) && $user->is_channel_partner_manager) {
+                    return maskNumber($secondary_phone);
+                } else {
+                    return $secondary_phone;
                 }
             });
 
@@ -175,7 +158,7 @@ class LeadsController extends Controller
                 return $row->updated_at;
             });
 
-            $table->rawColumns(['actions', 'email', 'phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status']);
+            $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
 
             return $table->make(true);
         }
@@ -185,7 +168,11 @@ class LeadsController extends Controller
         $campaigns = Campaign::whereIn('id', $campaign_ids)
                         ->get();
 
-        return view('admin.leads.index', compact('projects', 'campaigns'));
+        $sources = Source::whereIn('project_id', $project_ids)
+                    ->whereIn('campaign_id', $campaign_ids)
+                    ->get();
+
+        return view('admin.leads.index', compact('projects', 'campaigns', 'sources'));
     }
 
     public function create()
@@ -226,6 +213,7 @@ class LeadsController extends Controller
             $input['source_id'] = $source->id;
         }
 
+        $input['ref_num'] = $this->util->generateLeadRefNum($input['project_id']);
         $lead = Lead::create($input);
         $this->util->storeUniqueWebhookFields($lead);
         if(!empty($lead->project->outgoing_apis)) {
@@ -310,8 +298,15 @@ class LeadsController extends Controller
     {
         if($request->ajax()) {
             $index = $request->get('index') + 1;
-            return view('admin.leads.partials.lead_detail')
-                ->with(compact('index'));
+            if(empty($request->get('project_id'))) {
+                return view('admin.leads.partials.lead_detail')
+                    ->with(compact('index'));
+            } else {
+                $project = Project::findOrFail($request->get('project_id'));
+                $webhook_fields = $project->webhook_fields ?? [];
+                return view('admin.leads.partials.lead_detail')
+                    ->with(compact('index', 'webhook_fields'));
+            }
         }
     }
 
@@ -367,5 +362,14 @@ class LeadsController extends Controller
                 return $response;
             }
         }
+    }
+
+    public function export(Request $request) 
+    {
+        if(!auth()->user()->is_superadmin) {
+            abort(403, 'Unauthorized.');
+        }
+        
+        return Excel::download(new LeadsExport($request), 'leads.xlsx');
     }
 }

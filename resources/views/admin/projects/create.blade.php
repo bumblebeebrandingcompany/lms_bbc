@@ -20,6 +20,11 @@
                 <span class="help-block">{{ trans('cruds.project.fields.name_helper') }}</span>
             </div>
             <div class="form-group">
+                <label class="required" for="ref_prefix">{{ trans('messages.ref_prefix') }}</label>
+                <input class="form-control" type="text" name="ref_prefix" id="ref_prefix" value="{{old('ref_prefix', '')}}">
+                <span class="help-block">{{ trans('messages.ref_prefix_help_text') }}</span>
+            </div>
+            <div class="form-group">
                 <label for="start_date">{{ trans('cruds.project.fields.start_date') }}</label>
                 <input class="form-control date {{ $errors->has('start_date') ? 'is-invalid' : '' }}" type="text" name="start_date" id="start_date" value="{{ old('start_date') }}">
                 @if($errors->has('start_date'))

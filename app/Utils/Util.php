@@ -66,9 +66,10 @@ class Util
         $additional_email = !empty($source->additional_email_key) ? ($payload[$source->additional_email_key] ?? '') : '';
         $phone = !empty($source->phone_key) ? ($payload[$source->phone_key] ?? '') : ($payload['phone'] ?? '');
         $secondary_phone = !empty($source->secondary_phone_key) ? ($payload[$source->secondary_phone_key] ?? '') : '';
-
+        $ref_num = $this->generateLeadRefNum($source->project_id);
         $lead = Lead::create([
             'source_id' => $source->id,
+            'ref_num' => $ref_num,
             'name' => $name ?? '',
             'email' => $email ?? '',
             'additional_email' => $additional_email ?? '',
@@ -562,5 +563,106 @@ class Util
                     ->toArray();
 
         return $projects;
+    }
+
+    /**
+	* generate lead ref no
+	*
+	* @param  $project_id
+	*/
+	public function generateReferenceNumber($ref_count, $ref_prefix)
+	{
+	    $ref_digits =  str_pad($ref_count, 4, 0, STR_PAD_LEFT);
+	    return $ref_prefix.$ref_digits;
+	}
+
+    public function generateLeadRefNum($project_id)
+    {
+        $ref_count = Project::setAndGetReferenceCount($project_id);
+        $ref_prefix = Project::getProperty($project_id, 'ref_prefix');
+
+        return $this->generateReferenceNumber($ref_count, $ref_prefix);
+    }
+
+    public function generateUserRefNum($user)
+    {
+        $prefixes = [
+            'Superadmin' => 'SU',
+            'Client' => 'CL',
+            'Agency' => 'AG',
+            'ChannelPartner' => 'CP',
+            'ChannelPartnerManager' => 'CPM',
+            'Elephantine' => 'EEPL'
+        ];
+        return $this->generateReferenceNumber($user->id, $prefixes[$user->user_type]);
+    }
+
+    public function getFIlteredLeads($request)
+    {
+        $user = auth()->user();
+        $__global_clients_filter = $this->getGlobalClientsFilter();
+        if(!empty($__global_clients_filter)) {
+            $project_ids = $this->getClientsProjects($__global_clients_filter);
+            $campaign_ids = $this->getClientsCampaigns($__global_clients_filter);
+        } else {
+            $project_ids = $this->getUserProjects($user);
+            $campaign_ids = $this->getCampaigns($user, $project_ids);
+        }
+
+        $query = Lead::with(['project', 'campaign', 'source', 'createdBy'])
+                ->select(sprintf('%s.*', (new Lead)->table));
+
+        if ($request->has('leads_status')) {
+            $leads_status = $request->get('leads_status');
+            
+            if($leads_status == 'duplicate'){
+                $query->where('sell_do_is_exist', 1);
+            } 
+            
+            if($leads_status == 'new'){
+                $query->where('sell_do_is_exist', 0);
+            }
+        }
+
+        if($user->is_channel_partner_manager) {
+            $query = $query->whereHas('createdBy', function ($q) {
+                        $q->where('user_type', '=', 'ChannelPartner');
+                    });
+        } else {
+            $query = $query->where(function ($q) use($project_ids, $campaign_ids, $user) {
+                if($user->is_channel_partner) {
+                    $q->where('leads.created_by', $user->id);
+                } else {
+                    $q->whereIn('leads.project_id', $project_ids)
+                        ->orWhereIn('leads.campaign_id', $campaign_ids);
+                }
+            });
+        }
+
+        $query->groupBy('id');
+
+        //filter leads
+        if(!empty($request->input('project_id'))) {
+            $query->where('leads.project_id', $request->input('project_id'));
+        }
+
+        if(!empty($request->input('campaign_id'))) {
+            $query->where('leads.campaign_id', $request->input('campaign_id'));
+        }
+
+        if(!empty($request->input('source'))) {
+            $query->where('leads.source_id', $request->input('source'));
+        }
+
+        if(!empty($request->input('no_lead_id')) && $request->input('no_lead_id') === 'true') {
+            $query->whereNull('leads.sell_do_lead_id');
+        }
+
+        if(!empty($request->input('start_date')) && !empty($request->input('end_date'))) {
+            $query->whereDate('leads.created_at', '>=', $request->input('start_date'))
+                ->whereDate('leads.created_at', '<=', $request->input('end_date'));
+        }
+
+        return $query;
     }
 }

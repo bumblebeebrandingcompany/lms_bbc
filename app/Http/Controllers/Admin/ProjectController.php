@@ -12,6 +12,7 @@ use App\Models\Client;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Source;
+use App\Models\Campaign;
 use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -128,7 +129,7 @@ class ProjectController extends Controller
 
         $project_details = $request->except('_token');
         $project_details['created_by_id'] = auth()->user()->id;
-
+        $project_details['ref_prefix'] = empty($project_details['ref_prefix']) ? 'REF' : $project_details['ref_prefix'];
         $project = Project::create($project_details);
 
         /*
@@ -171,7 +172,9 @@ class ProjectController extends Controller
     {
         abort_if((auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $project->update($request->all());
+        $project_details = $request->except(['_method', '_token']);
+        $project_details['ref_prefix'] = empty($project_details['ref_prefix']) ? 'REF' : $project_details['ref_prefix'];
+        $project->update($project_details);
 
         return redirect()->route('admin.projects.index');
     }
@@ -329,6 +332,42 @@ class ProjectController extends Controller
             $constant_key = $request->get('constant_key');
             return view('admin.projects.partials.constants')
                 ->with(compact('webhook_key', 'constant_key'));
+        }
+    }
+
+    public function getCampaignsDropdown(Request $request)
+    {
+        if ($request->ajax()) {
+            $campaigns = Campaign::where('project_id', $request->input('project_id'))
+                        ->pluck('campaign_name', 'id')
+                        ->toArray();
+
+            return view('admin.projects.partials.campaigns_dropdown')
+                ->with(compact('campaigns'));
+        }
+    }
+
+    public function getSourceDropdown(Request $request)
+    {
+        if($request->ajax()) {
+            $sources = Source::where('project_id', $request->input('project_id'))
+                        ->where('campaign_id', $request->input('campaign_id'))
+                        ->pluck('name', 'id')
+                        ->toArray();
+
+            return view('admin.projects.partials.sources_dropdown')
+                ->with(compact('sources'));
+        }
+    }
+
+    public function getAdditionalFieldsDropdown(Request $request)
+    {
+        if($request->ajax()) {
+            $project = Project::where('id', $request->input('project_id'))
+                        ->firstOrFail();
+
+            return view('admin.projects.partials.additional_fields_dropdown')
+                ->with(compact('project'));
         }
     }
 }

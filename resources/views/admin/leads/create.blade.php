@@ -18,10 +18,10 @@
                 <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
             </div>
             <div class="form-group">
-                <label for="email" class="required">
+                <label for="email" @if(!auth()->user()->is_superadmin) class="required" @endif>
                     @lang('messages.email')
                 </label>
-                <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control" required>
+                <input type="email" name="email" id="email" value="{{ old('email') }}" class="form-control" @if(!auth()->user()->is_superadmin) required @endif>
             </div>
             <div class="form-group">
                 <label for="additional_email_key">
@@ -30,10 +30,10 @@
                 <input type="email" name="additional_email" id="additional_email_key" value="{{ old('additional_email') }}" class="form-control">
             </div>
             <div class="form-group">
-                <label for="phone" class="required">
+                <label for="phone" @if(!auth()->user()->is_superadmin) class="required" @endif>
                     @lang('messages.phone')
                 </label>
-                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" class="form-control input_number" required>
+                <input type="text" name="phone" id="phone" value="{{ old('phone') }}" class="form-control input_number" @if(!auth()->user()->is_superadmin) required @endif>
             </div>
             <div class="form-group">
                 <label for="secondary_phone_key">
@@ -92,15 +92,17 @@
                     <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip" title="{{trans('messages.lead_details_help_text')}}"></i>
                 </h4>
                 <div class="lead_details">
-                    @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0])
+                    <!-- @includeIf('admin.leads.partials.lead_detail', ['key' => '', 'value' => '', $index = 0]) -->
                 </div>
             @endif
-            <input type="hidden" id="index_count" value="1">
+            <input type="hidden" id="index_count" value="-1">
             <div class="form-group">
                 @if(!auth()->user()->is_channel_partner)
-                    <button type="button" class="btn btn-outline-primary add_lead_detail"
-                        data-total="0">
+                    <button type="button" class="btn btn-outline-primary add_lead_detail">
                         @lang('messages.add_lead_detail')
+                    </button>
+                    <button type="button" class="btn btn-outline-primary add_prefilled_lead_detail">
+                        @lang('messages.add_prefilled_lead_detail')
                     </button>
                 @endif
                 <button class="btn btn-primary float-right" type="submit">
@@ -149,7 +151,9 @@
 
         $(document).on('change', '#project_id', function() {
             getCampaigns();
-            getLeadDetailsRowHtml();
+            let index = $("#index_count").val(-1);
+            $("div.lead_details").html('');
+            // getLeadDetailsRowHtml();
         });
 
         $(document).on('change', '#campaign_id', function() {
@@ -157,7 +161,7 @@
         });
 
         $(document).on('click', '.add_lead_detail', function() {
-            let index = $(this).attr('data-total');
+            let index = $("#index_count").val();
             $.ajax({
                 method:"GET",
                 url: "{{route('admin.lead.detail.html')}}",
@@ -167,7 +171,7 @@
                 dataType: "html",
                 success: function(response) {
                     $("div.lead_details").append(response);
-                    $(".add_lead_detail").attr('data-total', +index + 1);
+                    $("#index_count").val(+index + 1);
                 }
             });
         });
@@ -178,20 +182,38 @@
             }
         });
 
-        function getLeadDetailsRowHtml() {
+        // function getLeadDetailsRowHtml() {
+        //     $.ajax({
+        //         method:"GET",
+        //         url: "{{route('admin.lead.details.rows')}}",
+        //         data: {
+        //             project_id: $('#project_id').val()
+        //         },
+        //         dataType: "json",
+        //         success: function(response) {
+        //             $("div.lead_details").html(response.html);
+        //             $("#index_count").val(response.count);
+        //         }
+        //     });
+        // }
+
+        $(document).on('click', '.add_prefilled_lead_detail', function() {
+            let index = $("#index_count").val();
             $.ajax({
                 method:"GET",
-                url: "{{route('admin.lead.details.rows')}}",
+                url: "{{route('admin.lead.detail.html')}}",
                 data: {
+                    index: index,
                     project_id: $('#project_id').val()
                 },
-                dataType: "json",
+                dataType: "html",
                 success: function(response) {
-                    $("div.lead_details").html(response.html);
-                    $(".add_lead_detail").attr('data-total', response.count);
+                    $("div.lead_details").append(response);
+                    $("#index_count").val(+index + 1);
+                    $(".select-tags").select2();
                 }
             });
-        }
+        });
     });
 </script>
 @endsection

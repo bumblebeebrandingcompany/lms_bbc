@@ -37,6 +37,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('users', 'UsersController');
 
     // Project
+    Route::get('project-additional-fields', 'ProjectController@getAdditionalFieldsDropdown')->name('projects.additional.fields');
+    Route::get('project-campaigns', 'ProjectController@getCampaignsDropdown')->name('projects.campaigns');
+    Route::get('project-campaign-sources', 'ProjectController@getSourceDropdown')->name('projects.campaign.sources');
     Route::get('get-api-constant-row', 'ProjectController@getApiConstantRow')
         ->name('get.api.constant.row.html');
     Route::post('test-webhook', 'ProjectController@postTestWebhook')
@@ -62,6 +65,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('campaigns', 'CampaignController');
 
     // Leads
+    Route::get('leads/export', 'LeadsController@export')->name('leads.export');
     Route::post('send-mass-webhook', 'LeadsController@sendMassWebhook')->name('lead.send.mass.webhook');
     Route::get('lead-details-rows-html', 'LeadsController@getLeadDetailsRows')->name('lead.details.rows');
     Route::get('lead-detail-html', 'LeadsController@getLeadDetailHtml')->name('lead.detail.html');
