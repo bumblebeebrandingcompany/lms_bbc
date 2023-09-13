@@ -129,7 +129,6 @@ class ProjectController extends Controller
 
         $project_details = $request->except('_token');
         $project_details['created_by_id'] = auth()->user()->id;
-        $project_details['ref_prefix'] = empty($project_details['ref_prefix']) ? 'REF' : $project_details['ref_prefix'];
         $project = Project::create($project_details);
 
         /*
@@ -173,7 +172,6 @@ class ProjectController extends Controller
         abort_if((auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $project_details = $request->except(['_method', '_token']);
-        $project_details['ref_prefix'] = empty($project_details['ref_prefix']) ? 'REF' : $project_details['ref_prefix'];
         $project->update($project_details);
 
         return redirect()->route('admin.projects.index');

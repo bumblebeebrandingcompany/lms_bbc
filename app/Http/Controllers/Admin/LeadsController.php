@@ -158,6 +158,21 @@ class LeadsController extends Controller
                 return $row->updated_at;
             });
 
+            $table->filter(function ($query) {
+                $search = request()->get('search');
+                $search_term = $search['value'] ?? '';
+                if (request()->has('search') && !empty($search_term)) {
+                    $query->where(function($q) use($search_term) {
+                        $q->where('name', 'like', "%" . $search_term . "%")
+                            ->orWhere('ref_num', 'like', "%" . $search_term . "%")
+                            ->orWhere('email', 'like', "%" . $search_term . "%")
+                            ->orWhere('additional_email', 'like', "%" . $search_term . "%")
+                            ->orWhere('phone', 'like', "%" . $search_term . "%")
+                            ->orWhere('secondary_phone', 'like', "%" . $search_term . "%");
+                    });
+                }
+            });
+            
             $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
 
             return $table->make(true);
@@ -213,8 +228,10 @@ class LeadsController extends Controller
             $input['source_id'] = $source->id;
         }
 
-        $input['ref_num'] = $this->util->generateLeadRefNum($input['project_id']);
         $lead = Lead::create($input);
+        $lead->ref_num = $this->util->generateLeadRefNum($lead);
+        $lead->save();
+
         $this->util->storeUniqueWebhookFields($lead);
         if(!empty($lead->project->outgoing_apis)) {
             $this->util->sendApiWebhook($lead->id);

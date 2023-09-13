@@ -66,10 +66,8 @@ class Util
         $additional_email = !empty($source->additional_email_key) ? ($payload[$source->additional_email_key] ?? '') : '';
         $phone = !empty($source->phone_key) ? ($payload[$source->phone_key] ?? '') : ($payload['phone'] ?? '');
         $secondary_phone = !empty($source->secondary_phone_key) ? ($payload[$source->secondary_phone_key] ?? '') : '';
-        $ref_num = $this->generateLeadRefNum($source->project_id);
         $lead = Lead::create([
             'source_id' => $source->id,
-            'ref_num' => $ref_num,
             'name' => $name ?? '',
             'email' => $email ?? '',
             'additional_email' => $additional_email ?? '',
@@ -79,6 +77,9 @@ class Util
             'campaign_id' => $source->campaign_id,
             'lead_details' => $payload
         ]);
+
+        $lead->ref_num = $this->generateLeadRefNum($lead);
+        $lead->save();
 
         $this->storeUniqueWebhookFields($lead);
 
@@ -576,12 +577,9 @@ class Util
 	    return $ref_prefix.$ref_digits;
 	}
 
-    public function generateLeadRefNum($project_id)
+    public function generateLeadRefNum($lead)
     {
-        $ref_count = Project::setAndGetReferenceCount($project_id);
-        $ref_prefix = Project::getProperty($project_id, 'ref_prefix');
-
-        return $this->generateReferenceNumber($ref_count, $ref_prefix);
+        return $this->generateReferenceNumber($lead->id, 'LE');
     }
 
     public function generateUserRefNum($user)

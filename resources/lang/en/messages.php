@@ -85,8 +85,6 @@ return [
     'added_on' => 'Added on',
     'no_lead_id' => 'No Lead ID',
     'add_prefilled_lead_detail' => 'Add prefilled lead detail',
-    'ref_prefix' => 'Reference Prefix',
-    'ref_prefix_help_text' => "Prefix for reference number to be used in ref_num for project leads. default: 'REF'",
     'ref_num' => 'Ref num',
     'added_on' => 'Added on',
     'alternate_phone' => 'Alternate phone no.',
