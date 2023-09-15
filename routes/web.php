@@ -12,6 +12,15 @@ Route::get('/home', function () {
 Auth::routes(['register' => false]);
 
 //webhook receiver
+
+Route::any('webhook/call-activity', 'CallActivityController@store')->name('webhook.ca.store');
+Route::any('webhook/followup-conducted', 'FollowupConductedController@store')->name('webhook.fc.store');
+Route::any('webhook/followup-scheduled', 'FollowupScheduledController@store')->name('webhook.fs.store');
+Route::any('webhook/new-lead', 'NewLeadController@store')->name('webhook.nl.store');
+Route::any('webhook/note-activity', 'NoteActivityController@store')->name('webhook.na.store');
+Route::any('webhook/site-visit-conducted', 'SiteVisitConductedController@store')->name('webhook.svc.store');
+Route::any('webhook/site-visit-scheduled', 'SiteVisitScheduledController@store')->name('webhook.svs.store');
+
 Route::any('webhook/{secret}', 'Admin\WebhookReceiverController@processor')->name('webhook.processor');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
@@ -20,6 +29,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
         ->name('store.global.client.filter');
         
     Route::get('/', 'HomeController@index')->name('home');
+
+    Route::get('incoming-webhook/list', 'WebhookReceiverController@incomingWebhookList')->name('webhook.incoming.list');
+
     // Permissions
     Route::delete('permissions/destroy', 'PermissionsController@massDestroy')->name('permissions.massDestroy');
     Route::resource('permissions', 'PermissionsController');

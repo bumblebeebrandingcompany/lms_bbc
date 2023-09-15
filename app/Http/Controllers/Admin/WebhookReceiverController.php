@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Source;
 use App\Utils\Util;
+use Symfony\Component\HttpFoundation\Response;
 
 class WebhookReceiverController extends Controller
 {
@@ -34,5 +35,12 @@ class WebhookReceiverController extends Controller
             return response()->json($response['msg']); 
         }
         
+    }
+
+    public function incomingWebhookList(Request $request)
+    {
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+
+        return view('admin.webhook.index');
     }
 }

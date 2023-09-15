@@ -43,6 +43,16 @@
                         </a>
                     </li>
                 @endif
+                @if(auth()->user()->is_superadmin)
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs("admin.webhook.incoming.list") ? "active" : "" }}" href="{{ route("admin.webhook.incoming.list") }}">
+                            <i class="fas fa-satellite-dish nav-icon fa-fw"></i>
+                            <p>
+                                {{ trans('messages.webhook') }}
+                            </p>
+                        </a>
+                    </li>
+                @endif
                 @if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager)
                     <li class="nav-item has-treeview {{ request()->is("admin/permissions*") ? "menu-open" : "" }} {{ request()->is("admin/roles*") ? "menu-open" : "" }} {{ request()->is("admin/users*") ? "menu-open" : "" }} {{ request()->is("admin/audit-logs*") ? "menu-open" : "" }}">
                         <a class="nav-link nav-dropdown-toggle {{ request()->is("admin/permissions*") ? "active" : "" }} {{ request()->is("admin/roles*") ? "active" : "" }} {{ request()->is("admin/users*") ? "active" : "" }} {{ request()->is("admin/audit-logs*") ? "active" : "" }}" href="#">
