@@ -47,6 +47,8 @@ class NewLeadController extends Controller
 
             return response()->json(__('messages.success'));
         } catch (Exception $e) {
+            $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
+            \Log::info('New Lead:- '.$msg);
             return response()->json(__('messages.something_went_wrong')); 
         }
     }

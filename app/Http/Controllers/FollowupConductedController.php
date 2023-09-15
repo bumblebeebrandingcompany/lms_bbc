@@ -61,6 +61,8 @@ class FollowupConductedController extends Controller
 
             return response()->json(__('messages.success'));
         } catch (Exception $e) {
+            $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
+            \Log::info('Followup Conducted:- '.$msg);
             return response()->json(__('messages.something_went_wrong')); 
         }
     }

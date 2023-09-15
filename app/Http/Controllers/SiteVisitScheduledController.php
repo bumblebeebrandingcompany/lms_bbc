@@ -49,6 +49,8 @@ class SiteVisitScheduledController extends Controller
 
             return response()->json(__('messages.success'));
         } catch (Exception $e) {
+            $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
+            \Log::info('Site Visit Scheduled:- '.$msg);
             return response()->json(__('messages.something_went_wrong')); 
         }
     }

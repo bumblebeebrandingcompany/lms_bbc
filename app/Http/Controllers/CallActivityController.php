@@ -75,6 +75,8 @@ class CallActivityController extends Controller
 
             return response()->json(__('messages.success'));
         } catch (Exception $e) {
+            $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
+            \Log::info('Call Activity:- '.$msg);
             return response()->json(__('messages.something_went_wrong')); 
         }
     }

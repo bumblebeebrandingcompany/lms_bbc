@@ -40,6 +40,8 @@ class NoteActivityController extends Controller
 
             return response()->json(__('messages.success'));
         } catch (Exception $e) {
+            $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
+            \Log::info('Note Activity:- '.$msg);
             return response()->json(__('messages.something_went_wrong')); 
         }
     }
