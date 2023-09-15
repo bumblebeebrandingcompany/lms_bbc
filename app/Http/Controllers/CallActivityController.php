@@ -75,7 +75,6 @@ class CallActivityController extends Controller
 
             return response()->json(__('messages.success'));
         } catch (Exception $e) {
-            die($e);
             return response()->json(__('messages.something_went_wrong')); 
         }
     }
