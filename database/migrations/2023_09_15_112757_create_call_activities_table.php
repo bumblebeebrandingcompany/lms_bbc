@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('id_sell_do')->nullable();
             $table->string('booking_detail_id')->nullable();
-            $table->string('booking_detail_id')->nullable();
             $table->string('c2c')->nullable();
             $table->string('called_on')->nullable();
             $table->string('campaign_info_name')->nullable();
