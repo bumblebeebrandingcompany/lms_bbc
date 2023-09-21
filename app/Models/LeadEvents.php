@@ -5,16 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CallActivity extends Model
+class LeadEvents extends Model
 {
     use HasFactory;
 
-     /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'call_activities';
+    public $table = 'lead_events';
 
     /**
      * The attributes that aren't mass assignable.
@@ -29,6 +24,6 @@ class CallActivity extends Model
      * @var array
      */
     protected $casts = [
-        'additional_details' => 'array'
+        'webhook_data' => 'array',
     ];
 }

@@ -13,14 +13,10 @@ Auth::routes(['register' => false]);
 
 //webhook receiver
 
-Route::any('webhook/call-activity', 'CallActivityController@store')->name('webhook.ca.store');
-Route::any('webhook/followup-conducted', 'FollowupConductedController@store')->name('webhook.fc.store');
-Route::any('webhook/followup-scheduled', 'FollowupScheduledController@store')->name('webhook.fs.store');
-Route::any('webhook/new-lead', 'NewLeadController@store')->name('webhook.nl.store');
-Route::any('webhook/note-activity', 'NoteActivityController@store')->name('webhook.na.store');
-Route::any('webhook/site-visit-conducted', 'SiteVisitConductedController@store')->name('webhook.svc.store');
-Route::any('webhook/site-visit-scheduled', 'SiteVisitScheduledController@store')->name('webhook.svs.store');
-
+Route::any('webhook/new-lead', 'Admin\WebhookReceiverController@storeNewLead')
+    ->name('webhook.store.new.lead');
+Route::any('webhook/lead-activity', 'Admin\WebhookReceiverController@storeLeadActivity')
+    ->name('webhook.store.lead.activity');
 Route::any('webhook/{secret}', 'Admin\WebhookReceiverController@processor')->name('webhook.processor');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {

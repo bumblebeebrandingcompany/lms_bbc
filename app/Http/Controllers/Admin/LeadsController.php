@@ -280,7 +280,7 @@ class LeadsController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $lead->load('project', 'campaign', 'source', 'createdBy');
+        $lead->load('project', 'campaign', 'source', 'createdBy', 'events');
 
         return view('admin.leads.show', compact('lead'));
     }

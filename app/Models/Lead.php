@@ -51,6 +51,7 @@ class Lead extends Model
     protected $casts = [
         'lead_details' => 'array',
         'webhook_response' => 'array',
+        'lead_event_webhook_response' => 'array',
     ];
     
     protected function serializeDate(DateTimeInterface $date)
@@ -78,6 +79,11 @@ class Lead extends Model
         return $this->belongsTo(Campaign::class, 'campaign_id');
     }
 
+    public function events()
+    {
+        return $this->hasMany(LeadEvents::class, 'lead_id');
+    }
+    
     public function flattenData($datas)
     {
         $singleDimArr = [];

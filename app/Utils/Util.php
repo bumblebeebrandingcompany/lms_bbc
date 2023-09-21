@@ -663,4 +663,26 @@ class Util
 
         return $query;
     }
+
+    public function getLeadBySellDoLeadId($sell_do_lead_id)
+    {
+        $lead = Lead::where('sell_do_lead_id', $sell_do_lead_id)
+                ->first();
+        
+        return $lead;
+    }
+
+    public function getProjectBySellDoProjectId($campaign)
+    {
+        $sell_do_project_id = $campaign['project_id'] ?? '';
+
+        if(empty($sell_do_project_id)) {
+            return [];
+        }
+
+        $project = Project::where('outgoing_apis', 'like', '%'.$sell_do_project_id.'%')
+                    ->first();
+
+        return $project;
+    }
 }
