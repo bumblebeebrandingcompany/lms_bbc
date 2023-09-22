@@ -30,3 +30,8 @@
         {{ trans('messages.edit_password') }}
     </button>
 @endif
+@if(isset($docGuestViewGate) && $docGuestViewGate)
+    <a class="btn btn-xs btn-dark" target="_blank" href="{{ route('document.guest.view', $row->id) }}">
+        {{ trans('messages.guest_view') }}
+    </a>
+@endif

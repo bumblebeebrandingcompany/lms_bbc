@@ -18,7 +18,14 @@ use App\Models\Source;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\View;
 use App\Exports\LeadsExport;
+use App\Models\Document;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\LeadEvents;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\LeadDocumentShare;
+use Exception;
+
 class LeadsController extends Controller
 {
     /**
@@ -280,9 +287,20 @@ class LeadsController extends Controller
             abort(403, 'Unauthorized.');
         }
 
-        $lead->load('project', 'campaign', 'source', 'createdBy', 'events');
+        $lead->load('project', 'campaign', 'source', 'createdBy');
 
-        return view('admin.leads.show', compact('lead'));
+        $lead_events = LeadEvents::where('lead_id', $lead->id)
+                        ->select('event_type', 'webhook_data', 'created_at as added_at')
+                        ->orderBy('added_at', 'desc')
+                        ->get();
+        
+        $documents = Document::where(function($q) use($lead) {
+                            $q->where('project_id', $lead->project_id)
+                            ->orWhereNull('project_id');
+                        })
+                        ->get();
+
+        return view('admin.leads.show', compact('lead', 'lead_events', 'documents'));
     }
 
     public function destroy(Lead $lead)
@@ -388,5 +406,31 @@ class LeadsController extends Controller
         }
         
         return Excel::download(new LeadsExport($request), 'leads.xlsx');
+    }
+
+    public function shareDocument(Request $request, $lead_id, $doc_id)
+    {
+        try {
+
+            $lead = Lead::findOrFail($lead_id);
+            $document = Document::findOrFail($doc_id);
+
+            $mails = [];
+            if(!empty($lead->email)) {
+                $mails[$lead->email] = $lead->name ?? $lead->ref_num;
+            }
+
+            if(!empty($lead->additional_email)) {
+                $mails[$lead->additional_email] = $lead->name ?? $lead->ref_num;
+            }
+
+            if(!empty($mails)) {
+                Notification::route('mail', $mails)->notify(new LeadDocumentShare($lead, $document, auth()->user()));
+            }
+            $output = ['success' => true, 'msg' => __('messages.success')];
+        } catch (Exception $e) {
+            $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
+        }
+        return $output;
     }
 }

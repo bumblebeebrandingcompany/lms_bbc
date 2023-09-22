@@ -53,3 +53,5 @@ Thumbs.db
 /vendor
 .env
 composer.lock
+
+/public/storage

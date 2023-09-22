@@ -12,12 +12,13 @@ Route::get('/home', function () {
 Auth::routes(['register' => false]);
 
 //webhook receiver
-
 Route::any('webhook/new-lead', 'Admin\WebhookReceiverController@storeNewLead')
     ->name('webhook.store.new.lead');
 Route::any('webhook/lead-activity', 'Admin\WebhookReceiverController@storeLeadActivity')
     ->name('webhook.store.lead.activity');
 Route::any('webhook/{secret}', 'Admin\WebhookReceiverController@processor')->name('webhook.processor');
+
+Route::get('document/{id}/view', 'Admin\DocumentController@guestView')->name('document.guest.view');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
 
@@ -73,6 +74,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('campaigns', 'CampaignController');
 
     // Leads
+    Route::get('share-lead/{lead_id}/doc/{doc_id}', 'LeadsController@shareDocument')->name('share.lead.doc');
     Route::get('leads/export', 'LeadsController@export')->name('leads.export');
     Route::post('send-mass-webhook', 'LeadsController@sendMassWebhook')->name('lead.send.mass.webhook');
     Route::get('lead-details-rows-html', 'LeadsController@getLeadDetailsRows')->name('lead.details.rows');
@@ -103,6 +105,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     
     Route::get('system-calendar', 'SystemCalendarController@index')->name('systemCalendar');
     Route::get('global-search', 'GlobalSearchController@search')->name('globalSearch');
+
+    // Document
+    Route::post('documents/ckmedia', 'DocumentController@storeCKEditorImages')->name('documents.storeCKEditorImages');
+    Route::delete('documents/destroy', 'DocumentController@massDestroy')->name('documents.massDestroy');
+    Route::resource('documents', 'DocumentController');
 });
 Route::group(['prefix' => 'profile', 'as' => 'profile.', 'namespace' => 'Auth', 'middleware' => ['auth']], function () {
     // Change password

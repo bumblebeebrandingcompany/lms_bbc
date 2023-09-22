@@ -52,6 +52,14 @@
                             </p>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs("admin.documents.index") ? "active" : "" }}" href="{{ route("admin.documents.index") }}">
+                            <i class="fas fa-question-circle nav-icon fa-fw"></i>
+                            <p>
+                                {{ trans('messages.documents') }}
+                            </p>
+                        </a>
+                    </li>
                 @endif
                 @if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager)
                     <li class="nav-item has-treeview {{ request()->is("admin/permissions*") ? "menu-open" : "" }} {{ request()->is("admin/roles*") ? "menu-open" : "" }} {{ request()->is("admin/users*") ? "menu-open" : "" }} {{ request()->is("admin/audit-logs*") ? "menu-open" : "" }}">
