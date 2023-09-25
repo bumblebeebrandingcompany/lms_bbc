@@ -34,7 +34,6 @@ class LeadsController extends Controller
     */
     protected $util;
     protected $lead_view;
-    protected $lead_stages;
     /**
     * Constructor
     *
@@ -43,11 +42,6 @@ class LeadsController extends Controller
     {
         $this->util = $util;
         $this->lead_view = ['list', 'kanban'];
-        $this->lead_stages = [
-            'no_stage' => ['class' => 'card-secondary', 'title' => 'No stage'],
-            'prospect' => ['class' => 'card-primary', 'title' => 'Prospect'],
-            'incoming' => ['class' => 'card-info', 'title' => 'Incoming']
-        ];
     }
 
     public function index(Request $request)
@@ -206,7 +200,7 @@ class LeadsController extends Controller
             return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view'));
         } else{
             $stage_wise_leads = $this->util->getFIlteredLeads($request)->get()->groupBy('sell_do_stage');
-            $lead_stages = $this->lead_stages;
+            $lead_stages = Lead::getStages();
             $filters = $request->except(['view']);
             return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters'));
         }

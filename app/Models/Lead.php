@@ -115,4 +115,25 @@ class Lead extends Model
 
         return $lead_info;
     }
+
+    public static function getStages()
+    {
+        $stages = Lead::whereNotNull('sell_do_stage')
+                    ->pluck('sell_do_stage')
+                    ->toArray();
+
+        $unique_stages = array_unique($stages);
+        $unique_stages[] = 'no_stage';
+
+        $card_classes = ['card-primary', 'card-danger', 'card-success', 'card-info', 'card-warning', 'card-secondary', 'card-dark'];
+
+        $lead_stages = [];
+        foreach ($unique_stages as $stage) {
+            $lead_stages[$stage] = [
+                'class' => $card_classes[array_rand($card_classes)],
+                'title' => ucfirst(str_replace('_', ' ', $stage))
+            ];
+        }
+        return $lead_stages;
+    }
 }
