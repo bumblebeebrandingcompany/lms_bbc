@@ -11,7 +11,6 @@
     @includeIf('layouts.partials.css')
     @yield('styles')
 </head>
-
 <body class="sidebar-mini layout-fixed" style="height: auto;">
     <div class="wrapper">
         <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
@@ -21,7 +20,6 @@
                     <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
                 </li>
             </ul>
-
             <!-- Right navbar links -->
             @if(count(config('panel.available_languages', [])) > 1)
                 <ul class="navbar-nav ml-auto">
@@ -37,34 +35,16 @@
                     </li>
                 </ul>
             @endif
-
         </nav>
-
         @include('partials.menu')
-        <div class="content-wrapper" style="min-height: 917px;">
-            <!-- Main content -->
-            <section class="content" style="padding-top: 20px">
-                @if(session('message'))
-                    <div class="row mb-2">
-                        <div class="col-lg-12">
-                            <div class="alert alert-success" role="alert">{{ session('message') }}</div>
-                        </div>
-                    </div>
-                @endif
-                @if($errors->count() > 0)
-                    <div class="alert alert-danger">
-                        <ul class="list-unstyled">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+        <div class="content-wrapper" id="filter-container">
+            @yield('content_header')
+        </div>
+        <div class="content-wrapper kanban">
+            <section class="content pb-3">
                 @yield('content')
             </section>
-            <!-- /.content -->
         </div>
-
         <footer class="main-footer">
             <div class="float-right d-none d-sm-block">
                 {{config('app.name', 'Laravel')}} | Copyright <strong> &copy;</strong> {{Date('Y')}} {{ trans('global.allRightsReserved') }}

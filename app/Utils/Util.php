@@ -188,6 +188,10 @@ class Util
 
                                     $lead->sell_do_response = json_encode($response);
 
+                                    $lead->sell_do_status = isset($response['selldo_lead_details']['status']) ? $response['selldo_lead_details']['status'] : null;
+                                    
+                                    $lead->sell_do_stage = isset($response['selldo_lead_details']['stage']) ? $response['selldo_lead_details']['stage'] : null;
+                                    
                                     $lead->save();
 
                                 }

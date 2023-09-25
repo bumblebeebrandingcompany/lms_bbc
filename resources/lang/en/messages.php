@@ -105,4 +105,12 @@ return [
     'send_to_lead' => 'Send to lead',
     'guest_view' => 'Guest view',
     'profile' => 'Profile',
+    'list_view' => 'List view',
+    'kanban_view' => 'Kanban view',
+    'sell_do_created_date' => 'Sell.do created at',
+    'filter_leads' => 'Filter Leads',
+    'no_leads_found' => 'No leads found.',
+    'no_leads_selected' => 'No leads selected',
+    'sell_do_status' => 'Sell.do status',
+    'sell_do_stage' => 'Sell.do stage'
 ];

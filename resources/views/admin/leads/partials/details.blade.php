@@ -11,6 +11,14 @@
             </tr>
             <tr>
                 <th>
+                    @lang('messages.sell_do_lead_id')
+                </th>
+                <td>
+                    {!! $lead->sell_do_lead_id ?? '' !!}
+                </td>
+            </tr>
+            <tr>
+                <th>
                     @lang('messages.name')
                 </th>
                 <td>
@@ -145,7 +153,33 @@
                         {{$value}}
                     </td>
                 </tr>
-            @endforeach
+            @endforeach            
+            <tr>
+                <th>
+                    @lang('messages.sell_do_created_date')
+                </th>
+                <td>
+                    @if(!empty($lead->sell_do_lead_created_at))
+                        {{@format_datetime($lead->sell_do_lead_created_at)}}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @lang('messages.sell_do_status')
+                </th>
+                <td>
+                    {!! $lead->sell_do_status ?? '' !!}
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @lang('messages.sell_do_stage')
+                </th>
+                <td>
+                    {!! $lead->sell_do_stage ?? '' !!}
+                </td>
+            </tr>
             <tr>
                 <th>
                     @lang('messages.customer_comments')

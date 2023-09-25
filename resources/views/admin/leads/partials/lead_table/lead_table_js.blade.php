@@ -1,20 +1,3 @@
-if($(".date_range").length) {
-    $('.date_range').daterangepicker({
-        startDate: moment().subtract(29, 'days'),
-        endDate: moment(),
-        ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
-        locale: {
-            cancelLabel: 'Clear'
-        }
-    });
-}
 let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
 dtButtons.splice(4, 1);//remove excel button
 @if(auth()->user()->is_superadmin)
@@ -121,21 +104,5 @@ $(document).on('click', '#send_bulk_outgoing_webhook', function() {
         return
     }
 
-    if (confirm('{{ trans('global.areYouSure') }}')) {
-        $("#send_bulk_outgoing_webhook").attr('disabled', true);
-        $.ajax({
-            method:"POST",
-            url:"{{route('admin.lead.send.mass.webhook')}}",
-            data:{
-                lead_ids:selected_ids
-            },
-            dataType: "JSON",
-            success: function(response) {
-                $("#send_bulk_outgoing_webhook").attr('disabled', false);
-                if(response.msg) {
-                    alert(decodeURIComponent(response.msg));
-                }
-            }
-        })
-    }
+    sendOutgoingWebhooks(selected_ids);
 });

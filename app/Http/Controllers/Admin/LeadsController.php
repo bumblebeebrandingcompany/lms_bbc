@@ -33,7 +33,8 @@ class LeadsController extends Controller
     *
     */
     protected $util;
-
+    protected $lead_view;
+    protected $lead_stages;
     /**
     * Constructor
     *
@@ -41,10 +42,17 @@ class LeadsController extends Controller
     public function __construct(Util $util)
     {
         $this->util = $util;
+        $this->lead_view = ['list', 'kanban'];
+        $this->lead_stages = [
+            'no_stage' => ['class' => 'card-secondary', 'title' => 'No stage'],
+            'prospect' => ['class' => 'card-primary', 'title' => 'Prospect'],
+            'incoming' => ['class' => 'card-info', 'title' => 'Incoming']
+        ];
     }
 
     public function index(Request $request)
     {
+        $lead_view = empty($request->view) ? 'list' : (in_array($request->view, $this->lead_view) ? $request->view : 'list');
         $__global_clients_filter = $this->util->getGlobalClientsFilter();
         if(!empty($__global_clients_filter)) {
             $project_ids = $this->util->getClientsProjects($__global_clients_filter);
@@ -194,7 +202,14 @@ class LeadsController extends Controller
                     ->whereIn('campaign_id', $campaign_ids)
                     ->get();
 
-        return view('admin.leads.index', compact('projects', 'campaigns', 'sources'));
+        if(in_array($lead_view, ['list'])) {
+            return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view'));
+        } else{
+            $stage_wise_leads = $this->util->getFIlteredLeads($request)->get()->groupBy('sell_do_stage');
+            $lead_stages = $this->lead_stages;
+            $filters = $request->except(['view']);
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters'));
+        }
     }
 
     public function create()

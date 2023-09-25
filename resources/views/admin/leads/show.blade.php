@@ -5,7 +5,7 @@
             <h2>
                 Lead Profile  <small>{{ $lead->name ? ' - ' .$lead->name : '' }}</small>
             </h2>
-            <a class="btn btn-default float-right" href="{{ route('admin.leads.index') }}">
+            <a class="btn btn-default float-right" href="{{ route('admin.leads.index') }}" id="go_back_to_list_btn">
                 <i class="fas fa-chevron-left"></i>
                 {{ trans('global.back_to_list') }}
             </a>
@@ -93,6 +93,14 @@
                 const search_term = $(this).val();
                 faqList.search(search_term);
             });
+        }
+
+        //if came from kanban view, set last url
+        let leadListUrl = sessionStorage.getItem('leadListUrl');
+        const urlParams = leadListUrl? new URLSearchParams(leadListUrl) : '';
+        if(urlParams && urlParams.has('view') && (urlParams.get('view') == 'kanban')) {
+            $("#go_back_to_list_btn").attr('href', leadListUrl);
+            $("#lead_menu_link").attr('href', leadListUrl);
         }
     });
 </script>
