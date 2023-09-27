@@ -11,8 +11,25 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
+use App\Utils\Util;
+
 class DocumentController extends Controller
 {
+    /**
+    * All Utils instance.
+    *
+    */
+    protected $util;
+    
+    /**
+    * Constructor
+    *
+    */
+    public function __construct(Util $util)
+    {
+        $this->util = $util;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -43,6 +60,7 @@ class DocumentController extends Controller
                 $editGate      = $user->is_superadmin;
                 $deleteGate    = $user->is_superadmin;
                 $docGuestViewGate = $user->is_superadmin;
+                $docGuestViewUrl = $this->util->generateGuestDocumentViewUrl($row->id);
                 $crudRoutePart = 'documents';
 
                 return view('partials.datatablesActions', compact(
@@ -51,6 +69,7 @@ class DocumentController extends Controller
                     'deleteGate',
                     'crudRoutePart',
                     'docGuestViewGate',
+                    'docGuestViewUrl',
                     'row'
                 ));
             });

@@ -299,7 +299,7 @@ class LeadsController extends Controller
         $lead->load('project', 'campaign', 'source', 'createdBy');
 
         $lead_events = LeadEvents::where('lead_id', $lead->id)
-                        ->select('event_type', 'webhook_data', 'created_at as added_at')
+                        ->select('event_type', 'webhook_data', 'created_at as added_at', 'source')
                         ->orderBy('added_at', 'desc')
                         ->get();
         
@@ -419,11 +419,10 @@ class LeadsController extends Controller
 
     public function shareDocument(Request $request, $lead_id, $doc_id)
     {
+        $lead = Lead::findOrFail($lead_id);
+        $document = Document::findOrFail($doc_id);
+
         try {
-
-            $lead = Lead::findOrFail($lead_id);
-            $document = Document::findOrFail($doc_id);
-
             $mails = [];
             if(!empty($lead->email)) {
                 $mails[$lead->email] = $lead->name ?? $lead->ref_num;
@@ -435,9 +434,11 @@ class LeadsController extends Controller
 
             if(!empty($mails)) {
                 Notification::route('mail', $mails)->notify(new LeadDocumentShare($lead, $document, auth()->user()));
+                $this->util->logActivity($lead, 'document_sent', ['sent_by' => auth()->user()->id, 'document_id' => $doc_id, 'status' => 'sent', 'datetime' => Carbon::now()->toDateTimeString()]);
             }
             $output = ['success' => true, 'msg' => __('messages.success')];
         } catch (Exception $e) {
+            $this->util->logActivity($lead, 'document_sent', ['sent_by' => auth()->user()->id, 'document_id' => $doc_id, 'status' => 'failed', 'datetime' => Carbon::now()->toDateTimeString()]);
             $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
         }
         return $output;

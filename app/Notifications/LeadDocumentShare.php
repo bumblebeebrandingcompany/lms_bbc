@@ -6,7 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
+use App\Utils\Util;
 class LeadDocumentShare extends Notification
 {
     use Queueable;
@@ -40,11 +40,14 @@ class LeadDocumentShare extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $util = new Util();
+        $docGuestViewUrl = $util->generateGuestDocumentViewUrl($this->document->id);
+        
         return (new MailMessage)
             ->greeting('Hello '. $this->lead->name)
             ->subject($this->sharer->name.' has shared a new document.')
             ->line('A new document '.$this->document->title.' is shared with you. View the document by clicking the button below.')
-            ->action('View Document', route('document.guest.view', ['id' => $this->document->id]));
+            ->action('View Document', $docGuestViewUrl);
     }
 
     /**

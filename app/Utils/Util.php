@@ -4,6 +4,7 @@ namespace App\Utils;
 use App\Models\Campaign;
 use App\Models\Project;
 use App\Models\Lead;
+use App\Models\LeadEvents;
 use Illuminate\Support\Str;
 use Spatie\WebhookServer\WebhookCall;
 use GuzzleHttp\Client;
@@ -688,5 +689,21 @@ class Util
                     ->first();
 
         return $project;
+    }
+
+    public function generateGuestDocumentViewUrl($id)
+    {
+        return config('constants.DOCUMENT_URL')."/document/{$id}/view";
+    }
+
+    public function logActivity($lead, $type, $webhook_data, $source="leads_system")
+    {
+        LeadEvents::create([
+            'source' => $source,
+            'lead_id' => $lead->id,
+            'sell_do_lead_id' => $lead->sell_do_lead_id,
+            'event_type' => $type,
+            'webhook_data' => $webhook_data,
+        ]);
     }
 }

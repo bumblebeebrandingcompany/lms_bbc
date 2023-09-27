@@ -18,6 +18,8 @@
                                     bg-success
                                 @elseif($event->event_type == 'note_added')
                                     bg-info
+                                @elseif($event->event_type == 'document_sent')
+                                    bg-dark
                                 @else
                                     bg-olive
                                 @endif">
@@ -41,6 +43,8 @@
                             <i class="fas fa-certificate bg-green"></i>
                         @elseif($event->event_type == 'note_added')
                             <i class="far fa-sticky-note bg-info"></i>
+                        @elseif($event->event_type == 'document_sent')
+                            <i class="fas fa-file-alt bg-dark"></i>
                         @else
                             <i class="far fa-check-circle bg-olive"></i>
                         @endif
@@ -63,10 +67,17 @@
                                     text-success
                                 @elseif($event->event_type == 'note_added')
                                     text-info
+                                @elseif($event->event_type == 'document_sent')
+                                    text-dark
                                 @else
                                     text-olive
                                 @endif">
                                 {{ucfirst(str_replace('_', ' ', $event->event_type))}}
+                                <small class="text-muted">
+                                    (
+                                        {{ucfirst(str_replace('_', ' ', $event->source))}}
+                                    )
+                                </small>
                             </h3>
                             <div class="timeline-body">
                             @if($event->event_type == 'call_feedback_submitted')
@@ -83,8 +94,10 @@
                                 @includeIf('admin.leads.partials.event_details.followup')
                             @elseif($event->event_type == 'note_added')
                                 @includeIf('admin.leads.partials.event_details.note_added')
+                            @elseif($event->event_type == 'document_sent')
+                                @includeIf('admin.leads.partials.event_details.document_sent')
                             @else
-                                {{json_encode($event->webhook_data['payload'] ?? [])}}
+                                {{json_encode($event->webhook_data ?? [])}}
                             @endif
                             </div>
                         </div>
