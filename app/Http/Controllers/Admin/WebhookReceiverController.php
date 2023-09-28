@@ -61,12 +61,12 @@ class WebhookReceiverController extends Controller
             $req_data = $request->all();
 
             if(empty($req_data)) {
-                return response()->json(['message' => 'Request data is empty.'], 400);
+                return response()->json(['message' => 'Request data is empty.'], 200);
             }
 
             if(isset($req_data['lead_id']) && !empty($req_data['lead_id'])){
                 $lead = $this->util->getLeadBySellDoLeadId($req_data['lead_id']);
-                if(!empty($lead))  return response()->json(['message' => 'Lead is already present.'], 400);
+                if(!empty($lead))  return response()->json(['message' => 'Lead is already present.'], 200);
             }
 
             $details['name'] = ($req_data['lead']['first_name'] ?? '').' '.($req_data['lead']['last_name'] ?? '');
@@ -138,7 +138,7 @@ class WebhookReceiverController extends Controller
             $req_data = $request->all();
 
             if(empty($req_data)) {
-                return response()->json(['message' => 'Request data is empty.'], 400);
+                return response()->json(['message' => 'Request data is empty.'], 200);
             }
 
             if(isset($req_data['lead_id']) && !empty($req_data['lead_id'])){
