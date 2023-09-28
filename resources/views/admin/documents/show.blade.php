@@ -52,6 +52,22 @@
                                     {{ $document->createdBy->name ?? '' }}
                                 </td>
                             </tr>
+                            <tr>
+                                <th>
+                                    {{ trans('messages.files') }}
+                                </th>
+                                <td>
+                                    @if(!empty($document->files_url))
+                                        @foreach($document->files_url as $file)
+                                            <a href="{{$file['url'] ?? '#!'}}" target="_blank"
+                                                download="{{$file['file_name']}}" class="btn btn-outline-primary btn-sm m-2">
+                                                <i class="fas fa-download mr-1"></i>
+                                                {{$file['file_name']}}
+                                            </a>
+                                        @endforeach
+                                    @endif
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>

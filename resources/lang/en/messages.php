@@ -112,5 +112,12 @@ return [
     'no_leads_found' => 'No leads found.',
     'no_leads_selected' => 'No leads selected',
     'sell_do_status' => 'Sell.do status',
-    'sell_do_stage' => 'Sell.do stage'
+    'sell_do_stage' => 'Sell.do stage',
+    'upload_files' => 'Upload files',
+    'choose_file' => 'Choose file',
+    'files' => 'Files',
+    'remove' => 'Remove',
+    'existing_files' => 'Existing files',
+    'file' => 'File',
+    'action' => 'Action',
 ];

@@ -37,3 +37,4 @@
         <span class="text-danger">{{ $errors->first('details') }}</span>
     @endif
 </div>
+@includeIf('admin.documents.partials.files')

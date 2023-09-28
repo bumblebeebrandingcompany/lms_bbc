@@ -84,6 +84,30 @@
             }
             );
         }
+
+        $(document).on('click', '.remove-file', function(){
+            if (confirm('{{ trans('global.areYouSure') }}')) {
+                let url = $(this).attr('data-href');
+                let file = $(this).attr('data-file');
+                let row = $(this).closest('tr');
+                $.ajax({
+					method:"DELETE",
+					url: url,
+					data: {file : file},
+					dataType: "json",
+					success: function(response) {
+						if(response.success == true){
+                            if($(row).closest('tbody').find('tr').length <= 1) {
+                                $('.existing_files_div').remove();
+                            } else{
+                                $(row).remove();
+                            }
+						}
+                        alert(response.message);
+					}
+				});
+            }
+        });
     });
 </script>
 @endsection

@@ -12,7 +12,7 @@ use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
 use App\Utils\Util;
-
+use Illuminate\Support\Facades\Storage;
 class DocumentController extends Controller
 {
     /**
@@ -121,7 +121,7 @@ class DocumentController extends Controller
 
         $input = $request->except(['_token']);
         $input['created_by'] = auth()->user()->id;
-
+        $input['files'] = $this->uploadFiles($request);
         Document::create($input);
 
         return redirect()->route('admin.documents.index');
@@ -161,6 +161,10 @@ class DocumentController extends Controller
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $input = $request->except(['_method', '_token']);
+        $files = $this->uploadFiles($request);
+        if(!empty($files)) {
+            $input['files'] = array_merge($document->files, $files);
+        }
         $document->update($input);
 
         return redirect()->route('admin.documents.index');
@@ -206,5 +210,48 @@ class DocumentController extends Controller
         $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
+    }
+
+    public function uploadFiles($request)
+    {   
+        $files = [];
+        $uploadable_files = $request->file('files');
+        if(!empty($uploadable_files)) {
+            $file_path = config('constants.document_files_path');
+            //if path does not exist create it
+            if(!file_exists(storage_path('app/public/'.config('constants.document_files_path')))){
+                Storage::disk('public')->makeDirectory(config('constants.document_files_path'));
+            }
+            foreach ($uploadable_files as $file) {
+                $file_name = time().'_'.$file->getClientOriginalName();
+                $file->storeAs('public/'.$file_path, $file_name);
+                $files[] = $file_name;
+            }
+        }
+        return $files;
+    }
+    
+    public function removeFile(Request $request, $id)
+    {
+        try {
+
+            $file_name = $request->input('file');
+
+            $document = Document::findOrFail($id);
+
+            $file_path = storage_path('app/public/'.config('constants.document_files_path'));
+            if (!empty($file_name) && file_exists($file_path . "/" . $file_name)) {
+                unlink($file_path . "/" . $file_name);
+            }
+
+            $filteredFiles = array_diff($document->files, [$file_name]);
+            $document->files = $filteredFiles ?? [];
+            $document->save();
+
+            return response()->json(['success' => true, 'message' => __('messages.success')], 200);
+        } catch (\Exception $e) {
+            $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
+            return response()->json(['success' => false, 'message' => __('messages.something_went_wrong')], 404); 
+        }
     }
 }
