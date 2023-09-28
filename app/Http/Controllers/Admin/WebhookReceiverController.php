@@ -75,7 +75,7 @@ class WebhookReceiverController extends Controller
             $details['additional_email'] = $req_data['payload']['secondary_emails'][0]?? null;
             $details['secondary_phone'] = $req_data['payload']['secondary_phones'][0] ?? null;
             $details['sell_do_lead_id'] = $req_data['lead_id'] ?? null;
-            $details['sell_do_is_exist'] = 1;
+            $details['sell_do_is_exist'] = 0;
 
             $campaign_data = $req_data['payload']['campaign_responses'][0] ?? [];
             $project = $this->util->getProjectBySellDoProjectId($campaign_data);

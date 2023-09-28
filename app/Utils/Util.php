@@ -170,7 +170,8 @@ class Util
                         if(
                             (
                                 !$is_sell_do_executed && 
-                                empty($sell_do_response)
+                                empty($sell_do_response) &&
+                                empty($lead->sell_do_lead_id)
                             ) || 
                             (
                                 !$is_sell_do_executed && 
