@@ -178,6 +178,11 @@ class DocumentController extends Controller
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
+        if(!empty($document->files)) {
+            foreach ($document->files as $file) {
+                $this->__unlinkFile($file);
+            }
+        }
         $document->delete();
 
         return back();
@@ -187,9 +192,17 @@ class DocumentController extends Controller
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        Document::whereIn('id', request('ids'))
-            ->delete();
-
+        $documents = Document::whereIn('id', request('ids'))
+                    ->get();
+                    
+        foreach ($documents as $document) {
+            if(!empty($document->files)) {
+                foreach ($document->files as $file) {
+                    $this->__unlinkFile($file);
+                }
+            }
+            $document->delete();
+        }
         return back();
     }
 
@@ -237,14 +250,8 @@ class DocumentController extends Controller
         try {
 
             $file_name = $request->input('file');
-
             $document = Document::findOrFail($id);
-
-            $file_path = storage_path('app/public/'.config('constants.document_files_path'));
-            if (!empty($file_name) && file_exists($file_path . "/" . $file_name)) {
-                unlink($file_path . "/" . $file_name);
-            }
-
+            $this->__unlinkFile($file_name);
             $filteredFiles = array_diff($document->files, [$file_name]);
             $document->files = $filteredFiles ?? [];
             $document->save();
@@ -253,6 +260,14 @@ class DocumentController extends Controller
         } catch (\Exception $e) {
             $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
             return response()->json(['success' => false, 'message' => __('messages.something_went_wrong')], 404); 
+        }
+    }
+
+    protected function __unlinkFile($file_name)
+    {
+        $file_path = storage_path('app/public/'.config('constants.document_files_path'));
+        if (!empty($file_name) && file_exists($file_path . "/" . $file_name)) {
+            unlink($file_path . "/" . $file_name);
         }
     }
 }
