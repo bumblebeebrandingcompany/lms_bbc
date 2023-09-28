@@ -163,7 +163,8 @@ class DocumentController extends Controller
         $input = $request->except(['_method', '_token']);
         $files = $this->uploadFiles($request);
         if(!empty($files)) {
-            $input['files'] = array_merge($document->files, $files);
+            $existing_files = $document->files ?? [];
+            $input['files'] = array_merge($existing_files, $files);
         }
         $document->update($input);
 
