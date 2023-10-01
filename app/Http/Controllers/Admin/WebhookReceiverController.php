@@ -120,11 +120,11 @@ class WebhookReceiverController extends Controller
             
             $this->util->storeUniqueWebhookFields($lead);
 
-            return response()->json(['message' => __('messages.success'), 'lead' => $lead], 201);
+            //return response()->json(['message' => __('messages.success'), 'lead' => $lead], 201);
         } catch (Exception $e) {
             $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
             \Log::info('store new lead:- '.$msg);
-            return response()->json(['message' => __('messages.something_went_wrong')], 404);
+            //return response()->json(['message' => __('messages.something_went_wrong')], 404);
         }
     }
 
@@ -161,11 +161,11 @@ class WebhookReceiverController extends Controller
 
             $event = LeadEvents::create($activity);
             
-            return response()->json(['message' => __('messages.success'), 'event' => $event], 201);
+            //return response()->json(['message' => __('messages.success'), 'event' => $event], 201);
         } catch (Exception $e) {
             $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
             \Log::info('store lead activity:- '.$msg);
-            return response()->json(['message' => __('messages.something_went_wrong')], 404); 
+            //return response()->json(['message' => __('messages.something_went_wrong')], 404); 
         }
     }
 }
