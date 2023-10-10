@@ -174,6 +174,7 @@ class LeadsController extends Controller
                     $query->where(function($q) use($search_term) {
                         $q->where('name', 'like', "%" . $search_term . "%")
                             ->orWhere('ref_num', 'like', "%" . $search_term . "%")
+                            ->orWhere('sell_do_lead_id', 'like', "%" . $search_term . "%")
                             ->orWhere('email', 'like', "%" . $search_term . "%")
                             ->orWhere('additional_email', 'like', "%" . $search_term . "%")
                             ->orWhere('phone', 'like', "%" . $search_term . "%")
