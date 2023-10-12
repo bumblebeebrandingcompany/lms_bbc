@@ -49,7 +49,7 @@
                                     @if($label == 'datetime')
                                         {{@format_datetime($value)}}
                                     @else
-                                        {!!$value ?? ''!!}
+                                        {!! nl2br($value ?? '')!!}
                                     @endif
                                 </td>
                             </tr>

@@ -304,13 +304,11 @@ class LeadsController extends Controller
                         ->orderBy('added_at', 'desc')
                         ->get();
         
-        $documents = Document::where(function($q) use($lead) {
-                            $q->where('project_id', $lead->project_id)
-                            ->orWhereNull('project_id');
-                        })
-                        ->get();
+        $project_ids = $this->util->getUserProjects(auth()->user());
+        $projects_list = Project::whereIn('id', $project_ids)->pluck('name', 'id')
+                            ->toArray();
 
-        return view('admin.leads.show', compact('lead', 'lead_events', 'documents'));
+        return view('admin.leads.show', compact('lead', 'lead_events', 'projects_list'));
     }
 
     public function destroy(Lead $lead)
@@ -422,7 +420,7 @@ class LeadsController extends Controller
     {
         $lead = Lead::findOrFail($lead_id);
         $document = Document::findOrFail($doc_id);
-
+        $note = $request->input('note');
         try {
             $mails = [];
             if(!empty($lead->email)) {
@@ -434,12 +432,12 @@ class LeadsController extends Controller
             }
 
             if(!empty($mails)) {
-                Notification::route('mail', $mails)->notify(new LeadDocumentShare($lead, $document, auth()->user()));
-                $this->util->logActivity($lead, 'document_sent', ['sent_by' => auth()->user()->id, 'document_id' => $doc_id, 'status' => 'sent', 'datetime' => Carbon::now()->toDateTimeString()]);
+                Notification::route('mail', $mails)->notify(new LeadDocumentShare($lead, $document, auth()->user(), $note));
+                $this->util->logActivity($lead, 'document_sent', ['sent_by' => auth()->user()->id, 'document_id' => $doc_id, 'status' => 'sent', 'datetime' => Carbon::now()->toDateTimeString(), 'note' => $note]);
             }
             $output = ['success' => true, 'msg' => __('messages.success')];
         } catch (Exception $e) {
-            $this->util->logActivity($lead, 'document_sent', ['sent_by' => auth()->user()->id, 'document_id' => $doc_id, 'status' => 'failed', 'datetime' => Carbon::now()->toDateTimeString()]);
+            $this->util->logActivity($lead, 'document_sent', ['sent_by' => auth()->user()->id, 'document_id' => $doc_id, 'status' => 'failed', 'datetime' => Carbon::now()->toDateTimeString(), 'note' => $note]);
             $output = ['success' => false, 'msg' => __('messages.something_went_wrong')];
         }
         return $output;

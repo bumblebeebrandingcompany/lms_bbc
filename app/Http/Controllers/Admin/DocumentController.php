@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreDocumentRequest;
 use App\Http\Requests\UpdateDocumentRequest;
+use App\Models\Lead;
+use App\Models\LeadEvents;
 use App\Utils\Util;
 use Illuminate\Support\Facades\Storage;
 class DocumentController extends Controller
@@ -269,5 +271,33 @@ class DocumentController extends Controller
         if (!empty($file_name) && file_exists($file_path . "/" . $file_name)) {
             unlink($file_path . "/" . $file_name);
         }
+    }
+
+    public function getFilteredDocuments(Request $request)
+    {
+        if($request->ajax()) {
+            $query = new Document();
+            if(!empty($request->get('project_id'))) {
+                $query = $query->where('project_id', $request->get('project_id'));
+            }
+            $documents = $query->get();
+            $lead = Lead::findOrFail($request->get('lead_id'));
+            return view('admin.leads.partials.document_card')
+                ->with(compact('documents', 'lead'));
+        }
+    }
+
+    public function getDocumentLogs(Request $request)
+    {
+        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        
+        $activities = LeadEvents::with(['lead'])
+                        ->where('event_type', 'document_sent')
+                        ->select(['webhook_data', 'lead_id', 'sell_do_lead_id', 'created_at'])
+                        ->orderBy('created_at', 'desc')
+                        ->cursorPaginate(30);
+                        
+        return view('admin.documents.log')
+            ->with(compact('activities'));
     }
 }

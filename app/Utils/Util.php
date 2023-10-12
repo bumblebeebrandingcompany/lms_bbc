@@ -381,6 +381,11 @@ class Util
             in_array($field, ['predefined_source_field4'])
         ) {
             return optional($lead->source)->source_field4 ?? '';
+        } else if(
+            !empty($field) && 
+            in_array($field, ['predefined_lead_ref_no'])
+        ) {
+            return $lead->ref_num ?? '';
         }
     }
 

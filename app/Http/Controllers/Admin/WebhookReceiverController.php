@@ -48,7 +48,11 @@ class WebhookReceiverController extends Controller
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        return view('admin.webhook.index');
+        $new_leads_history = $this->__getLeadActivityHistory($request);
+        $leads_activities_history = $this->__getNewLeadActivityHistory($request);
+
+        return view('admin.webhook.index')
+            ->with(compact('new_leads_history', 'leads_activities_history'));
     }
 
     /**
@@ -76,7 +80,8 @@ class WebhookReceiverController extends Controller
             $details['secondary_phone'] = $req_data['payload']['secondary_phones'][0] ?? null;
             $details['sell_do_lead_id'] = $req_data['lead_id'] ?? null;
             $details['sell_do_is_exist'] = 0;
-
+            $details['sell_do_lead_created_at'] = $req_data['payload']['recieved_on'] ?? null;
+            
             $campaign_data = $req_data['payload']['campaign_responses'][0] ?? [];
             $project = $this->util->getProjectBySellDoProjectId($campaign_data);
             $details['project_id'] = !empty($project) ? $project->id : null;
@@ -167,5 +172,25 @@ class WebhookReceiverController extends Controller
             \Log::info('store lead activity:- '.$msg);
             //return response()->json(['message' => __('messages.something_went_wrong')], 404); 
         }
+    }
+
+    protected function __getLeadActivityHistory()
+    {
+        $leads = Lead::whereNotNull('lead_event_webhook_response')
+                ->orderBy('created_at', 'desc')
+                ->cursorPaginate(4);
+
+        return $leads;
+    }
+
+    protected function __getNewLeadActivityHistory()
+    {
+        $activities = LeadEvents::with(['lead'])
+                        ->whereNotIn('event_type', ['document_sent'])
+                        ->select(['webhook_data', 'lead_id', 'sell_do_lead_id', 'created_at', 'event_type'])
+                        ->orderBy('created_at', 'desc')
+                        ->cursorPaginate(4);
+                        
+        return $activities;
     }
 }

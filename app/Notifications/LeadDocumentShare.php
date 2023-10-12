@@ -14,15 +14,17 @@ class LeadDocumentShare extends Notification
     public $lead;
     public $document;
     public $sharer;
+    public $note;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($lead, $document, $sharer)
+    public function __construct($lead, $document, $sharer, $note)
     {
         $this->lead = $lead;
         $this->document = $document;
         $this->sharer = $sharer;
+        $this->note = $note;
     }
 
     /**
@@ -47,7 +49,8 @@ class LeadDocumentShare extends Notification
             ->greeting('Hello '. $this->lead->name)
             ->subject($this->sharer->name.' has shared a new document.')
             ->line('A new document '.$this->document->title.' is shared with you. View the document by clicking the button below.')
-            ->action('View Document', $docGuestViewUrl);
+            ->action('View Document', $docGuestViewUrl)
+            ->lineIf(!empty($this->note), "<u>Note</u>: ".nl2br($this->note));
     }
 
     /**

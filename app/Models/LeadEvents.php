@@ -26,4 +26,9 @@ class LeadEvents extends Model
     protected $casts = [
         'webhook_data' => 'array',
     ];
+
+    public function lead()
+    {
+        return $this->belongsTo(Lead::class, 'lead_id');
+    }
 }

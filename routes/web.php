@@ -107,6 +107,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::get('global-search', 'GlobalSearchController@search')->name('globalSearch');
 
     // Document
+    Route::get('document-logs', 'DocumentController@getDocumentLogs')->name('get.documents.log');
+    Route::get('get-filtered-documents', 'DocumentController@getFilteredDocuments')->name('documents.filtered');
     Route::delete('documents/{id}/file-remove', 'DocumentController@removeFile')->name('documents.remove.file');
     Route::post('documents/ckmedia', 'DocumentController@storeCKEditorImages')->name('documents.storeCKEditorImages');
     Route::delete('documents/destroy', 'DocumentController@massDestroy')->name('documents.massDestroy');

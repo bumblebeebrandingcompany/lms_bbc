@@ -33,7 +33,8 @@ class Lead extends Model
         'predefined_campaign_name', 'predefined_agency_name',
         'predefined_additional_email', 'predefined_secondary_phone',
         'predefined_source_field1','predefined_source_field2',
-        'predefined_source_field3','predefined_source_field4'
+        'predefined_source_field3','predefined_source_field4',
+        'predefined_lead_ref_no'
     ];
     
     /**

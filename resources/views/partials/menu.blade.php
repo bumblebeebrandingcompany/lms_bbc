@@ -52,13 +52,32 @@
                             </p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link {{ request()->routeIs("admin.documents.index") ? "active" : "" }}" href="{{ route("admin.documents.index") }}">
-                            <i class="fas fa-question-circle nav-icon fa-fw"></i>
+                    <li class="nav-item has-treeview {{ request()->is('admin/documents*') ? 'menu-open' : '' }} {{ request()->routeIs('admin.get.documents.log') ? 'menu-open' : '' }}">
+                        <a class="nav-link nav-dropdown-toggle {{ request()->is('admin/documents*') ? 'active' : '' }} {{ request()->routeIs('admin.get.documents.log') ? 'active' : '' }}" href="#">
+                            <i class=" fa-fw nav-icon fas fa-folder-open"></i>
                             <p>
-                                {{ trans('messages.documents') }}
+                                {{ trans('messages.documents_management') }}
+                                <i class="right fa fa-fw fa-angle-left nav-icon ml-3"></i>
                             </p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs("admin.documents.*") ? "active" : "" }}" href="{{ route("admin.documents.index") }}">
+                                    <i class="fas fa-question-circle nav-icon fa-fw"></i>
+                                    <p>
+                                        {{ trans('messages.documents') }}
+                                    </p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {{ request()->routeIs("admin.get.documents.log") ? "active" : "" }}" href="{{ route("admin.get.documents.log") }}">
+                                    <i class="fas fa-history nav-icon fa-fw"></i>
+                                    <p>
+                                        {{ trans('messages.document_logs') }}
+                                    </p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 @endif
                 @if(auth()->user()->is_superadmin || auth()->user()->is_channel_partner_manager)
