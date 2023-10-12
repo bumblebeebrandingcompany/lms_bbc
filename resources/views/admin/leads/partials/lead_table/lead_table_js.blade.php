@@ -41,8 +41,8 @@ let dtOverrideGlobals = {
         data: function (d) {
             d.project_id = $("#project_id").val();
             d.campaign_id = $("#campaign_id").val();
-            d.leads_status = $("#leads_status").val();
-            d.no_lead_id = $("#no_lead_id").is(":checked");
+            <!-- d.leads_status = $("#leads_status").val(); -->
+            <!-- d.no_lead_id = $("#no_lead_id").is(":checked"); -->
             if($("#source_id").length) {
                 d.source = $("#source_id").val();
             }
@@ -59,10 +59,10 @@ let dtOverrideGlobals = {
         { data: 'email', name: 'email' },
         { data: 'phone', name: 'phone' },
         { data: 'secondary_phone', name: 'secondary_phone' },
-        { data: 'overall_status', name: 'overall_status' },
-        { data: 'sell_do_date', name: 'sell_do_date', orderable: false, searchable: false },
-        { data: 'sell_do_time', name: 'sell_do_time', orderable: false, searchable: false },
-        { data: 'sell_do_lead_id', name: 'sell_do_lead_id', orderable: false, searchable: false },
+        <!-- { data: 'overall_status', name: 'overall_status' }, -->
+        <!-- { data: 'sell_do_date', name: 'sell_do_date', orderable: false, searchable: false }, -->
+        <!-- { data: 'sell_do_time', name: 'sell_do_time', orderable: false, searchable: false }, -->
+        <!-- { data: 'sell_do_lead_id', name: 'sell_do_lead_id', orderable: false, searchable: false }, -->
         { data: 'project_name', name: 'project.name' },
         { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
         { data: 'source_name', name: 'source.name' },
@@ -72,7 +72,7 @@ let dtOverrideGlobals = {
         { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,
-    order: [[ 14, 'desc' ]],
+    order: [[ 9, 'desc' ]],
     pageLength: 50,
 };
 let table = $('.datatable-Lead').DataTable(dtOverrideGlobals);

@@ -15,12 +15,12 @@
                 <b>{{ trans('messages.ref_num') }}</b> 
                 <a class="float-right">{{ $lead->ref_num }}</a>
             </li>
-            <li class="list-group-item">
+            <!-- <li class="list-group-item">
                 <b>@lang('messages.sell_do_lead_id')</b>
                 <a class="float-right">
                     {!! $lead->sell_do_lead_id ?? '' !!}
                 </a>
-            </li>
+            </li> -->
             <li class="list-group-item">
                 <b> @lang('messages.email')</b>
                 <a class="float-right">
@@ -134,26 +134,26 @@
                     </a>
                 </li>
             @endforeach
-            <li class="list-group-item">
+            <!-- <li class="list-group-item">
                 <b>@lang('messages.sell_do_created_date')</b>
                 <a class="float-right">
                     @if(!empty($lead->sell_do_lead_created_at))
                         {{@format_datetime($lead->sell_do_lead_created_at)}}
                     @endif
                 </a>
-            </li>
-            <li class="list-group-item">
+            </li> -->
+            <!-- <li class="list-group-item">
                 <b>@lang('messages.sell_do_status')</b>
                 <a class="float-right">
                     {!! $lead->sell_do_status ?? '' !!}
                 </a>
-            </li>
-            <li class="list-group-item">
+            </li> -->
+            <!-- <li class="list-group-item">
                 <b>@lang('messages.sell_do_stage')</b>
                 <a class="float-right">
                     {!! $lead->sell_do_stage ?? '' !!}
                 </a>
-            </li>
+            </li> -->
             <li class="list-group-item">
                 <b>@lang('messages.customer_comments')</b>
                 <a class="float-right">

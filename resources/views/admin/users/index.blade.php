@@ -49,9 +49,9 @@
                     <th>
                         {{ trans('cruds.user.fields.agency') }}
                     </th>
-                    <th>
+                    <!-- <th>
                         @lang('messages.assigned_projects')
-                    </th>
+                    </th> -->
                     <th>@lang('messages.added_on')</th>
                     <th>
                         &nbsp;
@@ -104,7 +104,7 @@
                             </select>
                         @endif
                     </td>
-                    <td></td>
+                    <!-- <td></td> -->
                     <td></td>
                     <td>
                     </td>
@@ -168,7 +168,7 @@
                 { data: 'website', name: 'website' },
                 { data: 'client_name', name: 'client.name' },
                 { data: 'agency_name', name: 'agency.name' },
-                { data: 'assigned_projects', name: 'assigned_projects' },
+                // { data: 'assigned_projects', name: 'assigned_projects' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'actions', name: '{{ trans('global.actions') }}' }
             ],

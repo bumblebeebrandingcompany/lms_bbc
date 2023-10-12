@@ -78,7 +78,7 @@ class UsersController extends Controller
             });
 
             $table->editColumn('user_type', function ($row) {
-                return $row->user_type ? User::USER_TYPE_RADIO[$row->user_type] : '';
+                return $row->user_type ? (User::USER_TYPE_RADIO[$row->user_type] ?? '') : '';
             });
             $table->editColumn('contact_number_1', function ($row) {
                 return $row->contact_number_1 ? $row->contact_number_1 : '';

@@ -44,14 +44,14 @@
                     </li>
                 @endif
                 @if(auth()->user()->is_superadmin)
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs("admin.webhook.incoming.list") ? "active" : "" }}" href="{{ route("admin.webhook.incoming.list") }}">
                             <i class="fas fa-satellite-dish nav-icon fa-fw"></i>
                             <p>
                                 {{ trans('messages.webhook') }}
                             </p>
                         </a>
-                    </li>
+                    </li> -->
                     <li class="nav-item has-treeview {{ request()->is('admin/documents*') ? 'menu-open' : '' }} {{ request()->routeIs('admin.get.documents.log') ? 'menu-open' : '' }}">
                         <a class="nav-link nav-dropdown-toggle {{ request()->is('admin/documents*') ? 'active' : '' }} {{ request()->routeIs('admin.get.documents.log') ? 'active' : '' }}" href="#">
                             <i class=" fa-fw nav-icon fas fa-folder-open"></i>

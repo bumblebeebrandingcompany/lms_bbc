@@ -599,8 +599,8 @@ class Util
             'Superadmin' => 'SU',
             'Client' => 'CL',
             'Agency' => 'AG',
-            'ChannelPartner' => 'CP',
-            'ChannelPartnerManager' => 'CPM',
+            // 'ChannelPartner' => 'CP',
+            // 'ChannelPartnerManager' => 'CPM',
             'Elephantine' => 'EEPL'
         ];
         return $this->generateReferenceNumber($user->id, $prefixes[$user->user_type]);

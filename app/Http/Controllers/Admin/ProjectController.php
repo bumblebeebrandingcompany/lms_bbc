@@ -134,18 +134,18 @@ class ProjectController extends Controller
         /*
         *create default source for project
         */
-        if(!empty($project)) {
-            $webhook_secret = $this->util->generateWebhookSecret();
-            Source::create(
-                [
-                    'name' => 'Channel Partner',
-                    'is_cp_source' => 1,
-                    'source_name' => 'Channel Partner',
-                    'webhook_secret' => $webhook_secret,
-                    'project_id' => $project->id
-                ]
-            );
-        }
+        // if(!empty($project)) {
+        //     $webhook_secret = $this->util->generateWebhookSecret();
+        //     Source::create(
+        //         [
+        //             'name' => 'Channel Partner',
+        //             'is_cp_source' => 1,
+        //             'source_name' => 'Channel Partner',
+        //             'webhook_secret' => $webhook_secret,
+        //             'project_id' => $project->id
+        //         ]
+        //     );
+        // }
 
         if ($media = $request->input('ck-media', false)) {
             Media::whereIn('id', $media)->update(['model_id' => $project->id]);

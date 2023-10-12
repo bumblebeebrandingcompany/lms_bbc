@@ -70,7 +70,7 @@
                             <input class="form-control date_range" type="text" name="date" id="added_on" readonly>
                         </div>
                     @endif
-                    <div class="col-md-3">
+                    <!-- <div class="col-md-3">
                         <label for="leads_status">
                             @lang('messages.status')
                         </label>
@@ -79,8 +79,8 @@
                             <option value="new" @if(isset($filters['leads_status']) && $filters['leads_status'] == 'new') selected @endif>New</option>
                             <option value="duplicate" @if(isset($filters['leads_status']) && $filters['leads_status'] == 'duplicate') selected @endif>Duplicate</option>
                         </select>
-                    </div>
-                    @if(auth()->user()->is_superadmin)
+                    </div> -->
+                    <!-- @if(auth()->user()->is_superadmin)
                         <div class="col-md-3 mt-auto mb-2">
                             <div class="form-check">
                                 <input class="form-check-input search" type="checkbox" id="no_lead_id" value="1" @if(isset($filters['no_lead_id']) && $filters['no_lead_id'] != 'false') checked @endif>
@@ -89,7 +89,7 @@
                                 </label>
                             </div>
                         </div>
-                    @endif
+                    @endif -->
                     @if($lead_view == 'kanban')
                         <div class="col-md-3">
                             <label></label>

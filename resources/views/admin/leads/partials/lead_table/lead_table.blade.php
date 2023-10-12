@@ -19,7 +19,7 @@
             <th>
                 @lang('messages.alternate_phone')
             </th>
-            <th>
+            <!-- <th>
                 @lang('messages.status')
             </th>
             <th>
@@ -30,7 +30,7 @@
             </th>
             <th>
                 @lang('messages.sell_do_lead_id')
-            </th>
+            </th> -->
             <th>
                 {{ trans('cruds.lead.fields.project') }}
             </th>

@@ -20,7 +20,7 @@
                             <h5 class="card-title">
                                 {{ucfirst($lead->name ?? '')}} 
                                 <small>
-                                    {!!$lead->sell_do_lead_id ? ('(<code>#'.$lead->sell_do_lead_id.'</code>)') : ''!!}
+                                    {!!$lead->ref_num ? ('(<code>'.$lead->ref_num.'</code>)') : ''!!}
                                 </small>
                             </h5>
                             <div class="card-tools">
@@ -60,10 +60,10 @@
                                         {{ $lead->phone ?? '' }}
                                     @endif
                                 </div>
-                                <div class="col-md-12">
+                                <!-- <div class="col-md-12">
                                     <strong>@lang('messages.status')</strong>:
                                     {{$lead->sell_do_status}}
-                                </div>
+                                </div> -->
                                 <div class="col-md-12">
                                     <strong>{{ trans('cruds.lead.fields.project') }}</strong>:
                                     {{$lead->project->name ?? ''}}
@@ -77,9 +77,9 @@
                                     {{$lead->source->name ?? ''}}
                                 </div>
                                 <div class="col-md-12">
-                                    <strong>@lang('messages.sell_do_created_date')</strong>:
-                                    @if(!empty($lead->sell_do_lead_created_at))
-                                        {{@format_datetime($lead->sell_do_lead_created_at)}}
+                                    <strong>@lang('messages.created_at')</strong>:
+                                    @if(!empty($lead->created_at))
+                                        {{@format_datetime($lead->created_at)}}
                                     @endif
                                 </div>
                             </div>

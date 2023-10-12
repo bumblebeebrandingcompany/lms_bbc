@@ -47,8 +47,8 @@ class User extends Authenticatable
         'Superadmin' => 'Superadmin',
         'Client'     => 'Client',
         'Agency'     => 'Agency',
-        'ChannelPartner' => 'Channel Partner',
-        'ChannelPartnerManager' => 'Channel Partner Manager'
+        // 'ChannelPartner' => 'Channel Partner',
+        // 'ChannelPartnerManager' => 'Channel Partner Manager'
     ];
 
     /**
