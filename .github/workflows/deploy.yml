@@ -4,8 +4,8 @@ on: workflow_dispatch
 
 #on:
   #push:
-   branches:
-     - stages  # Adjust the branch name as needed
+   #branches:
+    # - stages  # Adjust the branch name as needed
 
 jobs:
   deploy:
