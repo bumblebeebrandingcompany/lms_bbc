@@ -779,7 +779,7 @@
         // Check the selected option and display the corresponding modal
         if (selectedName === 'followup') {
             document.getElementById('followUpContent').style.display = 'block';
-        } else if (selectedName === 'site visitscheduled') {
+        } else if (selectedName === 'site visit scheduled') {
             document.getElementById('siteVisitContent').style.display = 'block';
         } else if (selectedName === 'rescheduled') {
             document.getElementById('rescheduleContent').style.display = 'block';
