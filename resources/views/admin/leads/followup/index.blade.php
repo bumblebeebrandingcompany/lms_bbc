@@ -1,5 +1,4 @@
 @extends('layouts.admin')
-
 @section('content')
     <h1>Lead Follow Up List</h1>
     <div class="card">
@@ -14,6 +13,10 @@
                         <select class="form-control" id="date_range">
                             <option value="today">Today</option>
                             <option value="yesterday">Yesterday</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="this_week">This Week</option>
+                            <option value="next_60_days" selected>Next 60 Days</option>
+                            <option value="next_30_days">Next 30 Days</option>
                             <option value="last_week">Last Week</option>
                             <option value="last_30_days">Last 30 Days</option>
                             <option value="last_60_days" selected>Last 60 Days</option>
@@ -31,10 +34,12 @@
                 </div>
             </div>
 
-            <table class="table" id="followUpTable">
+            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followup" id="followUpTable">
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>Reference Number</th>
+                        <th>Parent Name</th>
                         <th>Campaign Name</th>
                         <th>Follow-Up Date</th>
                         <th>Follow-Up Time</th>
@@ -44,12 +49,24 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                    $counter = 1;
+                @endphp
                     @foreach ($followUps as $followUp)
-                        <tr data-created-at="{{ $followUp->created_at->format('Y-m-d') }}">
+
+                        <tr data-created-at="{{ $followUp->follow_up_date}}">
+                            <td>{{ $counter++ }}</td>
                             <td>
                                 @foreach ($lead as $leads)
                                     @if ($leads->id === $followUp->lead_id)
                                         {{ $leads->ref_num }}
+                                    @endif
+                                @endforeach
+                            </td>
+                            <td>
+                                @foreach ($lead as $leads)
+                                    @if ($leads->id === $followUp->lead_id)
+                                        {{ $leads->name }}
                                     @endif
                                 @endforeach
                             </td>
@@ -95,12 +112,12 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Initialize the date range picker
             $('#custom_range').daterangepicker();
 
             // Show/hide the custom range container based on the selected option
-            $('#date_range').change(function () {
+            $('#date_range').change(function() {
                 var selectedOption = $(this).val();
                 if (selectedOption === 'custom') {
                     $('#custom_range_container').show();
@@ -111,7 +128,7 @@
             });
 
             // Handle filtering when the custom range is selected
-            $('#custom_range').change(function () {
+            $('#custom_range').change(function() {
                 var customRange = $(this).val();
                 filterTable('custom', customRange);
             });
@@ -138,13 +155,30 @@
                         startDate = moment().subtract(59, 'days').startOf('day');
                         endDate = moment().endOf('day');
                         break;
+                    case 'next_60_days':
+                        startDate = moment().startOf('day');
+                        endDate = moment().add(59, 'days').startOf('day');
+
+                        break;
                     case 'last_year':
                         startDate = moment().subtract(1, 'year').startOf('day');
                         endDate = moment().endOf('day');
                         break;
-                        case 'last_week':
+                    case 'last_week':
                         startDate = moment().subtract(1, 'week').startOf('week');
                         endDate = moment().subtract(1, 'week').endOf('week');
+                        break;
+                    case 'next_30_days':
+                        startDate = moment().startOf('day');
+                        endDate = moment().add(29, 'days').endOf('day');
+                        break;
+                    case 'this_week':
+                        startDate = moment().add(1, 'week').startOf('week');
+                        endDate = moment().add(1, 'week').endOf('week');
+                        break;
+                    case 'tomorrow':
+                        startDate = moment().add(1, 'day').startOf('day');
+                        endDate = moment().add(1, 'day').endOf('day');
                         break;
                     case 'custom':
                         if (customRange) {
@@ -156,7 +190,7 @@
                 }
 
                 // Filter the table rows based on the calculated start and end dates
-                $('#followUpTable tbody tr').hide().filter(function () {
+                $('#followUpTable tbody tr').hide().filter(function() {
                     var createdDate = $(this).data('created-at');
                     return moment(createdDate, 'YYYY-MM-DD').isBetween(startDate, endDate, null, '[]');
                 }).show();

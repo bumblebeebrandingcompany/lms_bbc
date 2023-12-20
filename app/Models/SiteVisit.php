@@ -28,6 +28,10 @@ class SiteVisit extends Model
         'lead_id',
         'user_id'
     ];
+
+    protected $fillable = [
+        'parent_stage_id'
+    ];
     public function users()
     {
         return $this->belongsTo(User::class, 'user_id');

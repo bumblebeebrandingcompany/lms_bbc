@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
-use App\Models\Client;
+use App\Models\Clients;
 use Illuminate\Support\Facades\Blade;
 class AppServiceProvider extends ServiceProvider
 {
@@ -44,7 +44,7 @@ class AppServiceProvider extends ServiceProvider
                 return null;
             }
         });
-        
+
         Blade::directive('get_diff_for_humans', function ($date) {
             if (!empty($date)) {
                 return "\Carbon\Carbon::createFromTimestamp(strtotime($date))->diffForHumans()";
@@ -59,8 +59,8 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
 
             $__global_clients_filter = request()->session()->get('__global_clients_filter', []);
-            $__global_clients_drpdwn = Client::pluck('name', 'id')->toArray();
-            
+            $__global_clients_drpdwn = Clients::pluck('name', 'id')->toArray();
+
             $view->with(compact('__global_clients_filter', '__global_clients_drpdwn'));
         });
     }

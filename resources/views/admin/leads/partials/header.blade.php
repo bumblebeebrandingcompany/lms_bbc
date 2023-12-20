@@ -5,14 +5,23 @@
         </h2>
         <div class="cta">
             <div class="btn-group btn-group-toggle mr-2" data-toggle="buttons">
+                <label class="btn btn-outline-secondary @if($lead_view == 'kanban') active @endif">
+                    <input type="radio" name="toggle_view" class="toggle_view" id="kanban" value="kanban" @if($lead_view == 'kanban') checked @endif>
+                    @lang('messages.kanban_view')
+                </label>
                 <label class="btn btn-outline-secondary @if($lead_view == 'list') active @endif">
+                    <input type="radio" name="toggle_view" class="toggle_view" id="list" value="list" @if($lead_view == 'list') checked @endif>
+                    @lang('messages.list_view')
+                </label>
+
+                {{-- <label class="btn btn-outline-secondary @if($lead_view == 'list') active @endif">
                     <input type="radio" name="toggle_view" class="toggle_view" id="list" value="list" @if($lead_view == 'list') checked @endif>
                     @lang('messages.list_view')
                 </label>
                 <label class="btn btn-outline-secondary @if($lead_view == 'kanban') active @endif">
                     <input type="radio" name="toggle_view" class="toggle_view" id="kanban" value="kanban" @if($lead_view == 'kanban') checked @endif>
                     @lang('messages.kanban_view')
-                </label>
+                </label> --}}
             </div>
             @if(auth()->user()->is_superadmin || auth()->user()->is_client)
                 <a class="btn btn-success float-right" href="{{ route('admin.leads.create') }}">

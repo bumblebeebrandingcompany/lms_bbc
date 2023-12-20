@@ -7,7 +7,7 @@ use App\Http\Requests\MassDestroyUserRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Agency;
-use App\Models\Client;
+use App\Models\Clients;
 use App\Models\Role;
 use App\Models\User;
 use Gate;
@@ -119,7 +119,7 @@ class UsersController extends Controller
             return $table->make(true);
         }
 
-        $clients  = Client::get();
+        $clients  = Clients::get();
         $agencies = Agency::get();
 
         return view('admin.users.index', compact('clients', 'agencies'));
@@ -131,7 +131,7 @@ class UsersController extends Controller
 
         $roles = Role::pluck('title', 'id');
 
-        $clients = Client::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $clients = Clients::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -152,7 +152,7 @@ class UsersController extends Controller
         $user->save();
 
         // $user->roles()->sync($request->input('roles', []));
-        
+
         return redirect()->route('admin.users.index');
     }
 
@@ -162,7 +162,7 @@ class UsersController extends Controller
 
         $roles = Role::pluck('title', 'id');
 
-        $clients = Client::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $clients = Clients::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $agencies = Agency::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -213,7 +213,7 @@ class UsersController extends Controller
     public function editPassword(Request $request, $id)
     {
         abort_if(!auth()->user()->is_channel_partner_manager, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
+
         if($request->ajax()) {
             $user = User::findOrFail($id);
             return view('admin.users.partials.edit_password')

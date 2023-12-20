@@ -8,7 +8,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyProjectRequest;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
-use App\Models\Client;
+use App\Models\Clients;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Source;
@@ -107,7 +107,7 @@ class ProjectController extends Controller
         }
 
         $users   = User::get();
-        $clients = Client::get();
+        $clients = Clients::get();
 
         return view('admin.projects.index', compact('users', 'clients'));
     }
@@ -118,7 +118,7 @@ class ProjectController extends Controller
 
         $created_bies = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $clients = Client::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $clients = Clients::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.projects.create', compact('clients', 'created_bies'));
     }
@@ -166,7 +166,7 @@ class ProjectController extends Controller
 
         $created_bies = User::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $clients = Client::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+        $clients = Clients::pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $project->load('created_by', 'client');
 

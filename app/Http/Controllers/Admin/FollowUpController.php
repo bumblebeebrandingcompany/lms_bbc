@@ -14,7 +14,7 @@ use App\Models\LeadEvents;
 use App\Models\Project;
 use App\Models\Source;
 use App\Models\User;
-use App\Models\FollowUp;
+use App\Models\Followup;
 use App\Notifications\LeadDocumentShare;
 use App\Utils\Util;
 use Carbon\Carbon;
@@ -44,7 +44,7 @@ class FollowUpController extends Controller
         $lead = Lead::all();
         $agencies = User::all();
         $campaigns = Campaign::all();
-        $followUps = FollowUp::all();
+        $followUps = Followup::all();
 
         return view('admin.leads.followup.index', compact('campaigns', 'agencies', 'lead', 'followUps'));
     }

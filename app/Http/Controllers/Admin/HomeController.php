@@ -28,7 +28,7 @@ class HomeController
         if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
-        
+
         $__global_clients_filter = $this->util->getGlobalClientsFilter();
         if(!empty($__global_clients_filter)) {
             $project_ids = $this->util->getClientsProjects($__global_clients_filter);
@@ -159,7 +159,7 @@ class HomeController
             'chart_title'           => 'No. of Clients',
             'chart_type'            => 'number_block',
             'report_type'           => 'group_by_date',
-            'model'                 => 'App\Models\Client',
+            'model'                 => 'App\Models\Clients',
             'group_by_field'        => 'created_at',
             'group_by_period'       => 'day',
             'aggregate_function'    => 'count',
@@ -441,7 +441,7 @@ class HomeController
         ];
 
         $chart11 = new LaravelChart($settings11);
-        
+
         return view('home', compact('chart11', 'settings1', 'settings10', 'settings2', 'settings3', 'settings4', 'settings5', 'settings6', 'settings7', 'settings8', 'settings9'));
     }
 
@@ -455,6 +455,6 @@ class HomeController
                 'msg' => __('messages.success')
             ];
         }
-        
+
     }
 }

@@ -7,7 +7,7 @@ use App\Http\Controllers\Traits\MediaUploadingTrait;
 use App\Http\Requests\MassDestroyClientRequest;
 use App\Http\Requests\StoreClientRequest;
 use App\Http\Requests\UpdateClientRequest;
-use App\Models\Client;
+use App\Models\Clients;
 use Gate;
 use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -23,7 +23,7 @@ class ClientController extends Controller
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
-            $query = Client::query()->select(sprintf('%s.*', (new Client)->table));
+            $query = Clients::query()->select(sprintf('%s.*', (new Clients)->table));
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -73,7 +73,7 @@ class ClientController extends Controller
 
     public function store(StoreClientRequest $request)
     {
-        $client = Client::create($request->all());
+        $client = Clients::create($request->all());
 
         if ($media = $request->input('ck-media', false)) {
             Media::whereIn('id', $media)->update(['model_id' => $client->id]);
@@ -82,21 +82,21 @@ class ClientController extends Controller
         return redirect()->route('admin.clients.index');
     }
 
-    public function edit(Client $client)
+    public function edit(Clients $client)
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         return view('admin.clients.edit', compact('client'));
     }
 
-    public function update(UpdateClientRequest $request, Client $client)
+    public function update(UpdateClientRequest $request, Clients $client)
     {
         $client->update($request->all());
 
         return redirect()->route('admin.clients.index');
     }
 
-    public function show(Client $client)
+    public function show(Clients $client)
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -105,7 +105,7 @@ class ClientController extends Controller
         return view('admin.clients.show', compact('client'));
     }
 
-    public function destroy(Client $client)
+    public function destroy(Clients $client)
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
@@ -116,7 +116,7 @@ class ClientController extends Controller
 
     public function massDestroy(MassDestroyClientRequest $request)
     {
-        $clients = Client::find(request('ids'));
+        $clients = Clients::find(request('ids'));
 
         foreach ($clients as $client) {
             $client->delete();
@@ -129,7 +129,7 @@ class ClientController extends Controller
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $model         = new Client();
+        $model         = new Clients();
         $model->id     = $request->input('crud_id', 0);
         $model->exists = true;
         $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');

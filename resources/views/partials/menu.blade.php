@@ -197,6 +197,18 @@
                     </p>
                 </a>
             </li>
+            @if(!(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
+            <li class="nav-item">
+                <a href="{{ route("admin.callog.index") }}" class="nav-link {{ request()->is("admin/callog") || request()->is("admin/callog/*") ? "active" : "" }}">
+                    <i class="fas fa-fw fa-calendar nav-icon">
+
+                    </i>
+                    <p>
+                        Lead Call log
+                    </p>
+                </a>
+            </li>
+        @endif
                  {{-- @if(!(auth()->user()->is_channel_partner || auth()->user()->is_agency || auth()->user()->is_channel_partner_manager))
                     <li class="nav-item">
                         <a href="{{ route("admin.stages.index") }}" class="nav-link {{ request()->is("admin/stages") || request()->is("admin/stages/*") ? "active" : "" }}">
@@ -254,7 +266,7 @@
                 </li>
             @endif
                 <li class="nav-item">
-                    <a href="{{ route('admin.leads.index', ['view' => 'list']) }}" id="lead_menu_link" class="nav-link {{ request()->is("admin/leads") || request()->is("admin/leads/*") ? "active" : "" }}">
+                    <a href="{{ route('admin.leads.index', ['view' => 'kanban']) }}" id="lead_menu_link" class="nav-link {{ request()->is("admin/leads") || request()->is("admin/leads/*") ? "active" : "" }}">
                         <i class="fa-fw nav-icon fas fa-handshake">
                         </i>
                         <p>

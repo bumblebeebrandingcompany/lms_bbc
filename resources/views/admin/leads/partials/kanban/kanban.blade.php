@@ -52,7 +52,15 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <strong>@lang('messages.email')</strong>:
+                                    {{-- <strong>@lang('messages.phone')</strong>: --}}
+                                    @if (auth()->user()->is_agency && !empty($lead->phone))
+                                        {{ maskNumber($lead->phone) }}
+                                    @else
+                                        {{ $lead->phone ?? '' }}
+                                    @endif
+                                </div>
+                                <div class="col-md-12">
+                                    {{-- <strong>@lang('messages.email')</strong>: --}}
                                     @if (auth()->user()->is_agency && !empty($lead->email))
                                         {{ maskEmail($lead->email) }}
                                     @else
@@ -71,27 +79,11 @@
                                 </div>
                                 <div id="additional-details-{{ $lead->id }}" class="additional-details-container">
 
-                                    <div class="col-md-12">
-                                        <strong>@lang('messages.phone')</strong>:
-                                        @if (auth()->user()->is_agency && !empty($lead->phone))
-                                            {{ maskNumber($lead->phone) }}
-                                        @else
-                                            {{ $lead->phone ?? '' }}
-                                        @endif
-                                    </div>
+
                                     <!-- <div class="col-md-12">
                                         <strong>@lang('messages.status')</strong>:
                                         {{ $lead->sell_do_status }}
                                     </div> -->
-                                    <div class="col-md-12">
-                                        <strong>{{ trans('cruds.lead.fields.project') }}</strong>:
-                                        {{ $lead->project->name ?? '' }}
-                                    </div>
-                                    <div class="col-md-12">
-                                        <strong> {{ trans('messages.intake_year') }}
-                                        </strong>:
-                                        <span class="display-value">{{ $lead->intake_year ?? '' }}</span>
-                                    </div>
                                     <div class="col-md-12">
                                         <strong>{{ trans('cruds.lead.fields.campaign') }}</strong>:
                                         {{ $lead->campaign->campaign_name ?? '' }}
@@ -100,6 +92,20 @@
                                         <strong>{{ trans('messages.source') }}</strong>:
                                         {{ $lead->source->name ?? '' }}
                                     </div>
+                                    <div class="col-md-12">
+                                        <strong> {{ trans('messages.intake_year') }}
+                                        </strong>:
+                                        <span class="display-value">{{ $lead->intake_year ?? '' }}</span>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <strong></strong>:
+                                        {{ $lead->project->name ?? '' }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        <strong>{{ trans('messages.cp_comments') }}</strong>:
+                                        {{ $lead->cp_comments ?? '' }}
+                                    </div>
+
                                     <div class="col-md-12">
                                         <strong>@lang('messages.created_at')</strong>:
                                         @if (!empty($lead->created_at))

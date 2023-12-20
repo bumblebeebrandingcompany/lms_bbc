@@ -9,9 +9,8 @@ class Note extends Model
     public $table = 'notes';
 
     protected $dates = [
-        'id',
-        'note_text',
         'created_at',
     ];
-    protected $fillable = ['id','note_text','created_at',]; // Specify the fillable attributes
+
+    protected $fillable = ['note_text','lead_id']; // Specify the fillable attributes
 }

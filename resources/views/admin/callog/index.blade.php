@@ -3,96 +3,84 @@
     <h1>Call Records</h1>
     <form action="{{ route('admin.callog.store') }}" method="post">
         @csrf
-        <button type="submit">Store Call Records</button>
+        <button class="btn btn-primary" type="submit">
+            Store Call Records</button>
     </form>
     <div class="card">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="campaign_name">Select Campaign Name</label>
-                    <select id="campaign_name" name="campaign_name" class="form-control">
-                        @foreach ($campaigns as $key => $item)
-                            @if ($item->campaign_name)
-                                <!-- Check if representative_name is not null or empty -->
-                                <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
-                            @endif
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="staffMember">Select Staff Member</label>
-                    <select id="staffMember" name="staffMember" class="form-control">
-                        @foreach ($agencies as $key => $item)
-                            @if ($item->representative_name)
-                                <!-- Check if representative_name is not null or empty -->
-                                @if (trim($item->representative_name) !== '')
-                                    <!-- Check if representative_name is not empty after trimming -->
-                                    <option value="{{ $item->representative_name }}">{{ $item->representative_name }}
-                                    </option>
-                                @endif
-                            @endif
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="start_date">{{ trans('cruds.project.fields.start_date') }}</label>
-                    <input class="form-control date {{ $errors->has('start_date') ? 'is-invalid' : '' }}" type="text"
-                        name="start_date" id="start_date" value="{{ old('start_date') }}">
-                    @if ($errors->has('start_date'))
-                        <span class="text-danger">{{ $errors->first('start_date') }}</span>
-                    @endif
-                    <span class="help-block">{{ trans('cruds.project.fields.start_date_helper') }}</span>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="form-group">
-                    <label for="start_date">{{ trans('cruds.project.fields.end_date') }}</label>
-                    <input class="form-control date {{ $errors->has('end_date') ? 'is-invalid' : '' }}" type="text"
-                        name= "end_date" id="end_date" value="{{ old('end_date') }}">
-                    @if ($errors->has('end_date'))
-                        <span class="text-danger">{{ $errors->first('end_date') }}</span>
-                    @endif
-                    <span class="help-block">{{ trans('cruds.project.fields.end_date_helper') }}</span>
-                </div>
-            </div>
+        <div class="card-header">
+            <h3 class="card-title">Call Records Table</h3>
         </div>
-    <table class="table">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="date_range">Select a date</label>
+                        <select class="form-control" id="date_range">
+                            <option value="today">Today</option>
+                            <option value="yesterday">Yesterday</option>
+                            <option value="tomorrow">Tomorrow</option>
+                            <option value="this_week">This Week</option>
+                            <option value="next_60_days" selected>Next 60 Days</option>
+                            <option value="next_30_days">Next 30 Days</option>
+                            <option value="last_week">Last Week</option>
+                            <option value="last_30_days">Last 30 Days</option>
+                            <option value="last_60_days" >Last 60 Days</option>
+                            <option value="last_year">Last One Year</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4" id="custom_range_container" style="display:none;">
+                    <div class="form-group">
+                        <label for="custom_range">Custom Range</label>
+                        <input class="form-control" type="text" name="custom_range" id="custom_range"
+                            value="{{ old('custom_range') }}">
+                    </div>
+                </div>
+            </div>
+    <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-callog">
         <thead>
             <tr>
+                <th>ID</th>
+                <th>Ref num</th>
                 <th>Client number</th>
                 <th>Status</th>
                 <th>Call Start Time</th>
                 <th>Call Duration</th>
                 <th>Called On</th>
                 <th>Call Recording</th>
-                <!-- Add more table headers for other lead follow-up properties -->
+
             </tr>
         </thead>
         <tbody>
+            @php
+            $counter = 1;
+            @endphp
             @foreach ($callRecords as $callRecord)
                 <tr>
-                    <td>{{ $callRecord->called_by }}</td>
+                    <td>{{ $counter++ }}</td>
+                    <td>{{ $callRecord->lead->ref_num }} </td>
+                    <td>{{ $callRecord->client_number }}</td>
+                    <td>{{ $callRecord->status }}</td>
                     <td>{{ $callRecord->called_on }}</td>
                     <td>{{ $callRecord->call_start_time }}</td>
-                    <td>{{ $callRecord->call_duration }}</td>
-                    <td>{{ $callRecord->called_on }}</td>
-
-                    {{-- <td>
-                        <audio controls>
-                            <source src="{{ asset('storage/audio/' . $callRecord->call_recordings) }}" type="audio/mp3">
-                            Your browser does not support the audio element.
-                        </audio>
-                    </td> --}}
                     <td>
-                        <audio controls>
-                            <!-- Assuming the recording URL is already in MP3 format -->
-                            <source src="{{ $callRecord['recording_url'] }}" type="audio/mp3">
-                            Your browser does not support the audio tag.
-                        </audio>
+                        <?php
+                        $answeredSeconds = $callRecord->call_duration;
+                        $hours = floor($answeredSeconds / 3600);
+                        $minutes = floor(($answeredSeconds % 3600) / 60);
+                        $seconds = $answeredSeconds % 60;
+                        ?>
+                        {{ $hours ? $hours.'h ' : '' }}
+                        {{ $minutes ? $minutes.'m ' : '' }}
+                        {{ $seconds.'s' }}
+                    </td>
+
+                    <td>
+                            <audio controls>
+                                <source src="{{ asset($callRecord['call_recordings']) }}" type="audio/mp3">
+                                Your browser does not support the audio tag.
+                            </audio>
                     </td>
                 </tr>
             @endforeach
@@ -100,8 +88,8 @@
     </table>
     </div>
 </div>
-{{-- <form action="{{ route('admin.callog.store') }}" method="post">
-    @csrf
-    <button type="submit">Store Call Records</button>
-</form> --}}
+
 @endsection
+
+
+

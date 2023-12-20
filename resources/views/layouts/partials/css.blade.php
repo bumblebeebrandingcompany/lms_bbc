@@ -12,6 +12,20 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link href="{{ asset('css/custom.css') }}" rel="stylesheet" />
 <style type="text/css">
+  .audio {
+        /* Set the background color */
+        background-color: #f0f0f0;
+
+        /* Set the color of the volume control slider */
+        --webkit-slider-thumb-color: #3498db;
+        --moz-range-thumb-color: #3498db;
+        --ms-thumb-color: #3498db;
+        --o-range-thumb-color: #3498db;
+        --webkit-slider-runnable-track-color: #bdc3c7;
+        --moz-range-track-color: #bdc3c7;
+        --ms-track-color: #bdc3c7;
+        --o-range-track-color: #bdc3c7;
+    }
     .cursor-pointer{
         cursor: pointer;
     }
@@ -84,4 +98,14 @@ input:checked + .slider:before {
 .spacer {
     height: 10px; /* Adjust the height to add more or less space */
 }
+
+    .saved-note {
+        background-color: #f2f2f2;
+        /* Gray background color */
+        padding: 10px;
+        /* Add some padding to make it visually appealing */
+        margin-bottom: 10px;
+        /* Add some space between containers */
+    }
+
 </style>

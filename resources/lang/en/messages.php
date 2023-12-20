@@ -13,6 +13,9 @@ return [
     'created_at' => 'Created at',
     'updated_at' => 'Updated at',
     'no_data_found' => 'No data found!',
+    'child_name'=> 'Child Name',
+    'grade_enquired'=> 'Grade Enquired',
+    'intake_year' => 'Intake Year',
     'profile' => 'Profile',
     'edit_profile' => 'Edit profile',
     'send_webhook' => 'Send webhook',
@@ -133,4 +136,8 @@ return [
     'event_type' => 'Event type',
     'log' => 'Log',
     'search' => 'Search',
+    'child_name' => 'Child name',
+    'grade_enquired' => 'Grade enquired',
+    'intake_year' => 'Intake year',
+
 ];

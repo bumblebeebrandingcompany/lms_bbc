@@ -273,7 +273,30 @@
                 </li>
                 </li>
 
-
+                <li class="list-group-item">
+                    <b>Child Name</b>
+                    <a class="float-right">
+                        <span class="value-container">
+                            <span class="display-value"
+                                style="{{ $errors->has('child_name') ? 'display:none;' : '' }}">
+                                {{ $lead->child_name }}
+                            </span>
+                            <input type="text" name="child_name" class="edit-field"
+                                placeholder="Enter Current School"
+                                style="{{ $errors->has('child_name') ? '' : 'display:none;' }}"
+                                value="{{ old('child_name') }}">
+                            @error('child_name')
+                                <div class="text-danger">{{ $message }}</div>
+                                {{-- Show the save button when there is an error --}}
+                                <script>
+                                    $(document).ready(function() {
+                                        $('.save-button').show();
+                                    });
+                                </script>
+                            @enderror
+                        </span>
+                    </a>
+                </li>
                 <li class="list-group-item">
                     <b>Current School</b>
                     <a class="float-right">
@@ -371,6 +394,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                        <input type="hidden" name="parent_stage_id" value="10">
 
                                         <div class="form-group">
                                             <label type="select" for="user_id">clients</label>
@@ -458,7 +482,7 @@
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="Time">select time </label>
+                                            <label for="Time">Select Time </label>
                                             <input
                                                 class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
                                                 name="follow_up_time" id="follow_up_time" rows="3"
@@ -609,25 +633,6 @@
                     </li>
         </form>
         </ul>
-        {{-- <li class="list-group-item">
-            <b>{{ trans('messages.stages') }}</b>
-            <a href="#" class="float-right" onclick="togglePopup()">View Stages</a>
-
-            <div id="stagesPopup" class="popup">
-                <h3>Stages</h3>
-                <select id="mainDropdown" onchange="showSubOptions()">
-
-                    <option value="interested">Interested</option>
-                    <option value="notInterested">Not Interested</option>
-                    <option value="rnr">RNR</option>
-                </select>
-                <br>
-                <br>
-                <select id="SecondDropdown">
-                    <!-- Options will be dynamically populated using JavaScript -->
-                </select>
-
-        </li> --}}
     </div>
 </div>
 @section('scripts')

@@ -12,12 +12,13 @@ use App\Models\SiteVisit;
 use App\Models\Followup;
 use App\Models\CallRecord;
 use App\Models\Project;
-use App\Models\Client;
+use App\Models\Clients;
 use App\Models\Agency;
 use App\Models\Note;
 use App\Models\ParentStage;
 use App\Models\Tag;
 use Gate;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
@@ -117,9 +118,7 @@ class LeadsController extends Controller
                     $q->whereIn('name', $lead_stage);
                 });
 
-                // Check if the user is super admin
                 if ($user->is_superadmin) {
-                    // If not super admin, include leads with empty parent_stage_id
                     $query->orWhereNull('parent_stage_id');
                 }
             });
@@ -411,7 +410,7 @@ class LeadsController extends Controller
         $leads=Lead::all();
         $sitevisits = SiteVisit::all();
 
-          $client=Client::all();
+          $client=Clients::all();
           $lead->load('project', 'campaign', 'source', 'createdBy');
           $agencies= Agency::all();
           $user_id = request()->get('user_id'); // Get the user ID from the request
@@ -439,8 +438,9 @@ class LeadsController extends Controller
         //           return $query->where('user_id', $user_id);
         //       })
         //       ->get();
+        $sitevisits = SiteVisit::all();
           $campaigns = Campaign::all();
-        return view('admin.leads.show', compact('lead', 'lead_events', 'projects_list', 'parentStages', 'stages', 'tags','agencies', 'user_id', 'followUps', 'campaigns','sitevisit','client','leads','note'));
+        return view('admin.leads.show', compact('lead', 'lead_events', 'projects_list', 'parentStages', 'stages', 'tags','agencies', 'user_id', 'followUps', 'campaigns','sitevisit','client','leads','note','sitevisits'));
     }
 
     public function destroy(Lead $lead)

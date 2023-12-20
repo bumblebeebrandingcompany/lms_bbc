@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SiteVisitRequest;
 use App\Models\Campaign;
-use App\Models\Client;
+use App\Models\Clients;
 use App\Models\Lead;
 use App\Models\SiteVisit;
 use App\Models\User;
@@ -25,7 +25,7 @@ class SiteVisitController extends Controller
     public function index(Request $request)
     {
         $lead = Lead::all();
-        $client = Client::all();
+        $client = Clients::all();
         $agencies = User::all();
         $campaigns = Campaign::all();
         $sitevisits = SiteVisit::all(); // Fixed variable name to $sitevisits
@@ -55,7 +55,6 @@ class SiteVisitController extends Controller
 
     }
 
-    // app/Http/Controllers/SiteVisitController.php
 
     public function reschedule(Request $request, $id)
     {
@@ -78,7 +77,11 @@ class SiteVisitController extends Controller
         if (!$originalSiteVisit) {
             return redirect()->back()->with('error', 'Site visit not found.');
         }
+
         $parentStageId = $request->input('parent_stage_id');
+
+        // Update the old schedule's parent_stage_id to 19
+        $originalSiteVisit->update(['parent_stage_id' => 19]);
 
         // Create a new SiteVisit
         $newSiteVisit = new SiteVisit();
@@ -87,36 +90,34 @@ class SiteVisitController extends Controller
         $newSiteVisit->lead_id = $request->lead_id;
         $newSiteVisit->user_id = $request->user_id;
         $newSiteVisit->notes = $request->notes;
-        $newSiteVisit->lead->update(['parent_stage_id' => $parentStageId]);
+        $newSiteVisit->parent_stage_id = $parentStageId; // Set parent_stage_id directly
         $newSiteVisit->save();
 
         // Update the lead status to "rescheduled"
         $lead = Lead::find($request->lead_id);
         if ($lead) {
-            $lead->update(['stage_id' => 10]);
+            $lead->update(['parent_stage_id' =>  19]);
         }
 
-        // List old schedules
-        $oldSchedules = SiteVisit::where('lead_id', $originalSiteVisit->lead_id)
-            ->where('id', '!=', $id)
-            ->get();
+
 
         return redirect()->back()->with('success', 'Site visit rescheduled successfully.');
     }
+
+
 
     public function cancelSiteVisit(Request $request, $sitevisitId)
 {
     $sitevisit = SiteVisit::findOrFail($sitevisitId);
 
     $parentStageId = $request->input('parent_stage_id');
-        $sitevisit->lead->update(['parent_stage_id' =>  $parentStageId]);
-
+        $sitevisit->update(['parent_stage_id' =>  $parentStageId]);
+        $sitevisit->lead->update(['parent_stage_id'=>$sitevisit->parent_stage_id]);
 
     // Your additional logic or redirection here if needed
 
     return redirect()->back();
 
-    abort(404, 'Lead not found for the given SiteVisit.');
 }
 
 public function conducted(Request $request, $sitevisitId)
@@ -124,7 +125,8 @@ public function conducted(Request $request, $sitevisitId)
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
 
         $parentStageId = $request->input('parent_stage_id');
-            $sitevisit->lead->update(['parent_stage_id' =>  $parentStageId]);
+            $sitevisit->update(['parent_stage_id' =>  $parentStageId]);
+            $sitevisit->lead->update(['parent_stage_id'=>$sitevisit->parent_stage_id]);
 
 
         return redirect()->back();
@@ -135,14 +137,11 @@ public function notVisited(Request $request, $sitevisitId)
     $sitevisit = SiteVisit::findOrFail($sitevisitId);
     $parentStageId = $request->input('parent_stage_id');
 
-        $sitevisit->lead->update(['parent_stage_id' =>  $parentStageId]);
+        $sitevisit->update(['parent_stage_id' =>  $parentStageId]);
+        $sitevisit->lead->update(['parent_stage_id'=>$sitevisit->parent_stage_id]);
 
     // Your additional logic or redirection here if needed
 
     return redirect()->back();
 }
-
-
-
-
 }

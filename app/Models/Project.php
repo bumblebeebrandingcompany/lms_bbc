@@ -116,6 +116,6 @@ class Project extends Model implements HasMedia
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Clients::class, 'client_id');
     }
 }

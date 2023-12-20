@@ -23,7 +23,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_channel_partner', 'is_channel_partner_manager'];
-    
+
     public $table = 'users';
 
     protected $hidden = [
@@ -45,7 +45,7 @@ class User extends Authenticatable
 
     public const USER_TYPE_RADIO = [
         'Superadmin' => 'Superadmin',
-        'Client'     => 'Client',
+        'Clients'     => 'Clients',
         'Agency'     => 'Agency',
         // 'ChannelPartner' => 'Channel Partner',
         // 'ChannelPartnerManager' => 'Channel Partner Manager'
@@ -133,7 +133,7 @@ class User extends Authenticatable
 
     public function client()
     {
-        return $this->belongsTo(Client::class, 'client_id');
+        return $this->belongsTo(Clients::class, 'client_id');
     }
 
     public function agency()

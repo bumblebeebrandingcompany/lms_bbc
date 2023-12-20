@@ -39,8 +39,7 @@ class NoteController extends Controller
         $validatedData = $request->validate([
             'id',
             'note_text' => 'required',
-            'created_at',
-            'lead_id' => 'required', // Make sure lead_id is present in the request
+            'lead_id' => 'required',
         ]);
 
         $lead = Lead::find($request->lead_id);
@@ -49,8 +48,7 @@ class NoteController extends Controller
         $note = new Note();
         $note->id = $request->id;
         $note->note_text = $request->note_text;
-        $note->created_at = $request->created_at;
-
+        $note->lead_id = $lead->id;
         $note->save();
 
         return redirect()->back()->with('success', 'Form submitted successfully!');
