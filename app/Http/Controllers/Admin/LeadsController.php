@@ -394,7 +394,7 @@ class LeadsController extends Controller
         $lead->load('project', 'campaign', 'source', 'createdBy');
 
         $lead_events = LeadEvents::where('lead_id', $lead->id)
-            ->select('event_type', 'webhook_data', 'created_at as added_at', 'source')
+            ->select('event_type', 'webhook_data', 'created_at as added_at', 'source' )
             ->orderBy('added_at', 'desc')
             ->get();
 
