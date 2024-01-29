@@ -89,210 +89,220 @@ class LeadsController extends Controller
         return back();
      }
 
-    public function index(Request $request)
-    {
-        $lead_view = empty($request->view) ? 'list' : (in_array($request->view, $this->lead_view) ? $request->view : 'list');
-        $__global_clients_filter = $this->util->getGlobalClientsFilter();
-        if (!empty($__global_clients_filter)) {
-            $project_ids = $this->util->getClientsProjects($__global_clients_filter);
-            $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
-        } else {
-            $project_ids = $this->util->getUserProjects(auth()->user());
-            $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
-        }
+     public function index(Request $request)
+     {
+         $lead_view = empty($request->view) ? 'list' : (in_array($request->view, $this->lead_view) ? $request->view : 'list');
+         $__global_clients_filter = $this->util->getGlobalClientsFilter();
+         if (!empty($__global_clients_filter)) {
+             $project_ids = $this->util->getClientsProjects($__global_clients_filter);
+             $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
+         } else {
+             $project_ids = $this->util->getUserProjects(auth()->user());
+             $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
+         }
 
-        if ($request->ajax()) {
+         if ($request->ajax()) {
 
-            $user = auth()->user();
+             $user = auth()->user();
+             $lead_stage = '';
+             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
+                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled'.'Admission FollowUp'];
+             } elseif ($user->is_client||$user->is_frontoffice) {
 
-            $lead_stage = '';
+                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted','Cancelled' ];
+             } elseif ($user->is_admissionteam) {
+                     $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
+             }
 
-            if ($user->is_agency || $user->is_superadmin) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled'];
-            }  elseif ($user->is_client) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'application purchased', 'admitted'];
-            }
+             $query = $this->util->getFIlteredLeads($request);
 
-            $query = $this->util->getFIlteredLeads($request);
+             $query->where(function ($query) use ($lead_stage, $user) {
+                 $query->whereHas('parentStage', function ($q) use ($lead_stage) {
+                     $q->whereIn('name', $lead_stage);
+                 });
 
-            $query->where(function ($query) use ($lead_stage, $user) {
-                $query->whereHas('parentStage', function ($q) use ($lead_stage) {
-                    $q->whereIn('name', $lead_stage);
-                });
+                 if ($user->is_admissionteam) {
+                     // If the user is part of the admission team, filter by user_id
+                     $query->where('user_id', $user->id);
+                 } elseif ($user->is_superadmin || $user->is_frontoffice) {
+                     // If the user is super admin or front office, include leads with empty parent_stage_id
+                     $query->orWhereNull('parent_stage_id');
+                 }
+             });
+             $table = Datatables::of($query);
+             $table->addColumn('placeholder', '&nbsp;');
+             $table->addColumn('actions', '&nbsp;');
 
-                if ($user->is_superadmin) {
-                    $query->orWhereNull('parent_stage_id');
-                }
-            });
-            $table = Datatables::of($query);
-            $table->addColumn('placeholder', '&nbsp;');
-            $table->addColumn('actions', '&nbsp;');
+             $table->editColumn('actions', function ($row) use ($user) {
+                 $viewGate = true;
+                 $editGate = $user->is_superadmin;
+                 $deleteGate = $user->is_superadmin;
+                 $crudRoutePart = 'leads';
 
-            $table->editColumn('actions', function ($row) use ($user) {
-                $viewGate = true;
-                $editGate = $user->is_superadmin;
-                $deleteGate = $user->is_superadmin;
-                $crudRoutePart = 'leads';
+                 return view('partials.datatablesActions', compact(
+                     'viewGate',
+                     'editGate',
+                     'deleteGate',
+                     'crudRoutePart',
+                     'row'
+                 )
+                 );
+             });
 
-                return view('partials.datatablesActions', compact(
-                    'viewGate',
-                    'editGate',
-                    'deleteGate',
-                    'crudRoutePart',
-                    'row'
-                )
-                );
-            });
+             $table->addColumn('email', function ($row) use ($user) {
+                 $email_cell = $row->email ? $row->email : '';
+                 if (!empty($email_cell) && $user->is_channel_partner_manager) {
+                     return maskEmail($email_cell);
+                 } else {
+                     return $email_cell;
+                 }
+             });
 
-            $table->addColumn('email', function ($row) use ($user) {
-                $email_cell = $row->email ? $row->email : '';
-                if (!empty($email_cell) && $user->is_channel_partner_manager) {
-                    return maskEmail($email_cell);
-                } else {
-                    return $email_cell;
-                }
-            });
+             $table->addColumn('overall_status', function ($row) {
+                 $overall_status = '';
+                 if ($row->sell_do_is_exist) {
+                     $overall_status = '<b class="text-danger">Duplicate</b>';
+                 } else {
+                     $overall_status = '<b class="text-success">New</b>';
+                 }
+                 return $overall_status;
+             });
 
-            $table->addColumn('overall_status', function ($row) {
-                $overall_status = '';
-                if ($row->sell_do_is_exist) {
-                    $overall_status = '<b class="text-danger">Duplicate</b>';
-                } else {
-                    $overall_status = '<b class="text-success">New</b>';
-                }
-                return $overall_status;
-            });
+             $table->addColumn('sell_do_date', function ($row) {
+                 $date = '';
+                 if (!empty($row->sell_do_lead_created_at)) {
+                     $date = Carbon::parse($row->sell_do_lead_created_at)->format('d/m/Y');
+                 }
+                 return $date;
+             });
 
-            $table->addColumn('sell_do_date', function ($row) {
-                $date = '';
-                if (!empty($row->sell_do_lead_created_at)) {
-                    $date = Carbon::parse($row->sell_do_lead_created_at)->format('d/m/Y');
-                }
-                return $date;
-            });
+             $table->addColumn('sell_do_time', function ($row) {
+                 $time = '';
+                 if (!empty($row->sell_do_lead_created_at)) {
+                     $time = Carbon::parse($row->sell_do_lead_created_at)->format('h:i A');
+                 }
+                 return $time;
+             });
 
-            $table->addColumn('sell_do_time', function ($row) {
-                $time = '';
-                if (!empty($row->sell_do_lead_created_at)) {
-                    $time = Carbon::parse($row->sell_do_lead_created_at)->format('h:i A');
-                }
-                return $time;
-            });
+             $table->addColumn('sell_do_lead_id', function ($row) {
+                 $sell_do_lead_id = '';
+                 if (!empty($row->sell_do_lead_id)) {
+                     $sell_do_lead_id = $row->sell_do_lead_id;
+                 }
+                 return $sell_do_lead_id;
+             });
 
-            $table->addColumn('sell_do_lead_id', function ($row) {
-                $sell_do_lead_id = '';
-                if (!empty($row->sell_do_lead_id)) {
-                    $sell_do_lead_id = $row->sell_do_lead_id;
-                }
-                return $sell_do_lead_id;
-            });
+             $table->addColumn('phone', function ($row) use ($user) {
+                 $phone = $row->phone ? $row->phone : '';
+                 if (!empty($phone) && $user->is_channel_partner_manager) {
+                     return maskNumber($phone);
+                 } else {
+                     return $phone;
+                 }
+             });
 
-            $table->addColumn('phone', function ($row) use ($user) {
-                $phone = $row->phone ? $row->phone : '';
-                if (!empty($phone) && $user->is_channel_partner_manager) {
-                    return maskNumber($phone);
-                } else {
-                    return $phone;
-                }
-            });
+             $table->editColumn('secondary_phone', function ($row) use ($user) {
+                 $secondary_phone = $row->secondary_phone ? $row->secondary_phone : '';
+                 if (!empty($secondary_phone) && $user->is_channel_partner_manager) {
+                     return maskNumber($secondary_phone);
+                 } else {
+                     return $secondary_phone;
+                 }
+             });
 
-            $table->editColumn('secondary_phone', function ($row) use ($user) {
-                $secondary_phone = $row->secondary_phone ? $row->secondary_phone : '';
-                if (!empty($secondary_phone) && $user->is_channel_partner_manager) {
-                    return maskNumber($secondary_phone);
-                } else {
-                    return $secondary_phone;
-                }
-            });
+             $table->addColumn('project_name', function ($row) {
+                 return $row->project ? $row->project->name : '';
+             });
 
-            $table->addColumn('project_name', function ($row) {
-                return $row->project ? $row->project->name : '';
-            });
+             $table->addColumn('campaign_campaign_name', function ($row) {
+                 return $row->campaign ? $row->campaign->campaign_name : '';
+             });
 
-            $table->addColumn('campaign_campaign_name', function ($row) {
-                return $row->campaign ? $row->campaign->campaign_name : '';
-            });
+             $table->addColumn('source_name', function ($row) {
+                 return $row->source ? $row->source->name : '';
+             });
 
-            $table->addColumn('source_name', function ($row) {
-                return $row->source ? $row->source->name : '';
-            });
+             $table->addColumn('added_by', function ($row) {
+                 return $row->createdBy ? $row->createdBy->name : '';
+             });
 
-            $table->addColumn('added_by', function ($row) {
-                return $row->createdBy ? $row->createdBy->name : '';
-            });
+             $table->addColumn('created_at', function ($row) {
+                 return $row->created_at;
+             });
 
-            $table->addColumn('created_at', function ($row) {
-                return $row->created_at;
-            });
+             $table->addColumn('updated_at', function ($row) {
+                 return $row->updated_at;
+             });
 
-            $table->addColumn('updated_at', function ($row) {
-                return $row->updated_at;
-            });
+             $table->filter(function ($query) {
+                 $search = request()->get('search');
+                 $search_term = $search['value'] ?? '';
+                 if (request()->has('search') && !empty($search_term)) {
+                     $query->where(function ($q) use ($search_term) {
+                         $q->where('name', 'like', "%" . $search_term . "%")
+                             ->orWhere('ref_num', 'like', "%" . $search_term . "%")
+                             ->orWhere('sell_do_lead_id', 'like', "%" . $search_term . "%")
+                             ->orWhere('email', 'like', "%" . $search_term . "%")
+                             ->orWhere('additional_email', 'like', "%" . $search_term . "%")
+                             ->orWhere('phone', 'like', "%" . $search_term . "%")
+                             ->orWhere('secondary_phone', 'like', "%" . $search_term . "%");
+                     });
+                 }
+             });
 
-            $table->filter(function ($query) {
-                $search = request()->get('search');
-                $search_term = $search['value'] ?? '';
-                if (request()->has('search') && !empty($search_term)) {
-                    $query->where(function ($q) use ($search_term) {
-                        $q->where('name', 'like', "%" . $search_term . "%")
-                            ->orWhere('ref_num', 'like', "%" . $search_term . "%")
-                            ->orWhere('sell_do_lead_id', 'like', "%" . $search_term . "%")
-                            ->orWhere('email', 'like', "%" . $search_term . "%")
-                            ->orWhere('additional_email', 'like', "%" . $search_term . "%")
-                            ->orWhere('phone', 'like', "%" . $search_term . "%")
-                            ->orWhere('secondary_phone', 'like', "%" . $search_term . "%");
+             $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
+
+             return $table->make(true);
+         }
+
+         $projects = Project::whereIn('id', $project_ids)
+             ->get();
+         $campaigns = Campaign::whereIn('id', $campaign_ids)
+             ->get();
+
+         $sources = Source::whereIn('project_id', $project_ids)
+             ->whereIn('campaign_id', $campaign_ids)
+             ->get();
+
+                 $leads = Lead::all();if (in_array($lead_view, ['list'])) {
+                    return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads'));
+                } elseif ($lead_view === 'kanban') {
+                    $user = auth()->user();
+                    $lead_stage = '';
+                    if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
+                        $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled'.'Admission FollowUp'];
+                    } elseif ($user->is_client||$user->is_frontoffice) {
+
+                        $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted','Cancelled'];
+                    } elseif ($user->is_admissionteam) {
+
+                            $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
+
+
+
+
+                    }
+
+                    $query = $this->util->getFIlteredLeads($request);
+                    $query->where(function ($query) use ($lead_stage, $user) {
+                        $query->whereHas('parentStage', function ($q) use ($lead_stage) {
+                            $q->whereIn('name', $lead_stage);
+                        });
+
+                        if ($user->is_admissionteam) {
+                            // If the user is part of the admission team, filter by user_id
+                            $query->where('user_id', $user->id);
+                        } elseif ($user->is_superadmin || $user->is_frontoffice) {
+                            // If the user is super admin or front office, include leads with empty parent_stage_id
+                            $query->orWhereNull('parent_stage_id');
+                        }
                     });
+                    $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
+                    $lead_stages = Lead::getStages();
+                    $filters = $request->except(['view']);
+                    return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads'));
                 }
-            });
-
-            $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
-
-            return $table->make(true);
-        }
-
-        $projects = Project::whereIn('id', $project_ids)
-            ->get();
-        $campaigns = Campaign::whereIn('id', $campaign_ids)
-            ->get();
-
-        $sources = Source::whereIn('project_id', $project_ids)
-            ->whereIn('campaign_id', $campaign_ids)
-            ->get();
-
-        $leads = Lead::all();
-
-        if (in_array($lead_view, ['list'])) {
-            return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads'));
-        } elseif ($lead_view === 'kanban') {
-            $user = auth()->user();
-            $lead_stage = '';
-            if ($user->is_agency || $user->is_superadmin) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled'];
-            } elseif ($user->is_client) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'application purchased', 'admitted'];
             }
-
-            $query = $this->util->getFIlteredLeads($request);
-
-            $query->where(function ($query) use ($lead_stage, $user) {
-                $query->whereHas('parentStage', function ($q) use ($lead_stage) {
-                    $q->whereIn('name', $lead_stage);
-                });
-
-                // Check if the user is super admin
-                if ($user->is_superadmin) {
-                    // If not super admin, include leads with empty parent_stage_id
-                    $query->orWhereNull('parent_stage_id');
-                }
-            });
-            $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
-            $lead_stages = Lead::getStages();
-            $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads'));
-        }
-
-    }
-
     public function create()
     {
         if (!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
