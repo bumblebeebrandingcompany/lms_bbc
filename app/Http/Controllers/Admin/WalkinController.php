@@ -137,11 +137,7 @@ public function update(Request $request, Walkin $walkinform)
         'name' => 'required|string|max:255',
         'email' => 'required|string',
         'phone' => 'required|string|max:255',
-        'source_id' ,
-        'project_id',
-        'campaign_id',
-        'additional_email',
-        'secondary_phone',
+
     ]);
 
     $data = $request->only([
