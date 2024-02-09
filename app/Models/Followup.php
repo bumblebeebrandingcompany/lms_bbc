@@ -22,10 +22,10 @@ class Followup extends Model
         'follow_up_time',
         'notes'
     ];
-    public function users()
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
+    // public function users()
+    // {
+    //     return $this->belongsTo(User::class, 'user_id');
+    // }
 
     protected $fillable = [
         'parent_stage_id'

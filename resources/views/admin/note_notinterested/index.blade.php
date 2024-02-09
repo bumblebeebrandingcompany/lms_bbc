@@ -25,9 +25,11 @@
                                 <div class="spacer"></div>
                                 <div class="spacer"></div>
                                 <div class="spacer"></div>
+                                @if(!auth()->user()->is_client)
                                 <button type="submit"
                                     class="d-flex justify-content-between align-items-center btn btn-success ml-auto">Create
                                     Notes</button>
+                                    @endif
                             </div>
                         </div>
                     </div>
@@ -38,8 +40,9 @@
                         <tr>
                             <th>ID</th>
                             <th>Notes</th>
-
+                            @if(!auth()->user()->is_client)
                             <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -50,7 +53,7 @@
                             <tr>
                                 <td>{{ $counter++ }}</td>
                                 <td>{{ $notesNotInterested->notes }}</td>
-
+                                @if(!auth()->user()->is_client)
                                 <td>
                                     <div class="row">
                                         <div class="col-md-3">
@@ -73,7 +76,7 @@
                                         </div>
                                     </div>
                                 </td>
-
+@endif
                                 <!-- Edit Modal -->
                                 <div class="modal fade" id="editModal{{ $notesNotInterested->id }}" tabindex="-1"
                                     role="dialog" aria-labelledby="editModalLabel{{ $notesNotInterested->id }}"

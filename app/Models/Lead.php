@@ -152,7 +152,6 @@ class Lead extends Model
         $stages = Lead::whereNotNull('parent_stage_id')
                     ->pluck('parent_stage_id',)
                     ->toArray();
-
         $unique_stages = array_unique($stages);
 
         $card_classes = ['card-primary', 'card-danger', 'card-success', 'card-info', 'card-warning', 'card-secondary', 'card-dark'];

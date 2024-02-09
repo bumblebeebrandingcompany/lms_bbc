@@ -17,7 +17,7 @@ class StoreFollowupRequest extends FormRequest
     public function rules()
     {
         $lead_id = request()->input('lead_id');
-        $user_id = request()->input('user_id');
+
         $follow_up_date = request()->input('follow_up_date');
         $follow_up_time = request()->input('follow_up_time');
         $notes = request()->input('notes');
@@ -31,10 +31,7 @@ class StoreFollowupRequest extends FormRequest
                 'required',
                 'integer',
             ],
-            'user_id' => [
-                'required',
-                'integer',
-            ],
+
             'notes' => 'nullable|string'
         ];
     }

@@ -53,9 +53,6 @@ public function logTimeline($lead,$description, $activityType = null)
     if ($activityType !== null) {
         $data['activity_type'] = $activityType;
     }
-
-
-
     $this->timeline()->create($data);
 }
 

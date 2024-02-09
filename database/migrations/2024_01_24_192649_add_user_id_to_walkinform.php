@@ -15,9 +15,7 @@ return new class extends Migration
             $table->bigInteger('user_id');
         });
     }
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::table('walkinform', function (Blueprint $table) {

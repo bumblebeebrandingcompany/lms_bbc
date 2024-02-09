@@ -11,6 +11,7 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card card-primary card-outline">
+
                 @if(auth()->user()->is_superadmin)
                     <div class="card-header">
                         <a class="btn btn-success float-right" href="{{ route('admin.documents.create') }}">

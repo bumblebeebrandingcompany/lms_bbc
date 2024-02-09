@@ -17,7 +17,6 @@ return new class extends Migration
             $table->foreign('parent_stage_id', 'stage_fk_8745955')->references('id')->on('parent_stages');
         });
     }
-
     /**
      * Reverse the migrations.
      */

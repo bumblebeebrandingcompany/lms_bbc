@@ -112,7 +112,7 @@ class LeadsController extends Controller
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted','Cancelled' ];
             } elseif ($user->is_admissionteam) {
-                    $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
+                    $lead_stage = ['Admission FollowUp','application purchased', 'admitted'];
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -133,7 +133,6 @@ class LeadsController extends Controller
             $table = Datatables::of($query);
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');
-
             $table->editColumn('actions', function ($row) use ($user) {
                 $viewGate = true;
                 $editGate = $user->is_superadmin;
@@ -264,10 +263,7 @@ class LeadsController extends Controller
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
-
                 $leads = Lead::all();
-
-
 
         if (in_array($lead_view, ['list'])) {
             return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads'));
@@ -275,17 +271,13 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin|| $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled'.'Admission FollowUp'];
-            } elseif ($user->is_client||$user->is_frontoffice) {
-
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled','Admission FollowUp'];
+            } elseif ($user->is_frontoffice) {
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted','Cancelled' ];
             } elseif ($user->is_admissionteam) {
-
                     $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
-
-
-
-
+            }elseif($user->is_client){
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled','Admission FollowUp'];
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -307,7 +299,6 @@ class LeadsController extends Controller
             $filters = $request->except(['view']);
             return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads'));
         }
-
     }
 
     public function create()
@@ -369,7 +360,6 @@ class LeadsController extends Controller
                 $lead->save();
             }
         }
-
         $this->util->storeUniqueWebhookFields($lead);
 
         if (!empty($lead->project->outgoing_apis)) {
@@ -388,7 +378,7 @@ class LeadsController extends Controller
     }
     public function edit(Lead $lead)
     {
-        if (!auth()->user()->is_superadmin) {
+        if (!auth()->user()->is_superadmin ) {
             abort(403, 'Unauthorized.');
         }
 
@@ -397,15 +387,12 @@ class LeadsController extends Controller
 
         $projects = Project::whereIn('id', $project_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
         $lead->load('project', 'campaign');
 
         return view('admin.leads.edit', compact('campaigns', 'lead', 'projects'));
     }
-
     public function update(UpdateLeadRequest $request, Lead $lead)
     {
         $input = $request->except(['_method', '_token']);
@@ -457,6 +444,7 @@ class LeadsController extends Controller
         $lead->load('project', 'campaign', 'source', 'createdBy');
         $agencies = Agency::all();
         $user_id = request()->get('user_id'); // Get the user ID from the request
+
         // Load follow-ups associated with the lead and filter by user ID
         $followUps = Followup::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
@@ -477,7 +465,7 @@ class LeadsController extends Controller
             return $query->where('user_id', $user_id);
         })->get();
         $itemsPerPage = request('perPage', 10);
-        $followUps = Followup::paginate($itemsPerPage);
+        // $followUps = Followup::paginate($itemsPerPage);
         $notes = Note::paginate($itemsPerPage);
 
         //   $note = Note::where('lead_id', $lead->id)
@@ -485,12 +473,13 @@ class LeadsController extends Controller
         //           return $query->where('user_id', $user_id);
         //       })
         //       ->get();
-
+//     $followUps = $followUps->filter(function ($followUp) {
+//     return $followUp->parent_stage_id == 28 || $followUp->parent_stage_id == 9;
+// });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
         return view('admin.leads.show', compact('lead', 'lead_events', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities','noteNotInterested'));
     }
-
     public function destroy(Lead $lead)
     {
         if (!auth()->user()->is_superadmin) {

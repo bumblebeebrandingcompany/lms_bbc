@@ -16,7 +16,6 @@ return new class extends Migration
             $table->foreign('lead_id')->references('id')->on('leads'); // Create a foreign key constraint
         });
     }
-
     /**
      * Reverse the migrations.
      */

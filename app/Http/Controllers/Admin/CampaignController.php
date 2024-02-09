@@ -53,7 +53,7 @@ class CampaignController extends Controller
 
             $query = Campaign::whereIn('campaigns.id', $campaign_ids)
                         ->with(['project', 'agency'])->select(sprintf('%s.*', (new Campaign)->table));
-                        
+
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
@@ -61,7 +61,7 @@ class CampaignController extends Controller
 
             $table->editColumn('actions', function ($row) use($user) {
                 $viewGate      = true;
-                $editGate      = true;
+                $editGate      = $user->is_superadmin;
                 $deleteGate    = $user->is_superadmin;
                 $crudRoutePart = 'campaigns';
 
@@ -150,7 +150,7 @@ class CampaignController extends Controller
         if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
-        
+
         $campaign->load('project', 'agency', 'campaignLeads', 'campaignSources');
 
         return view('admin.campaigns.show', compact('campaign'));

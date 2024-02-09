@@ -1,9 +1,10 @@
 <div class="form-group">
     <p>Notes for Lead ID: {{ $lead->id }}</p>
+@if(!auth()->user()->is_client)
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addNoteModal">
         Add Note
     </button>
-
+@endif
     <br>
     <br>
     <div class="modal fade" id="addNoteModal" tabindex="-1" role="dialog" aria-labelledby="addNoteModalLabel"

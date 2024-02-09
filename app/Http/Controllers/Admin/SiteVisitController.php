@@ -54,7 +54,7 @@ class SiteVisitController extends Controller
         $parentStageId = $request->input('parent_stage_id');
         $sitevisit = new SiteVisit();
         $sitevisit->lead_id = $lead->id;
-        $sitevisit->user_id = $input['user_id'];
+
         $sitevisit->follow_up_date = $input['follow_up_date']; // Assign the date
         $sitevisit->follow_up_time = $input['follow_up_time']; // Assign the time
         $sitevisit->notes = $input['notes'];
@@ -63,7 +63,6 @@ class SiteVisitController extends Controller
         $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
         // $sitevisit->logTimeline($lead->id, 'Site Visit  created', 'sitevisit_created');
         return redirect()->back()->with('success', 'Form submitted successfully!');
-
     }
     public function reschedule(Request $request, $id)
     {
@@ -75,9 +74,7 @@ class SiteVisitController extends Controller
                 'required',
                 'integer',
             ],
-            'user_id' => [
-                // Add your validation rules for user_id if needed
-            ],
+
             'notes' => 'nullable|string',
         ]);
 
@@ -167,7 +164,6 @@ class SiteVisitController extends Controller
         if ($sitevisit->lead) {
             $sitevisit->lead->update([
                 'parent_stage_id' => $sitevisit->parent_stage_id,
-
                 // 'notes' => $sitevisit->notes,
                 // Add other lead fields you want to update
             ]);
@@ -184,13 +180,11 @@ class SiteVisitController extends Controller
         //     'notes' => 'required|string',
         // ]);
         // Update the site visit information
-
         $sitevisit->update([
             'parent_stage_id' => $request->input('parent_stage_id'),
             // 'notes' => $request->input('notes'),
             'user_id'=>$request->input('user_id'),
         ]);
-
         // Update the lead information if it's associated with the site visit
         if ($sitevisit->lead) {
             $sitevisit->lead->update([

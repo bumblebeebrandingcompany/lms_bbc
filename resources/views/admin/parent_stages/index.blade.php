@@ -3,6 +3,7 @@
 @section('content')
     <div class="container">
         <div class="card">
+
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
                     <h2>Create Parent Stage</h2>
@@ -14,6 +15,7 @@
                 <div class="spacer"></div>
                 <form method="post" action="{{ route('admin.parent-stages.store') }}">
                     @csrf
+                    @if(!auth()->user()->is_client )
                     <div class="row">
                         <div class="col-md-5">
                             <div class="form-group">
@@ -41,6 +43,7 @@
                             </div>
                         </div>
                     </div>
+                    @endif
                 </form>
                 <h2 class="mt-3">Parent Stages</h2>
                 <table class="table table-bordered">
@@ -49,7 +52,9 @@
                             <th>ID</th>
                             <th>Name</th>
                             <th>Tag Name</th>
+                            @if(!auth()->user()->is_client )
                             <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -61,6 +66,7 @@
                                 <td>{{ $counter++ }}</td>
                                 <td>{{ $parentStage->name }}</td>
                                 <td>{{ $parentStage->tag->name }}</td>
+                                @if(!auth()->user()->is_client )
                                 <td>
                                     <div class="row">
                                         <div class="col-md-2">
@@ -81,7 +87,7 @@
                                         </div>
                                     </div>
                                 </td>
-
+@endif
                                 <!-- Edit Modal -->
                                 <div class="modal fade" id="editModal{{ $parentStage->id }}" tabindex="-1" role="dialog" aria-labelledby="editModalLabel{{ $parentStage->id }}" aria-hidden="true">
                                     <div class="modal-dialog" role="document">

@@ -5,7 +5,6 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
 class Walkin extends Model
 {
     use  HasFactory;
@@ -26,7 +25,11 @@ class Walkin extends Model
         'name',
         'email',
         'phone',
-        'source_id'
+'secondary_phone',
+'additional_email',
+        'source_id',
+        'project_id',
+        'campaign_id',
     ];
 
     public function leads()
@@ -34,12 +37,17 @@ class Walkin extends Model
     return $this->hasMany(Lead::class);
 }
 
-public function sources()
-{
-    return $this->belongsto(Source::class);
-}
-public function projectLeads()
-{
-    return $this->hasMany(Lead::class, 'project_id', 'id');
-}
+    public function sources()
+    {
+        return $this->belongsTo(Source::class, 'source_id');
+    }
+
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class, 'campaign_id');
+    }
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
 }

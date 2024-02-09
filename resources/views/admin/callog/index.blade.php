@@ -4,11 +4,13 @@
     <form action="{{ route('admin.callog.store') }}" method="post">
         @csrf
         <div class="card">
+            @if(!auth()->user()->is_client)
             <div class="card-header">
                 <h3 class="card-title">Call Records Table</h3>
                 <button class="btn btn-primary float-right" type="submit">
                     Store Call Records</button>
             </div>
+            @endif
     </form>
     <div class="card-body">
         <div class="row">

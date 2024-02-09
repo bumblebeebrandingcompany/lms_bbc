@@ -23,7 +23,7 @@
                     @lang('messages.kanban_view')
                 </label> --}}
             </div>
-            @if(auth()->user()->is_superadmin || auth()->user()->is_client)
+            @if(auth()->user()->is_superadmin )
                 <a class="btn btn-success float-right" href="{{ route('admin.leads.create') }}">
                     {{ trans('global.add') }} {{ trans('cruds.lead.title_singular') }}
                 </a>

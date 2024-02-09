@@ -51,10 +51,11 @@
                                     {{ $source->name ?? '' }}
                                 </td>
                                 <td>
-                                    @if(auth()->user()->is_superadmin)
+
                                         <a class="btn btn-xs btn-primary" href="{{ route('admin.sources.show', $source->id) }}">
                                             {{ trans('global.view') }}
                                         </a>
+                                        @if(auth()->user()->is_superadmin )
                                         <a class="btn btn-xs btn-info" href="{{ route('admin.sources.edit', $source->id) }}">
                                             {{ trans('global.edit') }}
                                         </a>
@@ -121,7 +122,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>

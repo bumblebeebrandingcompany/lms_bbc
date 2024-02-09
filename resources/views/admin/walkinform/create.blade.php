@@ -10,7 +10,6 @@
                 <div class="card-body">
                     <form action="{{ route('admin.walkinform.store') }}" method="post">
                         @csrf
-
                         <div class="form-group" class="required">
                             <label for="name">Name:</label>
                             <input type="text" name="name" class="form-control" required>
@@ -24,84 +23,63 @@
                         </div>
                         <div class="form-group">
                             <label for="secondary_phone">Secondary Phone:</label>
-                            <input type="text" name="secondary_phone" class="form-control">
+                            <input type="phone" name="secondary_phone" class="form-control">
                         </div>
                         <div class="form-group" class="required">
                             <label for="email">Email:</label>
-                            <input type="text" name="email" class="form-control" required>
+                            <input type="email" name="email" class="form-control" required>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" class="required">
                             <label for="additional_email">Additional Email:</label>
-                            <input type="text" name="additional_email" class="form-control">
+                            <input type="email" name="additional_email" class="form-control" required>
                         </div>
 
-                        {{-- <div class="form-group">
-                            <label class="required" for="project_id">Referred By</label>
-                            <br>
-                            <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
-                                name="referred_by" id="leadSource" required>
-                                <option value="Direct Walk-in">Direct Walk-in</option>
-                                <option value="Parent">Parent</option>
-                                <option value="Teachers">Teachers</option>
-                                <option value="Management">Management</option>
-                            </select>
-                        </div>
-                        <label class="required" for="project_id">Representative name</label> --}}
-                        {{-- <br>
-                        <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}" name="user_id"
-                            id="user_id" required>
-                            @foreach ($client as $id => $clients)
-                                @foreach ($clients->clientUsers as $user)
-                                    @if ($user->user_type == 'Admissionteam')
-                                        <option value="{{ $user->id }}"
-                                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                            {{ $user->representative_name }}
-                                        </option>
-                                    @endif
-                                @endforeach
-                            @endforeach
-                        </select> --}}
-                        <div class="form-group">
-                            <label for="channelPartner" class="required">Remarks:</label>
-
-                            <input type="text" name="cp_comments" class="form-control" value="" required>
-                        </div>
                         <input type="hidden" name="comments" class="form-control" value= "Direct Walk-in attended"
                             required>
-                            @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
-                            <div class="col-md-3">
-                                <label for="source_id">
-                                Projects
-                                </label>
-                            </div>
-                                <div class="col-md-12">
-                                <select class="select2" name="source_id">
-                                    @foreach ($sources as $source)
-                                        <option value="{{ $source->id }}">{{ $source->name }}</option>
+                        @if (!(auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
+                            <div class="form-group">
+                                <label class="required" for="project_id">{{ trans('cruds.source.fields.project') }}</label>
+                                <br>
+                                <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
+                                    name="project_id" id="project_id" required>
+                                    @foreach ($projects as $id => $entry)
+                                        <option value="{{ $id }}"
+                                            {{ old('project_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
                                     @endforeach
                                 </select>
+                                @if ($errors->has('project'))
+                                    <span class="text-danger">{{ $errors->first('project') }}</span>
+                                @endif
+                                <span class="help-block">{{ trans('cruds.source.fields.project_helper') }}</span>
                             </div>
-                            <div class="col-md-12 campaigns_div">
-                                <label for="campaign_id">
-                                    @lang('messages.campaigns')
-                                </label>
-                                <select class="search form-control" id="campaign_id" >
-                                    @foreach($campaigns as $key => $item)
-                                        <option value="{{ $item->id }}" @if(isset($filters['campaign_id']) && $filters['campaign_id'] == $item->id) selected @endif>{{ $item->campaign_name }}</option>
+                            <div class="form-group">
+                                <label class="required"
+                                    for="campaign_id">{{ trans('cruds.source.fields.campaign') }}</label>
+                                <br>
+                                <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}"
+                                    name="campaign_id" id="campaign_id" required>
+                                    @foreach ($campaigns as $id => $entry)
+                                        <option value="{{ $id }}"
+                                            {{ old('campaign_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
                                     @endforeach
                                 </select>
+                                @if ($errors->has('campaign'))
+                                    <span class="text-danger">{{ $errors->first('campaign') }}</span>
+                                @endif
+                                <span class="help-block">{{ trans('cruds.source.fields.campaign_helper') }}</span>
                             </div>
-                            <div class="col-md-12 sources_div">
-                                <label for="source_id">
-                                    Source
-                                </label>
-                                <select class="search form-control" name="source" id="source_id">
+                            <div class="form-group">
+                                <label class="required" for="source_id">{{ trans('messages.source') }}</label>
+                                <br>
+                                <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}"
+                                    name="source_id" id="source_id" required>
+                                </select>
+                                <br>
+                                @if ($errors->has('source_id'))
+                                    <span class="text-danger">{{ $errors->first('source_id') }}</span>
+                                @endif
+                            </div>
 
-                                    @foreach($sources as $source)
-                                        <option value="{{$source->id}}" @if(isset($filters['source']) && $filters['source'] == $item->id) selected @endif>{{ $source->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
                             <br>
                         @endif
                         <button type="submit" class="btn btn-success">Create Walkin</button>
@@ -110,4 +88,113 @@
             </div>
         </div>
     </div>
+@endsection
+@section('scripts')
+    <script>
+        $(function() {
+            function getCampaigns() {
+                let data = {
+                    project_id: $('#project_id').val()
+                };
+
+                $.ajax({
+                    method: "GET",
+                    url: "{{ route('admin.get.campaigns') }}",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        $('#campaign_id').select2('destroy').empty().select2({
+                            data: response
+                        });
+
+                        getSource();
+                    }
+                });
+            }
+
+            function getSource() {
+                let data = {
+                    project_id: $('#project_id').val(),
+                    campaign_id: $('#campaign_id').val(),
+                };
+                $.ajax({
+                    method: "GET",
+                    url: "{{ route('admin.get.sources') }}",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        $('#source_id').select2('destroy').empty().select2({
+                            data: response
+                        });
+
+                    }
+                });
+            }
+            $(document).on('change', '#project_id', function() {
+                getCampaigns();
+                getLeadDetailsRowHtml();
+            });
+
+            $(document).on('change', '#campaign_id', function() {
+                getSource();
+            });
+
+            $(document).on('click', '.add_lead_detail', function() {
+                let index = $("#index_count").val();
+                $.ajax({
+                    method: "GET",
+                    url: "{{ route('admin.lead.detail.html') }}",
+                    data: {
+                        index: index
+                    },
+                    dataType: "html",
+                    success: function(response) {
+                        $("div.lead_details").append(response);
+                        $("#index_count").val(+index + 1);
+                    }
+                });
+            });
+
+            $(document).on('click', '.delete_lead_detail_row', function() {
+                if (confirm('Do you want to remove?')) {
+                    $(this).closest('.row').remove();
+                }
+            });
+
+            function getLeadDetailsRowHtml() {
+                $.ajax({
+                    method: "GET",
+                    url: "{{ route('admin.lead.details.rows') }}",
+                    data: {
+                        project_id: $('#project_id').val(),
+                        lead_id: $('#lead_id').val()
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        $("div.lead_details").html(response.html);
+                        $("#index_count").val(response.count);
+                    }
+                });
+            }
+
+            $(document).on('click', '.add_prefilled_lead_detail', function() {
+                let index = $("#index_count").val();
+                $.ajax({
+                    method: "GET",
+                    url: "{{ route('admin.lead.detail.html') }}",
+                    data: {
+                        index: index,
+                        project_id: $('#project_id').val()
+                    },
+                    dataType: "html",
+                    success: function(response) {
+                        $("div.lead_details").append(response);
+                        $("#index_count").val(+index + 1);
+                        $(".select-tags").select2();
+                    }
+                });
+            });
+            getCampaigns();
+        });
+    </script>
 @endsection

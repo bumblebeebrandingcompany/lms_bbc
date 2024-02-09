@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exports\LeadsExport;
 use App\Http\Controllers\Controller;
-
-use App\Http\Requests\MassDestroyFollowupRequest;
-
+use App\Http\Requests\MassDestroyLeadRequest;
 use App\Http\Requests\StoreFollowupRequest;
 use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Campaign;
@@ -49,10 +47,8 @@ class FollowUpController extends Controller
             $project_ids = $this->util->getUserProjects(auth()->user());
             $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
         }
-
         $lead = Lead::all();
         $agencies = User::all();
-
         $campaigns = Campaign::all();
         $followUps = Followup::all();
         $itemsPerPage = request('perPage', 10);
@@ -67,11 +63,10 @@ class FollowUpController extends Controller
         ->get();
         return view('admin.leads.followup.index', compact('campaigns', 'agencies', 'lead', 'followUps','projects','sources'));
     }
-
     public function store(StoreFollowupRequest $request)
     {
-        $input = $request->validated();
 
+        $input = $request->validated();
         // Find the lead based on its ID
         $lead = Lead::findOrFail($input['lead_id']);
 
@@ -80,26 +75,21 @@ class FollowUpController extends Controller
             $parentStageId = $request->input('parent_stage_id');
             $followup = new Followup();
             $followup->lead_id = $lead->id;
-            $followup->user_id = $input['user_id']?? '';
             $followup->follow_up_date = $input['follow_up_date'];
             $followup->follow_up_time = $input['follow_up_time'];
             $followup->notes = $input['notes'];
             $followup->parent_stage_id = $parentStageId;
-
             $followup->save();
-
             // Check if $followup->lead is not null before updating
             if ($followup->lead) {
                 $followup->lead->update(['parent_stage_id' => $followup->parent_stage_id]);
             }
-
             return redirect()->back()->with('success', 'Form submitted successfully!');
         } else {
             // Handle the case where the lead is not found
             return redirect()->back()->with('error', 'Lead not found!');
         }
     }
-
     public function destroy(Followup $followup)
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
@@ -108,5 +98,4 @@ class FollowUpController extends Controller
 
         return back();
     }
-
 }

@@ -63,6 +63,7 @@ Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitCon
     //call record
     Route::resource('/callog', 'CallRecordController');
 
+
     Route::resource('/walkinform', 'WalkinController');
     Route::resource('/admission', 'AdmissionFollowUpController');
     // Users
