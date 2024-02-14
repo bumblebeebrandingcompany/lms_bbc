@@ -1,4 +1,3 @@
-
 @extends('layouts.admin')
 
 @section('content')
@@ -121,8 +120,6 @@
                             <!-- Add other fields as needed -->
                             <div class="form-group">
                                 <label for="selected_child_stages">Edited Child Stages:</label>
-
-
                                 <select name="selected_child_stages[]" id="selected_child_stages"
                                     class="form-control select2" multiple required
                                     data-minimum-results-for-search="Infinity">
