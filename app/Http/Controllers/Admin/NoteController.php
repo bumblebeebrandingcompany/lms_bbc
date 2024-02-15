@@ -53,7 +53,7 @@ class NoteController extends Controller
             $lead->save();
 
             // Log the timeline event
-            $note->logTimeline($lead->id, 'Note added', 'note_added');
+            // $note->logTimeline($lead->id, 'Note added', 'note_added');
 
             return redirect()->back()->with('success', 'Form submitted successfully!');
         } else {
