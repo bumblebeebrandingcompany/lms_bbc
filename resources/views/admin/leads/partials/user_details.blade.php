@@ -490,7 +490,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="SpamFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="SpamFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
                                 class="myForm" enctype="multipart/form-data">
                                 @csrf
                                 <div id="spamContent" style="display: none;">
@@ -498,13 +498,15 @@
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                         <input type="hidden" name="parent_stage_id" value="15">
+                                        <input type="hidden" name="stage" value="spam">
+
                                         <div class="form-group">
                                              <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
-                                            {{-- <select id="myselection" name="note_text">
+                                            {{-- <select id="myselection" name="notes">
                                                 <option>Select Option</option>
                                                 @foreach ($noteNotInterested as $id => $notes)
                                                     <option value="{{ $notes->notes }}"
@@ -516,8 +518,8 @@
                                             {{-- </select> --}}
                                             {{-- <div id="showOthers" class="myDiv">
                                                 <label for="OthersNoteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div> --}}
                                         </div>
                                         <div class="modal-footer">
@@ -526,7 +528,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="NotvisitedFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="NotvisitedFormId" method="POST" action="{{ route('admin.sitevisit.notvisited') }}"
                                 class="myForm" enctype="multipart/form-data">
                                 @csrf
                                 <div id="notvisitedContent" style="display: none;">
@@ -534,11 +536,13 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="12">
+                                            <input type="hidden" name="stage" value="not_visited">
+
                                             <div class="form-group">
                                                 <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
                                             </div>
                                             <div class="modal-footer">
@@ -551,7 +555,7 @@
 
 
 
-                            <form id="ResheduleFormId" method="POST" action="{{ route('admin.sitevisit.store') }}"
+                            <form id="ResheduleFormId" method="POST" action="{{ route('admin.sitevisit.reschedule') }}"
                                 class="" enctype="multipart/form-data">
                                 @csrf
                                 <div id="showrescheduled" style="display: none;">
@@ -564,7 +568,7 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id"
-                                                value="19
+                                                value="10
                                             ">
                                             <div class="form-group">
                                                 <label type="select" for="user_id">clients</label>
@@ -617,7 +621,7 @@
                             </form>
 
 
-                            <form id="ConductedFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="ConductedFormId" method="POST" action="{{ route('admin.sitevisit.conducted') }}"
                                 class="myForm" enctype="multipart/form-data">
                                 @csrf
                                 <div id="sitevisitconductedContent" style="display: none;">
@@ -626,10 +630,12 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="11">
+                                            <input type="hidden" name="stage" value="site_visit_conducted">
+
                                             <div class="form-group">
                                                 <label for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
                                             <div class="modal-footer">
                                                 <button class="btn btn-danger" type="submit">Save</button>
@@ -638,7 +644,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="CancelledFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="CancelledFormId" method="POST" action="{{ route('admin.sitevisit.cancel') }}"
                                 class="myForm" enctype="multipart/form-data">
                                 @csrf
                                 <div id="cancelledContent" style="display: none;">
@@ -647,11 +653,13 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="20">
+                                            <input type="hidden" name="stage" value="site_visit_cancelled">
+
                                             <div class="form-group">
                                                  <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
                                                 {{-- <select id="myselection">
                                                     <option>Select Option</option>
@@ -665,8 +673,8 @@
                                                 {{-- </select> --}}
                                                 {{-- <div id="showOthers" class="myDiv">
                                                     <label for="otherNoteContent">Note Content</label>
-                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                    <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                        rows="4" required>{{ old('notes') }}</textarea>
                                                 </div> --}}
                                             </div>
 
@@ -677,7 +685,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="LostFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="LostFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
                                 class="myForm" enctype="multipart/form-data">
                                 @csrf
                                 <div id="lostContent" style="display: none;">
@@ -688,13 +696,15 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="17">
+                                            <input type="hidden" name="stage" value="lost">
+
                                             <div class="form-group">
                                                  <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
-                                                {{-- <select id="myselection" name="note_text">
+                                                {{-- <select id="myselection" name="notes">
                                                     <option>Select Option</option>
                                                     @foreach ($noteNotInterested as $id => $notes)
                                                         <option value="{{ $notes->notes }}"
@@ -706,8 +716,8 @@
                                                 {{-- </select> --}}
                                                 {{-- <div id="showOthers" class="myDiv">
                                                     <label for="otherNoteContent">Note Content</label>
-                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                    <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                        rows="4" required>{{ old('notes') }}</textarea>
                                                 </div> --}}
                                             </div>
 
@@ -774,7 +784,7 @@
                             </form>
 
                             <form id="FututeprospectFormId" method="POST"
-                                action="{{ route('admin.notes.store') }}" class="myForm"
+                                action="{{ route('admin.stage-notes.store') }}" class="myForm"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div id="futureprospectContent" style="display: none;">
@@ -783,11 +793,13 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="18">
+                                            <input type="hidden" name="stage" value="future_prospect">
+
                                             <div class="form-group">
                                                    <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
                                             </div>
                                             <div class="modal-footer">
@@ -900,6 +912,7 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="10">
+
                                             {{-- <div class="form-group">
                                                 <label type="select" for="user_id">clients</label>
                                                 <select name="user_id" id="user_id"
@@ -947,7 +960,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="NotqualifiedFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="NotqualifiedFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div id="notqualifiedContent" style="display: none;">
@@ -958,11 +971,12 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="1">
+                                            <input type="hidden" name="stage" value="not_qualified">
                                             <div class="form-group">
                                                  <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
                                             </div>
 
                                             </div>
@@ -974,7 +988,7 @@
                                     </div>
                                 </div>
                             </form>
-                            <form id="rnrFormId" method="POST" action="{{ route('admin.notes.store') }}"
+                            <form id="rnrFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div id="rnrContent" style="display: none;">
@@ -985,12 +999,12 @@
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="21">
-
+                                            <input type="hidden" name="stage" value="rnr">
                                             <div class="form-group">
                                                 <div class="form-group">
                                                     <label for="noteContent">Note Content</label>
-                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                    <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                        rows="4" required>{{ old('notes') }}</textarea>
                                                 </div>
 
                                                 <div class="modal-footer">

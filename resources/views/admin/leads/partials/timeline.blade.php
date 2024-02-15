@@ -78,6 +78,8 @@
                                     @includeIf('admin.leads.partials.event_details.call_feedback_submitted')
                                 @elseif($item->activity_type == 'Site Visit created')
                                     @includeIf('admin.leads.partials.event_details.sitevisit')
+                                @elseif($item->activity_type == 'Rescheduled')
+                                    @includeIf('admin.leads.partials.event_details.sitevisit')
                                 @elseif($item->activity_type == 'sitevisit_conducted')
                                     @includeIf('admin.leads.partials.event_details.sitevisit')
                                 @elseif($item->activity_type == 'Stage Changed')
@@ -88,6 +90,7 @@
                                         $description = str_replace($parentStageId, $parentStageName, $item->description);
                                     @endphp
                                     {{ $description }}
+                                    @includeIf('admin.leads.partials.event_details.stage_changed')
                                 @elseif($item->activity_type == 'followup_scheduled')
                                     @includeIf('admin.leads.partials.event_details.followup')
                                 @elseif($item->activity_type == 'followup_conducted')
