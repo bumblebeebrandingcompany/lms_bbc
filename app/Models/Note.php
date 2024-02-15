@@ -28,7 +28,6 @@ class Note extends Model
         ];
     }
 
-
     public function timeline()
 {
     return $this->hasMany(LeadTimeline::class);

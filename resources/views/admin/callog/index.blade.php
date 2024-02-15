@@ -16,29 +16,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    {{-- <label for="date_range">Select a date</label>
-                        <select class="form-control" id="date_range">
-                            <option value="today">Today</option>
-                            <option value="yesterday">Yesterday</option>
-                            <option value="tomorrow">Tomorrow</option>
-                            <option value="this_week">This Week</option>
-                            <option value="next_60_days" selected>Next 60 Days</option>
-                            <option value="next_30_days">Next 30 Days</option>
-                            <option value="last_week">Last Week</option>
-                            <option value="last_30_days">Last 30 Days</option>
-                            <option value="last_60_days">Last 60 Days</option>
-                            <option value="last_year">Last One Year</option>
-                            <option value="custom">Custom Range</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-4" id="custom_range_container" style ="display:none;">
-                    <div class="form-group">
-                        <label for="custom_range">Custom Range</label>
-                        <input class="form-control" type="text" name="custom_range" id="custom_range"
-                            value="{{ old('custom_range') }}">
-                    </div>
-                </div> --}}
+
                     <div class="col-md-4">
                         <form method="get" action="{{ url()->current() }}">
                             <label for="recordsPerPage">Records Per Page:</label>
@@ -64,7 +42,6 @@
                             <th>Called On</th>
                             <th>Call Start Time</th>
                             <th>Call Recording</th>
-
                         </tr>
                     </thead>
                     <tbody>
