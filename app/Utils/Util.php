@@ -716,18 +716,7 @@ class Util
     {
         return $this->generateReferenceNumber($lead->id, 'LE');
     }
-    public function generatePresalesRefNum($lead)
-    {
-        return $this->generateReferenceNumber($lead->id, 'PR');
-    }
-    public function generateAdmissionteamRefNum($lead)
-    {
-        return $this->generateReferenceNumber($lead->id, 'AD');
-    }
-    public function generateFrontofficeRefNum($lead)
-    {
-        return $this->generateReferenceNumber($lead->id, 'FR');
-    }
+
 
 
     public function generateUserRefNum($user)
@@ -739,6 +728,7 @@ class Util
             'Presales'=>'PR',
             'Admissionteam' => 'AD',
             'Frontoffice'=>'FR'
+
             // 'ChannelPartner' => 'CP',
             // 'ChannelPartnerManager' => 'CPM',
             // 'Elephantine' => 'EEPL'

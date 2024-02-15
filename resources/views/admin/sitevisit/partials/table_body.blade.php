@@ -161,7 +161,6 @@
                     </button>
                 @endif
             @endif
-
             <!-- Modal for Conducted -->
             <div class="modal fade" id="conductedModel{{ $sitevisit->id }}" tabindex="-1" role="dialog"
                 aria-labelledby="conductedModelLabel{{ $sitevisit->id }}" aria-hidden="true">
@@ -177,7 +176,6 @@
                             Are you sure this site visit is Conducted?
                             <br>
                             <br>
-
                             <br>
                             <div class="form-group">
                                 <label class=float-left for="noteContent">Note Content</label>
@@ -220,7 +218,6 @@
                         Application Purchased </button>
                 @endif
             @endif
-            <!-- Modal for Conducted -->
             <div class="modal fade" id="applicationpurchasedmodel{{ $sitevisit->id }}" tabindex="-1" role="dialog"
                 aria-labelledby="applicationpurchasedLabel{{ $sitevisit->id }}" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -232,23 +229,28 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            Are you sure this site visit is Application purchased?
-                            <br>
-                            <br>
-                            <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
-                                name="user_id" id="user_id" required>
+                            <p>Are you sure this site visit is Application purchased?</p>
+                            <label for="application_no">Application Number:</label>
+                            <input class="form-control" type="text" name="application_no"  value="">
 
-                                    @foreach ($agencies as $user)
-                                        @if ($user->user_type == 'Admissionteam')
-                                            <option value="{{ $user->id }}"
-                                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                {{ $user->representative_name }}
-                                            </option>
-                                        @endif
+                            <label for="user_id">Select Representative:</label>
+                            <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}" name="user_id" id="user_id" required>
+                                @foreach ($agencies as $user)
+                                    @if ($user->user_type == 'Admissionteam')
+                                        <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->representative_name }}
+                                        </option>
+                                    @endif
                                 @endforeach
                             </select>
                             <br>
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
                         </div>
+
                         <div class="modal-footer">
                             <input type="hidden" name="parent_stage_id" value="13">
                             <button type="submit" class="btn btn-danger">Confirm</button>
@@ -355,6 +357,12 @@
                         </div>
                         <div class="modal-body">
                             Are you sure this site visit is not visited?
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label class=float-left for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
                         </div>
                         <div class="modal-footer">
                             <input type="hidden" name="parent_stage_id" value="12">

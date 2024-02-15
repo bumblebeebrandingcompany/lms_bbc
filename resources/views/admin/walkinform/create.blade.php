@@ -31,7 +31,7 @@
                         </div>
                         <div class="form-group" class="required">
                             <label for="additional_email">Additional Email:</label>
-                            <input type="email" name="additional_email" class="form-control" required>
+                            <input type="email" name="additional_email" class="form-control" >
                         </div>
 
                         <input type="hidden" name="comments" class="form-control" value= "Direct Walk-in attended"

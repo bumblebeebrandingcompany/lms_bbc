@@ -74,11 +74,9 @@
                         @foreach ($callRecords as $callRecord)
                             <tr>
                                 <td>{{ $counter++ }}</td>
-                                <td>{{ $callRecord->lead->ref_num }} </td>
+                                <td>{{ $callRecord->lead->ref_num ?? ''}} </td>
                                 <td>{{ $callRecord->client_number }}</td>
                                 <td>{{ $callRecord->status }}</td>
-
-
                                 <td>
                                     <?php
                                     $answeredSeconds = $callRecord->call_duration;
@@ -91,14 +89,12 @@
                                     {{ $seconds . 's' }}
                                 </td>
                                 <td>{{ $callRecord->called_on }}</td>
-
                                 @php
                                     $callOnTime = $callRecord->call_on_time; // Replace this with your actual time
                                     $formattedTime = \Carbon\Carbon::createFromFormat('H:i:s', $callOnTime)->format('h:i A');
                                 @endphp
 
                                 <td>{{ $formattedTime }}</td>
-
                                 <td>
                                     <audio controls>
                                         <source src="{{ asset($callRecord['call_recordings']) }}" type="audio/mp3">

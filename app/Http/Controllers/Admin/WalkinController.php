@@ -44,7 +44,7 @@ class WalkinController extends Controller
 
     public function create()
     {
-        if (!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+        if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {
             abort(403, 'Unauthorized.');
         }
         $project_ids = $this->util->getUserProjects(auth()->user());
@@ -106,10 +106,9 @@ class WalkinController extends Controller
         // }
         return redirect()->route('admin.walkinform.index')->with('success', 'Form created successfully');
     }
-
 public function edit(Walkin $walkinform)
 {
-    if (!(auth()->user()->is_superadmin || auth()->user()->is_channel_partner)) {
+    if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {
         abort(403, 'Unauthorized.');
     }
 

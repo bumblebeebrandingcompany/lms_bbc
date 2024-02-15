@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('call_records', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lead_id');
-            $table->foreign('lead_id')->references('id')->on('leads');
+
             $table->string('called_on');
             $table->string('client_number');
             $table->unsignedBigInteger('call_duration');
@@ -30,7 +30,6 @@ return new class extends Migration
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */

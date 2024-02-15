@@ -20,11 +20,9 @@
                 <form method="POST" action="{{ route('admin.notes.store') }}" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
-
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                         <h3 class="card-title"> Notes for Lead ID: {{ $lead->id }}</h3>
                         <br>
-
                         <div class="form-group">
                             <label for="noteContent">Note Content</label>
                             <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
@@ -45,9 +43,6 @@
                 <div class="saved-note">
                     <label for="note_text" class="saved-note-label">Note:</label>
                     <div class="saved-note-text">{{ $note->note_text }}</div>
-                    <label for="note_content" class="saved-note-label"></label>
-                    <div class="saved-note-content">{{ $note->note_content }}</div>
-                    <label for="created at" class="saved-note-label">Date:</label>
                     <div class="saved-created_at">{{ $note->created_at }}</div>
                 </div>
             @endforeach
@@ -55,7 +50,7 @@
     </div>
 
     </form>
-    <div class="d-flex justify-content-end">
+    {{-- <div class="d-flex justify-content-end">
         {{ $notes->links('pagination::bootstrap-4') }}
-    </div>
+    </div> --}}
 </div>

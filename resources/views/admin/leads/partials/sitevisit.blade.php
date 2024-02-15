@@ -79,7 +79,7 @@
                             {{ $sitevisit->notes }}
                             <td style="text-align: center;">
                                 @if ($sitevisit->parent_stage_id == 10)
-                                @if (!auth()->user()->is_client && !auth()->user()->is_frontoffice)
+                                @if (auth()->user()->is_client && !auth()->user()->is_frontoffice)
                                 <div
                                             style="background-color: rgb(47, 230, 236); padding: 5px; display: inline-block; border-radius: 5px;"title="Scheduled">
                                             <i class="fas fa-calendar-check nav-icon"></i>
@@ -184,10 +184,12 @@
                                     @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 11)
                                         @if ($sitevisit->parent_stage_id != 12)
                                             <!-- Add this condition to exclude Not Visited -->
+                                            @if(!auth()->user()->is_client)
                                             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
                                                 data-target="#conductedModel{{ $sitevisit->id }}">
                                                 Conducted
                                             </button>
+                                            @endif
                                         @endif
                                     @endif
                                     <!-- Modal for Conducted -->
@@ -257,9 +259,11 @@
                                     @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 13)
                                         @if ($sitevisit->parent_stage_id != 12)
                                             <!-- Add this condition to exclude Not Visited -->
+                                            @if(!auth()->user()->is_client)
                                             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
                                                 data-target="#applicationpurchasedmodel{{ $sitevisit->id }}">
                                                 Application Purchased </button>
+                                        @endif
                                         @endif
                                     @endif
                                     <!-- Modal for Conducted -->
@@ -359,11 +363,9 @@
                                 </form>
                                 </div>
                                 <div class="mr-2"></div>
-
                                 <form action="{{ route('admin.sitevisits.notvisited', $sitevisit->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-
                                     @if ($sitevisit->parent_stage_id == 12)
                                         @if (!auth()->user()->is_superadmin && !auth()->user()->is_presales)
                                             <div class=float-center>
@@ -382,10 +384,13 @@
                                     @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19,13]))
 
                                     @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 12)
-                                        <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
+
+                                    @if(!auth()->user()->is_client)
+                                    <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                                             data-target="#notVisitedModel{{ $sitevisit->id }}">
                                             Not Visited
                                         </button>
+                                        @endif
                                     @endif
                                     <!-- Modal -->
                                     <div class="modal fade" id="notVisitedModel{{ $sitevisit->id }}" tabindex="-1" role="dialog"
@@ -395,6 +400,7 @@
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="notVisitedModelLabel{{ $sitevisit->id }}">Confirmation
                                                     </h5>
+
                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                         <span aria-hidden="true">&times;</span>
                                                     </button>

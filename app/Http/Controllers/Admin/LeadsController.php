@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
+use App\Models\ApplicationPurchased;
 use App\Models\Campaign;
 use App\Models\Lead;
 use App\Models\SiteVisit;
@@ -17,8 +18,10 @@ use App\Models\Agency;
 use App\Models\Note;
 use App\Models\ParentStage;
 use App\Models\Tag;
+use App\Models\Admitted;
 use App\Models\NoteNotInterested;
 
+use App\Models\User;
 use Gate;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -103,7 +106,6 @@ class LeadsController extends Controller
         }
 
         if ($request->ajax()) {
-
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin|| $user->is_presales) {
@@ -259,7 +261,7 @@ class LeadsController extends Controller
             ->get();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
-
+$admitted=Admitted::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
@@ -297,7 +299,7 @@ class LeadsController extends Controller
             $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
             $lead_stages = Lead::getStages();
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads','admitted'));
         }
     }
 
@@ -437,15 +439,16 @@ class LeadsController extends Controller
         $stages = Stage::all();
         $tags = Tag::all();
         $leads = Lead::all();
+         $admitted=Admitted::all();
         $sitevisits = SiteVisit::all();
         $allActivities = $this->getLeadActivities($lead);
         $noteNotInterested=NoteNotInterested::all();
         $client = Clients::all();
         $lead->load('project', 'campaign', 'source', 'createdBy');
         $agencies = Agency::all();
+        $users = User::all();
+        $application=ApplicationPurchased::all();
         $user_id = request()->get('user_id'); // Get the user ID from the request
-
-        // Load follow-ups associated with the lead and filter by user ID
         $followUps = Followup::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
                 return $query->where('user_id', $user_id);
@@ -456,11 +459,12 @@ class LeadsController extends Controller
                 return $query->where('user_id', $user_id);
             })
             ->get();
-        $sitevisit = SiteVisit::where('lead_id', $lead->id)
+            $sitevisit = SiteVisit::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
                 return $query->where('user_id', $user_id);
             })
             ->get();
+
         $note = Note::where('lead_id', $lead->id)->when($user_id, function ($query) use ($user_id) {
             return $query->where('user_id', $user_id);
         })->get();
@@ -478,7 +482,7 @@ class LeadsController extends Controller
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
-        return view('admin.leads.show', compact('lead', 'lead_events', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities','noteNotInterested'));
+        return view('admin.leads.show', compact('admitted','lead', 'lead_events', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities','noteNotInterested','users','application'));
     }
     public function destroy(Lead $lead)
     {
@@ -611,13 +615,10 @@ class LeadsController extends Controller
         }
         return $output;
     }
-
     private function getLeadActivities(Lead $lead)
     {
         $leadActivities = $lead->timeline()->get();
-        // $noteActivities = $lead->notes()->with('activity')->get();
-        // $callRecordActivities = $lead->callRecords()->with('activity')->get();
-        // $siteVisitActivities = $lead->siteVisits()->with('activity')->get();
+
 
         return collect([])
             ->merge($leadActivities)

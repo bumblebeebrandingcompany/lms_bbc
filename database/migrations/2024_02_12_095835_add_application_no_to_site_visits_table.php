@@ -6,14 +6,19 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
         Schema::table('site_visits', function (Blueprint $table) {
-            $table->unsignedBigInteger('parent_stage_id')->nullable();
-            $table->foreign('parent_stage_id', 'stage_fk_8745955')->references('id')->on('parent_stages');
+            $table->bigInteger('application_no')->nullable();
         });
     }
+
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::table('site_visits', function (Blueprint $table) {

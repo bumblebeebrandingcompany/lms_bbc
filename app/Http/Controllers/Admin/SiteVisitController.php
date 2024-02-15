@@ -21,10 +21,19 @@ class SiteVisitController extends Controller
      * All Utils instance.
      *
      */
-    public function __construct(Util $util)
-    {
-        $this->util = $util;
-    }
+
+     protected $util;
+     protected $lead_view;
+     /**
+      * Constructor
+      *
+      */
+     public function __construct(Util $util)
+     {
+         $this->util = $util;
+         $this->lead_view = ['list', 'kanban'];
+     }
+
     public function index(Request $request)
     {
         $lead = Lead::all();
@@ -74,7 +83,6 @@ class SiteVisitController extends Controller
                 'required',
                 'integer',
             ],
-
             'notes' => 'nullable|string',
         ]);
 
@@ -105,13 +113,8 @@ class SiteVisitController extends Controller
         if ($lead) {
             $lead->update(['parent_stage_id' => 19]);
         }
-
-
-
         return redirect()->back()->with('success', 'Site visit rescheduled successfully.');
     }
-
-
 
     public function cancelSiteVisit(Request $request, $sitevisitId)
     {
@@ -128,22 +131,7 @@ class SiteVisitController extends Controller
 
     }
 
-    // public function conducted(Request $request, $sitevisitId)
-    // {
-    //     $sitevisit = SiteVisit::findOrFail($sitevisitId);
-    //     $lead = new Lead;
 
-    //     $parentStageId = $request->input('parent_stage_id');
-    //     $sitevisit->update(['parent_stage_id' => $parentStageId]);
-    //     $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
-    //     $sitevisit->update([
-    //         'notes' => $request->input('notes'),
-    //         // Add other fields you want to update
-    //     ]);
-    //     // $sitevisit->logTimeline($lead->id, 'Site visit was conducted', 'site_visit_conducted');
-
-    //     return redirect()->back();
-    // }
     public function conducted(Request $request, $sitevisitId)
     {
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
@@ -173,6 +161,7 @@ class SiteVisitController extends Controller
     }
     public function applicationpurchased(Request $request, $sitevisitId)
     {
+
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
 
         // Validate the request data
@@ -182,16 +171,17 @@ class SiteVisitController extends Controller
         // Update the site visit information
         $sitevisit->update([
             'parent_stage_id' => $request->input('parent_stage_id'),
-            // 'notes' => $request->input('notes'),
+            'notes' => $request->input('notes'),
             'user_id'=>$request->input('user_id'),
+            'application_no'=>$request->input('application_no'),
+
         ]);
-        // Update the lead information if it's associated with the site visit
-        if ($sitevisit->lead) {
+      if ($sitevisit->lead) {
             $sitevisit->lead->update([
                 'parent_stage_id' => $sitevisit->parent_stage_id,
                 'user_id' => $request->input('user_id'),
-                // 'notes' => $sitevisit->notes,
-                // Add other lead fields you want to update
+               'application_no' =>$sitevisit->application_no,
+                 'notes'=>$sitevisit->notes,
             ]);
         }
         // Redirect or return a response as needed
@@ -202,9 +192,13 @@ class SiteVisitController extends Controller
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
         $parentStageId = $request->input('parent_stage_id');
         $lead = Lead::find($request->lead_id);
-
-        $sitevisit->update(['parent_stage_id' => $parentStageId]);
-        $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
+        $sitevisit->update([
+            'parent_stage_id' => $parentStageId,
+            'notes' => $request->input('notes'),
+        ]);
+        $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id,
+        'notes'=>$sitevisit->notes,
+    ]);
         // $sitevisit->logTimeline($lead->id, 'Site not visited', 'site_not_visited', $sitevisit->id);
         return redirect()->back();
     }

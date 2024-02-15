@@ -26,13 +26,15 @@ class SiteVisit extends Model
         'follow_up_time',
         'notes',
         'lead_id',
-        'user_id'
+        'user_id',
+        'application_no',
     ];
 
     protected $fillable = [
         'parent_stage_id',
         'user_id',
-        'notes'
+        'notes',
+        'application_no',
     ];
     public function users()
     {

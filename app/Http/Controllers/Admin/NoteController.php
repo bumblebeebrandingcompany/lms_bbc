@@ -37,35 +37,29 @@ class NoteController extends Controller
     }
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'note_text'=>'required',
-            'lead_id' => 'required',
-
-        ]);
-
         $lead = Lead::find($request->lead_id);
 
-        // Create a new note record in your database
-        $note = new Note();
+        if ($lead) {
+            $parentStageId = $request->input('parent_stage_id');
 
-        // Set the note_text based on the dropdown selection
-        $noteText = $request->input('note_text');
-        $noteContent = $request->input('note_content');
+            $note = new Note();
+            $note->lead_id = $lead->id;
+            $note->parent_stage_id = $parentStageId;
+            $note->note_text = $request->input('note_text');
+            $note->save();
 
-        // Debugging statements
+            // Update the parent_stage_id in the leads table
+            $lead->parent_stage_id = $parentStageId;
+            $lead->save();
 
-        $note->lead_id = $lead->id;
+            // Log the timeline event
+            $note->logTimeline($lead->id, 'Note added', 'note_added');
 
-        // $note->note_content = $request->note_content; // Save the selected option or "Others"
-        $note->save();
-
-        // Log the timeline event
-        $note->logTimeline($lead->id, 'Note added', 'note_added');
-
-        return redirect()->back()->with('success', 'Form submitted successfully!');
+            return redirect()->back()->with('success', 'Form submitted successfully!');
+        } else {
+            // Handle the case where the lead is not found
+            return redirect()->back()->with('error', 'Lead not found!');
+        }
     }
-
-
-
 }
 

@@ -44,6 +44,7 @@ Route::resource('/sitevisit', 'SiteVisitController');
 Route::resource('/notes', 'NoteController');
 Route::resource('/notenotinterested', 'NoteNotInterestedController');
 
+Route::resource('/admitted', 'AdmittedController');
 Route::resource('/followups', 'FollowUpController');
 Route::delete('followups/destroy', 'FollowUpController@massDestroy')->name('followups.massDestroy');
 Route::get('leads/{lead}/initiate-call', 'LeadsController@initiateCall')
@@ -62,7 +63,7 @@ Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitCon
 
     //call record
     Route::resource('/callog', 'CallRecordController');
-
+    Route::resource('/applications', 'ApplicationPurchasedController');
 
     Route::resource('/walkinform', 'WalkinController');
     Route::resource('/admission', 'AdmissionFollowUpController');
