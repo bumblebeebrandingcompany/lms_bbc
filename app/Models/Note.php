@@ -10,9 +10,10 @@ class Note extends Model
 
     protected $dates = [
         'created_at',
+        'note_text'
     ];
 
-    protected $fillable = ['note_text','lead_id']; // Specify the fillable attributes
+    protected $fillable = ['lead_id','parent_stage_id']; // Specify the fillable attributes
 
 
     public function rules()

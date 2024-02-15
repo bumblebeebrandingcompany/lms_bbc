@@ -313,7 +313,6 @@
                         </a>
                     </li>
                 @endif
-
                 <li class="nav-item">
                     <a href="{{ route('admin.leads.index', ['view' => 'kanban']) }}" id="lead_menu_link"
                         class="nav-link {{ request()->is('admin/leads') || request()->is('admin/leads/*') ? 'active' : '' }}">
@@ -348,6 +347,30 @@
                             </p>
                         </a>
                     </li>
+                @endif
+                @if (auth()->user()->is_superadmin ||auth()->user()->is_frontoffice || auth()->user()->is_client)
+                <li class="nav-item">
+                    <a href="{{ route('admin.applications.index') }}"
+                        class="nav-link {{ request()->is('admin/applications') || request()->is('admin/applications/*') ? 'active' : '' }}">
+                        <i class="	fas fa-receipt nav-icon"></i>
+                        </i>
+                        <p>
+                          Application Purchased
+                        </p>
+                    </a>
+                </li>
+                @endif
+                @if (auth()->user()->is_admissionteam|| auth()->user()->is_superadmin || auth()->user()->is_client)
+                <li class="nav-item">
+                    <a href="{{ route('admin.admitted.index') }}"
+                        class="nav-link {{ request()->is('admin/admitted') || request()->is('admin/admitted/*') ? 'active' : '' }}">
+                        <i class="fas fa fa-check nav-icon"></i>
+                        </i>
+                        <p>
+                         Admitted
+                        </p>
+                    </a>
+                </li>
                 @endif
                 @if (file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
                     <li class="nav-item">

@@ -116,7 +116,6 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
-
                             {{-- <div style="padding-bottom: 4px">
                                 <span class="btn btn-info btn-xs select-all" style="border-radius: 0">{{ trans('global.select_all') }}</span>
                                 <span class="btn btn-info btn-xs deselect-all" style="border-radius: 0">{{ trans('global.deselect_all') }}</span>
@@ -169,7 +168,6 @@
 
                                 <tr>
                                     <td>Conducted
-
                                         <div class="float-right"
                                             style="background-color: green; padding: 2px; display: inline-block; border-radius: 5px;"title="Conducted">
                                             <i class="far fa fa-check nav-icon"></i>

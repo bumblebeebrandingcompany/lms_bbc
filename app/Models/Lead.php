@@ -196,10 +196,23 @@ class Lead extends Model
         $this->timeline()->create($data);
     }
 
-
     public function timeline()
     {
         return $this->hasMany(LeadTimeline::class, 'lead_id');
     }
+    // Lead model
+public function notes()
+{
+    return $this->hasMany(Note::class);
+}
+public function admitted()
+{
+    return $this->hasMany(Admitted::class);
+}
+
+public function application()
+{
+    return $this->hasOne(ApplicationPurchased::class);
+}
 }
 
