@@ -265,7 +265,7 @@ class LeadsController extends Controller
             ->get();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
-$admitted=Admitted::all();
+        $admitted = Admitted::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
@@ -307,7 +307,7 @@ $admitted=Admitted::all();
             $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
             $lead_stages = Lead::getStages();
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads','admitted'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'admitted'));
         }
     }
     public function create()
@@ -331,53 +331,61 @@ $admitted=Admitted::all();
     }
 
     public function store(StoreLeadRequest $request)
-{
-    $input = $request->except(['_method', '_token']);
-    $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
-    $input['created_by'] = auth()->user()->id;
+    {
+        $input = $request->except(['_method', '_token']);
+        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
+        $input['created_by'] = auth()->user()->id;
 
-    $input['parent_stage_id'] = $request->input('parent_stage_id');
-    $input['user_id'] = $request->input('user_id');
-    $existingLeads = Lead::where('phone', $input['phone'])->get();
+        $input['parent_stage_id'] = $request->input('parent_stage_id');
+        $input['user_id'] = $request->input('user_id');
+        $existingLead = Lead::where('phone', $input['phone'])->first();
 
-    foreach ($existingLeads as $existingLead) {
-        // Update each existing lead with the new data
-        $existingLead->fill($input);
+        if ($existingLead) {
+            // Create a new lead instance
+            $lead = new Lead;
 
-        // Save the updated lead
-        $existingLead->save();
-        $this->logTimeline($existingLead, 'lead_recreated', 'Lead Recreated Again');
-    }
+            // Copy the existing lead's attributes to the new instance
+            $lead->fill($existingLead->getAttributes());
 
-    if ($existingLeads->isEmpty()) {
-        // Create a new lead if no existing leads are found
-        $lead = Lead::create($input);
-        $lead->ref_num = $this->util->generateLeadRefNum($lead);
-        $lead->save();
-        $this->logTimeline($lead, 'lead_created', 'Lead Created Successfully');
+            // Update the new lead with the new data
+            $lead->fill($input);
 
-        // Update source and campaign for the new lead if necessary
-        if (auth()->user()->is_channel_partner) {
-            $source = Source::where('is_cp_source', 1)
-                ->where('project_id', $input['project_id'])
-                ->first();
+            // Keep the same reference number
+            $lead->ref_num = $existingLead->ref_num;
 
-            if (!empty($source)) {
-                $lead->source_id = $source->id;
-                $lead->campaign = $source->campaign;
-                $lead->save();
+            // Save the new lead
+            $lead->save();
+            $this->logTimeline($lead, 'lead_created', 'Lead Created Again');
+        } else {
+            // Create a new lead if no existing leads are found
+            $lead = Lead::create($input);
+            $lead->ref_num = $this->util->generateLeadRefNum($lead);
+            $lead->save();
+            $this->logTimeline($lead, 'lead_created', 'Lead Created Successfully');
+
+            // Update source and campaign for the new lead if necessary
+            if (auth()->user()->is_channel_partner) {
+                $source = Source::where('is_cp_source', 1)
+                    ->where('project_id', $input['project_id'])
+                    ->first();
+
+                if (!empty($source)) {
+                    $lead->source_id = $source->id;
+                    $lead->campaign = $source->campaign;
+                    $lead->save();
+                }
+            }
+
+            $this->util->storeUniqueWebhookFields($lead);
+
+            if (!empty($lead->project->outgoing_apis)) {
+                $this->util->sendApiWebhook($lead->id);
             }
         }
 
-        $this->util->storeUniqueWebhookFields($lead);
-
-        if (!empty($lead->project->outgoing_apis)) {
-            $this->util->sendApiWebhook($lead->id);
-        }
+        return redirect()->route('admin.leads.index');
     }
 
-    return redirect()->route('admin.leads.index');
-}
 
 
     public function showTimeline($leadId)
@@ -464,7 +472,7 @@ $admitted=Admitted::all();
         $stages = Stage::all();
         $tags = Tag::all();
         $leads = Lead::all();
-         $admitted=Admitted::all();
+        $admitted = Admitted::all();
         $sitevisits = SiteVisit::all();
         $allActivities = $this->getLeadActivities($lead);
         $noteNotInterested = NoteNotInterested::all();
@@ -472,7 +480,7 @@ $admitted=Admitted::all();
         $lead->load('project', 'campaign', 'source', 'createdBy');
         $agencies = Agency::all();
         $users = User::all();
-        $application=ApplicationPurchased::all();
+        $application = ApplicationPurchased::all();
         $user_id = request()->get('user_id'); // Get the user ID from the request
         $followUps = Followup::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
@@ -484,7 +492,7 @@ $admitted=Admitted::all();
                 return $query->where('user_id', $user_id);
             })
             ->get();
-            $sitevisit = SiteVisit::where('lead_id', $lead->id)
+        $sitevisit = SiteVisit::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
                 return $query->where('user_id', $user_id);
             })
@@ -507,7 +515,7 @@ $admitted=Admitted::all();
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
-        return view('admin.leads.show', compact('admitted','lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested','users','application'));
+        return view('admin.leads.show', compact('admitted', 'lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested', 'users', 'application'));
     }
     public function destroy(Lead $lead)
     {
