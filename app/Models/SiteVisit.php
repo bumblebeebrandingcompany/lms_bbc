@@ -11,7 +11,6 @@ class SiteVisit extends Model
 
     use HasFactory;
 
-    protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_channel_partner', 'is_channel_partner_manager',];
 
     public $table = 'site_visits';
 
@@ -30,7 +29,9 @@ class SiteVisit extends Model
     ];
 
     protected $fillable = [
-        'parent_stage_id'
+        'parent_stage_id',
+        'user_id',
+        'notes'
     ];
     public function users()
     {
@@ -41,26 +42,9 @@ class SiteVisit extends Model
 {
     return $this->belongsTo(Lead::class);
 }
-public function logTimeline($lead,$description, $activityType = null)
-{
-    $data = [
-        'lead_id' =>$lead,
-        'description' => $description,
-    ];
-
-    if ($activityType !== null) {
-        $data['activity_type'] = $activityType;
-    }
 
 
 
-    $this->timeline()->create($data);
-}
-
-public function timeline()
-{
-    return $this->hasMany(LeadTimeline::class);
-}
 public function campaign()
 {
     return $this->belongsTo(Campaign::class, 'campaign_id');
@@ -71,5 +55,14 @@ public function source()
 }    public function project()
 {
     return $this->belongsTo(Project::class, 'project_id');
+}
+public function parentStage()
+{
+    return $this->belongsTo(ParentStage::class, 'parent_stage_id');
+}
+
+public function timeline()
+{
+    return $this->hasMany(LeadTimeline::class, 'payload');
 }
 }

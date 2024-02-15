@@ -1,104 +1,104 @@
 <div class="row">
     <div class="col-md-12">
-        @if(count($lead_events) > 0)
+        @if (count($timelineItems) > 0)
             <div class="timeline">
-                @foreach($lead_events as $index => $event)
+                @foreach ($timelineItems as $index => $item)
                     <div class="time-label">
-                        <span class="text-center @if($event->event_type == 'call_feedback_submitted')
-                                    bg-primary
-                                @elseif($event->event_type == 'sitevisit_scheduled')
+                        <span
+                            class="text-center @if ($item->activity_type == 'call_feedback_submitted') bg-primary
+                                @elseif($item->activity_type == 'Site Visit created')
                                     bg-warning
-                                @elseif($event->event_type == 'sitevisit_conducted')
+                                @elseif($item->activity_type == 'sitevisit_conducted')
                                     bg-success
-                                @elseif($event->event_type == 'stage_changed')
+                                @elseif($item->activity_type == 'Stage Changed')
                                     bg-danger
-                                @elseif($event->event_type == 'followup_scheduled')
+                                @elseif($item->activity_type == 'followup_scheduled')
                                     bg-warning
-                                @elseif($event->event_type == 'followup_conducted')
+                                @elseif($item->activity_type == 'followup_conducted')
                                     bg-success
-                                @elseif($event->event_type == 'note_added')
+                                @elseif($item->activity_type == 'note_added')
                                     bg-info
-                                @elseif($event->event_type == 'document_sent')
+                                @elseif($item->activity_type == 'document_sent')
                                     bg-dark
                                 @else
-                                    bg-olive
-                                @endif">
-                            {{@format_datetime($event->added_at)}}
+                                    bg-olive @endif">
+                            {{ @format_datetime($item->created_at) }}
                             <br>
-                            <small>({{@get_diff_for_humans($event->added_at)}})</small>
+                            <small>({{ @get_diff_for_humans($item->created_at) }})</small>
                         </span>
                     </div>
                     <div>
-                        @if($event->event_type == 'call_feedback_submitted')
-                            <i class="fas fa-phone-volume bg-blue"></i>
-                        @elseif($event->event_type == 'sitevisit_scheduled')
-                            <i class="fas fa-map-marker-alt bg-yellow"></i>
-                        @elseif($event->event_type == 'sitevisit_conducted')
-                            <i class="fas fa-map-marker bg-green"></i>
-                        @elseif($event->event_type == 'stage_changed')
-                            <i class="fas fa-exchange-alt bg-red"></i>
-                        @elseif($event->event_type == 'followup_scheduled')
-                            <i class="fas fa-bullseye bg-yellow"></i>
-                        @elseif($event->event_type == 'followup_conducted')
-                            <i class="fas fa-certificate bg-green"></i>
-                        @elseif($event->event_type == 'note_added')
-                            <i class="far fa-sticky-note bg-info"></i>
-                        @elseif($event->event_type == 'document_sent')
-                            <i class="fas fa-file-alt bg-dark"></i>
+                        @if ($item->activity_type == 'call_feedback_submitted')
+                            <i class="fas fa-phone-alt bg-blue" style="color: blue;"></i>
+                        @elseif($item->activity_type == 'Site Visit created')
+                            <i class="fas fa-map-marker-alt bg-yellow" style="color: yellow;"></i>
+                        @elseif($item->activity_type == 'sitevisit_conducted')
+                            <i class="fas fa-check-circle bg-green" style="color: green;"></i>
+                        @elseif($item->activity_type == 'Stage Changed')
+                            <i class="fas fa-exchange-alt bg-red" style="color: red;"></i>
+                        @elseif($item->activity_type == 'followup_scheduled')
+                            <i class="fas fa-calendar-alt bg-yellow" style="color: yellow;"></i>
+                        @elseif($item->activity_type == 'followup_conducted')
+                            <i class="fas fa-check-double bg-green" style="color: green;"></i>
+                        @elseif($item->activity_type == 'note_added')
+                            <i class="fas fa-sticky-note bg-info" style="color: blue;"></i>
+                        @elseif($item->activity_type == 'document_sent')
+                            <i class="far fa-file-alt bg-dark" style="color: dark;"></i>
                         @else
-                            <i class="far fa-check-circle bg-olive"></i>
+                            <i class="fas fa-check-circle bg-olive" style="color: olive;"></i>
                         @endif
                         <div class="timeline-item">
                             <span class="time">
                                 <i class="fas fa-clock"></i>
-                                {{@format_time($event->added_at)}}
+                                {{ @format_time($item->created_at) }}
                             </span>
-                            <h3 class="timeline-header text-bold @if($event->event_type == 'call_feedback_submitted')
-                                    text-primary
-                                @elseif($event->event_type == 'sitevisit_scheduled')
+                            <h3
+                                class="timeline-header text-bold @if ($item->activity_type == 'call_feedback_submitted') text-primary
+                                @elseif($item->activity_type == 'Site Visit created')
                                     text-warning
-                                @elseif($event->event_type == 'sitevisit_conducted')
+                                @elseif($item->activity_type == 'sitevisit_conducted')
                                     text-success
-                                @elseif($event->event_type == 'stage_changed')
+                                @elseif($item->activity_type == 'Stage Changed')
                                     text-danger
-                                @elseif($event->event_type == 'followup_scheduled')
+                                @elseif($item->activity_type == 'followup_scheduled')
                                     text-warning
-                                @elseif($event->event_type == 'followup_conducted')
+                                @elseif($item->activity_type == 'followup_conducted')
                                     text-success
-                                @elseif($event->event_type == 'note_added')
+                                @elseif($item->activity_type == 'note_added')
                                     text-info
-                                @elseif($event->event_type == 'document_sent')
+                                @elseif($item->activity_type == 'document_sent')
                                     text-dark
                                 @else
-                                    text-olive
-                                @endif">
-                                {{ucfirst(str_replace('_', ' ', $event->event_type))}}
-                                <small class="text-muted">
-                                    (
-                                        {{ucfirst(str_replace('_', ' ', $event->source))}}
-                                    )
-                                </small>
+                                    text-olive @endif">
+                                {{ ucfirst(str_replace('_', ' ', $item->activity_type)) }}
+
                             </h3>
                             <div class="timeline-body">
-                            @if($event->event_type == 'call_feedback_submitted')
-                                @includeIf('admin.leads.partials.event_details.call_feedback_submitted')
-                            @elseif($event->event_type == 'sitevisit_scheduled')
-                                @includeIf('admin.leads.partials.event_details.sitevisit')
-                            @elseif($event->event_type == 'sitevisit_conducted')
-                                @includeIf('admin.leads.partials.event_details.sitevisit')
-                            @elseif($event->event_type == 'stage_changed')
-                                @includeIf('admin.leads.partials.event_details.stage_changed')
-                            @elseif($event->event_type == 'followup_scheduled')
-                                @includeIf('admin.leads.partials.event_details.followup')
-                            @elseif($event->event_type == 'followup_conducted')
-                                @includeIf('admin.leads.partials.event_details.followup')
-                            @elseif($event->event_type == 'note_added')
-                                @includeIf('admin.leads.partials.event_details.note_added')
-                            @elseif($event->event_type == 'document_sent')
-                                @includeIf('admin.leads.partials.event_details.document_sent')
-                            @else
-                                {{json_encode($event->webhook_data ?? [])}}
-                            @endif
+                                @if ($item->activity_type == 'call_feedback_submitted')
+                                    @includeIf('admin.leads.partials.event_details.call_feedback_submitted')
+                                @elseif($item->activity_type == 'Site Visit created')
+                                    @includeIf('admin.leads.partials.event_details.sitevisit')
+                                @elseif($item->activity_type == 'sitevisit_conducted')
+                                    @includeIf('admin.leads.partials.event_details.sitevisit')
+                                @elseif($item->activity_type == 'Stage Changed')
+                                    @php
+                                        preg_match('/\b\d+\b/', $item->description, $matches);
+                                        $parentStageId = $matches[0] ?? null;
+                                        $parentStageName = App\Models\ParentStage::find($parentStageId)->name ?? 'Unknown';
+                                        $description = str_replace($parentStageId, $parentStageName, $item->description);
+                                    @endphp
+                                    {{ $description }}
+                                @elseif($item->activity_type == 'followup_scheduled')
+                                    @includeIf('admin.leads.partials.event_details.followup')
+                                @elseif($item->activity_type == 'followup_conducted')
+                                    @includeIf('admin.leads.partials.event_details.followup')
+                                @elseif($item->activity_type == 'note_added')
+                                    @includeIf('admin.leads.partials.event_details.note_added')
+                                @elseif($item->activity_type == 'document_sent')
+                                    @includeIf('admin.leads.partials.event_details.document_sent')
+                                @else
+                                    {{ json_encode($item->webhook_data ?? []) }}
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -106,7 +106,7 @@
             </div>
         @else
             <div class="callout callout-warning">
-                <h5>No, record found.</h5>
+                <h5>No record found.</h5>
             </div>
         @endif
     </div>

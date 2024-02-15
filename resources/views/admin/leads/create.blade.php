@@ -44,7 +44,6 @@
                 <input type="text" name="secondary_phone" id="secondary_phone_key" value="{{ old('secondary_phone')}}" class="form-control input_number">
             </div>
             <input type="hidden" name="parent_stage_id" id="parent_stage_id" value="8">
-
             <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
                 <br>

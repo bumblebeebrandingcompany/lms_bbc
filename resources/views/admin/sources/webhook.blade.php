@@ -75,6 +75,7 @@
                                             @if (!empty($lead) && !empty($lead->lead_info))
                                                 @php
                                                     $serial_num = 0;
+
                                                 @endphp
                                                 <tr>
                                                     <td>
@@ -199,39 +200,16 @@
                                             <div class="row mb-3">
                                                 <div class="col-md-4">
                                                     <div class="form-group">
-                                                        <label
-                                                            for="essential_fields">{{ $essentialField['name_data'] }}</label>
-                                                        <input type="hidden"
-                                                            name="sales_fields[{{ $key }}][name_data]"
+                                                        <label for="essential_fields">{{ $essentialField['name_data'] }}</label>
+                                                        <input type="hidden" name="sales_fields[{{ $key }}][name_data]"
                                                             value="{{ $essentialField['name_data'] }}">
-
                                                         <span class="help-block">{{ $essentialField['name_value'] }}</span>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-5">
+                                                <div class="col-md-8">
                                                     <div class="form-group">
-
-                                                        <select class="form-control select2" required>
-                                                            <option value="">@lang('messages.please_select')</option>
-                                                            @php
-                                                                $existing_keys = optional($source->project)->webhook_fields ?? [];
-                                                            @endphp
-                                                            @foreach ($existing_keys as $existingKey)
-                                                                <option value="{{ $existingKey }}">
-                                                                    {{ $existingKey }}
-                                                                    @if (!empty($existing_keys) && in_array($existingKey, $existing_keys))
-                                                                        (@lang('messages.exist_in_recent_lead'))
-                                                                    @endif
-                                                                </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <input type="text" class="lead-input"
-                                                            name="essential_fields[{{ $key }}][value]" readonly>
+                                                        <input type="text" class="lead-input" name="essential_fields[{{ $key }}][value]"
+                                                            value="{{ isset($essentialField['value']) ? $essentialField['value'] : '' }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -241,6 +219,7 @@
                                 @endif
                             </div>
                         </div>
+
 
                         {{-- Custom Fields --}}
                         <div class="row">
@@ -257,7 +236,6 @@
                                                             value="{{ $customField['name_data'] }}">
                                                         <br>
                                                         <span class="help-block">{{ $customField['name_value'] }}</span>
-
                                                     </div>
                                                 </div>
                                                 <div class="col-md-5">
@@ -328,7 +306,6 @@
                                                         </select>
                                                     </div>
                                                 </div>
-
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <input type="text" class="lead-input"
@@ -370,6 +347,7 @@
                                 @endif
                             </div>
                         </div>
+
 
                         {{-- system fields --}}
                         <div class="row">
@@ -433,130 +411,7 @@
                         </div>
 
 
-                        {{-- <div class="row">
-                        @php
-                            $tags = optional($source->project)->webhook_fields ?? [];
-                            $email_label = __('messages.email');
-                            $phone_label = __('messages.phone');
-                            $name_label = __('messages.name');
-                            $addi_email_label = __('messages.additional_email');
-                            $secondary_phone_label = __('messages.secondary_phone');
-                        @endphp
-                        <div class="col-md-12">
-                            <h3>
-                                @lang('messages.email_and_phone_key')
-                            </h3>
-                        </div>
-                        <div class="row ml-1">
-                            <div class="col-md-12">
-                                <form action="{{route('admin.update.email.and.phone.key')}}" method="post" enctype="multipart/form-data">
-                                    @csrf
-                                    <input type="hidden" name="source_id" value="{{$source->id}}" id="source_id">
-                                    <div class="row">
-                                        @if ($source->name_key !== null)
-                                        <div class="col-md-4">
-                                            <div class="form-group">
 
-                                                <label for="name_key" class="required">
-                                                    {{ trans('messages.name') }} {{ trans('messages.key') }}
-                                                </label>
-
-                                                    <input type="text" class="form-control" name="name_key" id="name_key" value="{{ $source->name_key }}" readonly>
-                                                @endif
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="email_key" class="required">
-                                                    {{ trans('messages.email') }} {{trans('messages.key')}}
-                                                </label><br>
-                                                <select class="form-control select2" name="email_key" id="email_key" required>
-                                                    <option value="">@lang('messages.please_select')</option>
-                                                    @foreach ($tags as $key)
-                                                        <option value="{{$key}}"
-                                                            @if ($key == $source->email_key || soundex($key) == soundex($email_label))
-                                                                selected
-                                                            @endif>
-                                                            {{$key}}
-                                                            @if (!empty($existing_keys) && in_array($key, $existing_keys))
-                                                                (@lang('messages.exist_in_recent_lead'))
-                                                            @endif
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="addi_email_label">
-                                                    {{ trans('messages.additional_email_key') }} {{trans('messages.key')}}
-                                                </label><br>
-                                                <select class="form-control select2" name="additional_email_key" id="addi_email_label">
-                                                    <option value="">@lang('messages.please_select')</option>
-                                                    @foreach ($tags as $key)
-                                                        <option value="{{$key}}"
-                                                            @if ($key == $source->additional_email_key || soundex($key) == soundex($addi_email_label))
-                                                                selected
-                                                            @endif>
-                                                            {{$key}}
-                                                            @if (!empty($existing_keys) && in_array($key, $existing_keys))
-                                                                (@lang('messages.exist_in_recent_lead'))
-                                                            @endif
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="phone_key" class="required">
-                                                {{ trans('messages.phone') }} {{trans('messages.key')}}
-                                            </label>
-                                            <select class="form-control select2" name="phone_key" id="phone_key" required>
-                                                <option value="">@lang('messages.please_select')</option>
-                                                @foreach ($tags as $key)
-                                                    <option value="{{$key}}"
-                                                        @if ($key == $source->phone_key || soundex($key) == soundex($phone_label))
-                                                            selected
-                                                        @endif>
-                                                        {{$key}}
-                                                        @if (!empty($existing_keys) && in_array($key, $existing_keys))
-                                                            (@lang('messages.exist_in_recent_lead'))
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <label for="secondary_phone_key">
-                                                {{ trans('messages.secondary_phone_key') }} {{trans('messages.key')}}
-                                            </label>
-                                            <select class="form-control select2" name="secondary_phone_key" id="secondary_phone_key">
-                                                <option value="">@lang('messages.please_select')</option>
-                                                @foreach ($tags as $key)
-                                                    <option value="{{$key}}"
-                                                        @if ($key == $source->secondary_phone_key || soundex($key) == soundex($secondary_phone_label))
-                                                            selected
-                                                        @endif>
-                                                        {{$key}}
-                                                        @if (!empty($existing_keys) && in_array($key, $existing_keys))
-                                                            (@lang('messages.exist_in_recent_lead'))
-                                                        @endif
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row mt-3">
-                                        <div class="col-md-4">
-                                            <button type="submit" class="btn btn-outline-primary">
-                                                {{trans('messages.save')}}
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div> --}}
                     </div>
                 </div>
             </div>
@@ -576,6 +431,7 @@
 
             // Retrieve the corresponding value from the leadData object
             const selectedValue = leadData[selectedKey];
+
 
             // Set the input field's value to the selected value (or handle "not found" case)
             if (selectedValue !== undefined) {
@@ -613,4 +469,3 @@
         });
     </script>
 @endsection
-

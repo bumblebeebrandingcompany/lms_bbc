@@ -20,7 +20,7 @@ class ClientController extends Controller
 
     public function index(Request $request)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin && !auth()->user()->is_client, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
             $query = Clients::query()->select(sprintf('%s.*', (new Clients)->table));
@@ -100,7 +100,7 @@ class ClientController extends Controller
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $client->load('clientProjects', 'clientUsers');
+        $client->load('clientProjects', 'clientUsers',);
 
         return view('admin.clients.show', compact('client'));
     }

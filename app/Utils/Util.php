@@ -30,9 +30,7 @@ class Util
                 }
             });
         }
-
         $project_ids = $query->pluck('id')->toArray();
-
         return $project_ids;
     }
 
@@ -106,8 +104,6 @@ class Util
 
             $essentialFields[$field['name_value']] = $value ?? '';
         }
-
-
         $salesFields = [];
 
         foreach ($project->sales_fields as $field) {
@@ -499,7 +495,6 @@ class Util
 
         return $tags;
     }
-
     /*
      * return sources
      *
@@ -522,6 +517,18 @@ class Util
 
         return $sources->pluck('name', 'id')->toArray();
     }
+// public function getSourcesForProjectAndCampaign($project_id, $campaign_id)
+// {
+//     $sources = Source::whereHas('project', function ($query) use ($project_id) {
+//             $query->where('id', $project_id);
+//         })
+//         ->whereHas('campaign', function ($query) use ($campaign_id) {
+//             $query->where('id', $campaign_id);
+//         })
+//         ->get();
+
+//     return $sources->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+// }
 
     public function postWebhook($url, $method, $headers = [], $body = [])
     {
@@ -603,7 +610,6 @@ class Util
         if (empty($client_ids)) {
             return [];
         }
-
         $projects = Project::whereIn('client_id', $client_ids)
             ->pluck('id')->toArray();
 
@@ -686,9 +692,6 @@ class Util
 
 
     }
-
-
-
     public function getClientProjects($id)
     {
         $projects = Project::where('client_id', $id)
@@ -713,6 +716,19 @@ class Util
     {
         return $this->generateReferenceNumber($lead->id, 'LE');
     }
+    public function generatePresalesRefNum($lead)
+    {
+        return $this->generateReferenceNumber($lead->id, 'PR');
+    }
+    public function generateAdmissionteamRefNum($lead)
+    {
+        return $this->generateReferenceNumber($lead->id, 'AD');
+    }
+    public function generateFrontofficeRefNum($lead)
+    {
+        return $this->generateReferenceNumber($lead->id, 'FR');
+    }
+
 
     public function generateUserRefNum($user)
     {
@@ -720,6 +736,9 @@ class Util
             'Superadmin' => 'SU',
             'Clients' => 'CL',
             'Agency' => 'AG',
+            'Presales'=>'PR',
+            'Admissionteam' => 'AD',
+            'Frontoffice'=>'FR'
             // 'ChannelPartner' => 'CP',
             // 'ChannelPartnerManager' => 'CPM',
             // 'Elephantine' => 'EEPL'

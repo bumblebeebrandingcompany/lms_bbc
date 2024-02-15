@@ -7,7 +7,11 @@ use App\Http\Requests\SiteVisitRequest;
 use App\Models\Campaign;
 use App\Models\Clients;
 use App\Models\Lead;
+use App\Models\LeadTimeline;
 use App\Models\SiteVisit;
+use App\Models\ParentStage;
+use App\Models\Source;
+use App\Models\Tag;
 use App\Models\User;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -30,36 +34,58 @@ class SiteVisitController extends Controller
         $campaigns = Campaign::all();
         $sitevisits = SiteVisit::all(); // Fixed variable name to $sitevisits
         $ids = $sitevisits->pluck('id'); // Get an array of all sitevisit IDs
-        // Alternatively, if you want to get the IDs in a loop
+        $parentStages = ParentStage::all();
+        $tags = Tag::all();
+        $sitevisitId =SiteVisit::all();
         $ids = [];
         foreach ($sitevisits as $sitevisit) {
             $ids[] = $sitevisit->id;
         }
         // $itemsPerPage = request('perPage', 10);
         // $sitevisits = SiteVisit::paginate($itemsPerPage);
-        return view('admin.sitevisit.index', compact('campaigns', 'agencies', 'lead', 'sitevisits', 'ids', 'client'));
+        return view('admin.sitevisit.index', compact('campaigns', 'agencies', 'lead', 'sitevisits', 'ids', 'client','parentStages','tags'));
     }
 
     public function store(SiteVisitRequest $request)
     {
         $input = $request->validated(); // Use the validated input from the request
+
         // Find the lead and user based on their IDs
         $lead = Lead::findOrFail($input['lead_id']);
         $parentStageId = $request->input('parent_stage_id');
+
         $sitevisit = new SiteVisit();
         $sitevisit->lead_id = $lead->id;
-        $sitevisit->user_id = $input['user_id'];
         $sitevisit->follow_up_date = $input['follow_up_date']; // Assign the date
         $sitevisit->follow_up_time = $input['follow_up_time']; // Assign the time
         $sitevisit->notes = $input['notes'];
         $sitevisit->parent_stage_id = $parentStageId;
         $sitevisit->save();
-        $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
-        // $sitevisit->logTimeline($lead->id, 'Site Visit  created', 'sitevisit_created');
-        return redirect()->back()->with('success', 'Form submitted successfully!');
 
+        $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
+
+        // Log the timeline
+        $this->logTimeline($lead,$sitevisit, 'Site Visit created', 'sitevisit_created');
+
+        return redirect()->back()->with('success', 'Form submitted successfully!');
     }
 
+    private function logTimeline(Lead $lead, $sitevisit, $type, $description)
+    {
+        $timeline = new LeadTimeline;
+        $timeline->activity_type = $type;
+        $timeline->lead_id = $lead->id;
+
+        // Combine lead and site visit data into payload
+        $payload = [
+            'lead' => $lead->toArray(),
+            'sitevisit' => $sitevisit->toArray()
+        ];
+
+        $timeline->payload = json_encode($payload); // Convert array to JSON
+        $timeline->description = $description;
+        $timeline->save();
+    }
 
     public function reschedule(Request $request, $id)
     {
@@ -71,9 +97,7 @@ class SiteVisitController extends Controller
                 'required',
                 'integer',
             ],
-            'user_id' => [
-                // Add your validation rules for user_id if needed
-            ],
+
             'notes' => 'nullable|string',
         ]);
 
@@ -93,7 +117,7 @@ class SiteVisitController extends Controller
         $newSiteVisit->follow_up_date = $request->follow_up_date;
         $newSiteVisit->follow_up_time = $request->follow_up_time;
         $newSiteVisit->lead_id = $request->lead_id;
-        $newSiteVisit->user_id = $request->user_id;
+        // $newSiteVisit->user_id = $request->user_id;
         $newSiteVisit->notes = $request->notes;
         $newSiteVisit->parent_stage_id = $parentStageId; // Set parent_stage_id directly
         // $newSiteVisit->logTimeline('rescheduled', 'rescheduled');
@@ -127,19 +151,75 @@ class SiteVisitController extends Controller
 
     }
 
+    // public function conducted(Request $request, $sitevisitId)
+    // {
+    //     $sitevisit = SiteVisit::findOrFail($sitevisitId);
+    //     $lead = new Lead;
+
+    //     $parentStageId = $request->input('parent_stage_id');
+    //     $sitevisit->update(['parent_stage_id' => $parentStageId]);
+    //     $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
+    //     $sitevisit->update([
+    //         'notes' => $request->input('notes'),
+    //         // Add other fields you want to update
+    //     ]);
+    //     // $sitevisit->logTimeline($lead->id, 'Site visit was conducted', 'site_visit_conducted');
+
+    //     return redirect()->back();
+    // }
     public function conducted(Request $request, $sitevisitId)
     {
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
-        $lead = new Lead;
 
-        $parentStageId = $request->input('parent_stage_id');
-        $sitevisit->update(['parent_stage_id' => $parentStageId]);
-        $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
-        // $sitevisit->logTimeline($lead->id, 'Site visit was conducted', 'site_visit_conducted');
+        // Validate the request data
+        $request->validate([
+            'notes' => 'required|string',
+        ]);
+        // Update the site visit information
 
-        return redirect()->back();
+        $sitevisit->update([
+            'parent_stage_id' => $request->input('parent_stage_id'),
+            'notes' => $request->input('notes'),
+
+        ]);
+
+        // Update the lead information if it's associated with the site visit
+        if ($sitevisit->lead) {
+            $sitevisit->lead->update([
+                'parent_stage_id' => $sitevisit->parent_stage_id,
+                // 'notes' => $sitevisit->notes,
+                // Add other lead fields you want to update
+            ]);
+        }
+        // Redirect or return a response as needed
+        return redirect()->back()->with('success', 'Site visit conducted successfully!');
     }
+    public function applicationpurchased(Request $request, $sitevisitId)
+    {
+        $sitevisit = SiteVisit::findOrFail($sitevisitId);
 
+        // Validate the request data
+        // $request->validate([
+        //     'notes' => 'required|string',
+        // ]);
+        // Update the site visit information
+        $sitevisit->update([
+            'parent_stage_id' => $request->input('parent_stage_id'),
+            // 'notes' => $request->input('notes'),
+            'user_id'=>$request->input('user_id'),
+        ]);
+        // Update the lead information if it's associated with the site visit
+        if ($sitevisit->lead) {
+            $sitevisit->lead->update([
+                'parent_stage_id' => $sitevisit->parent_stage_id,
+                'user_id' => $request->input('user_id'),
+                // 'notes' => $sitevisit->notes,
+                // Add other lead fields you want to update
+            ]);
+        }
+        // Redirect or return a response as needed
+        return redirect()->back()->with('success', 'application purchased successfully!');
+    }
     public function notVisited(Request $request, $sitevisitId)
     {
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
@@ -149,8 +229,6 @@ class SiteVisitController extends Controller
         $sitevisit->update(['parent_stage_id' => $parentStageId]);
         $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
         // $sitevisit->logTimeline($lead->id, 'Site not visited', 'site_not_visited', $sitevisit->id);
-
-
         return redirect()->back();
     }
 }

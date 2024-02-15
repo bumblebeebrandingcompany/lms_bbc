@@ -34,13 +34,12 @@ class SourceController extends Controller
 
     public function index(Request $request)
     {
-        if(!auth()->user()->is_superadmin) {
+        if(!auth()->user()->is_superadmin && !auth()->user()->is_client  ) {
             abort(403, 'Unauthorized.');
         }
 
         if ($request->ajax()) {
             $query = Source::with(['project', 'campaign'])->select(sprintf('%s.*', (new Source)->table));
-
             $__global_clients_filter = $this->util->getGlobalClientsFilter();
             if(!empty($__global_clients_filter)) {
                 $project_ids = $this->util->getClientsProjects($__global_clients_filter);
@@ -50,18 +49,22 @@ class SourceController extends Controller
                         ->orWhereIn('sources.campaign_id', $campaign_ids);
                 })->groupBy('sources.id');
             }
-
+            // $essential_fields=DB::table('leads')->get()->toArray();
+            // echo "<pre>";
+            // print_r($essential_fields);
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate      = 'source_show';
-                $editGate      = 'source_edit';
-                $deleteGate    = 'source_delete';
-                $webhookSecretGate = true;
+                $viewGate      = 'source_show' ;
+                $user=auth()->user();
+                $editGate      = 'source_edit'  && $user->is_superadmin;
+                $deleteGate    = 'source_delete' && $user->is_superadmin;
+                $webhookSecretGate = $user->is_superadmin;
                 $crudRoutePart = 'sources';
+
 
                 return view('partials.datatablesActions', compact(
                     'viewGate',
@@ -129,7 +132,6 @@ class SourceController extends Controller
         if(!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
-
         $source_details = $request->except('_token');
         $source_details['webhook_secret'] = $this->util->generateWebhookSecret();
         $source = Source::create($source_details);
@@ -171,7 +173,7 @@ class SourceController extends Controller
 
     public function show(Source $source)
     {
-        if(!auth()->user()->is_superadmin) {
+        if(!auth()->user()->is_superadmin && !auth()->user()->is_client) {
             abort(403, 'Unauthorized.');
         }
 
@@ -203,7 +205,6 @@ class SourceController extends Controller
 
         return response(null, Response::HTTP_NO_CONTENT);
     }
-
     public function getSource(Request $request)
     {
         if($request->ajax()) {
@@ -240,7 +241,9 @@ class SourceController extends Controller
         $source = Source::with(['project'])->findOrFail($id);
 
         $lead = Lead::where('source_id', $id)->latest()->first();
-
+        // $lead=Lead::table('leads')->get()->toArray();
+        // echo "<pre>";
+        // print_r($lead);
 
         return view('admin.sources.webhook', compact('source', 'lead'));
     }

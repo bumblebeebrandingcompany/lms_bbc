@@ -19,14 +19,11 @@ class ParentStageController extends Controller
         $tags = Tag::all();
         return view('admin.parent_stages.index', compact('parentStages','tags'));
     }
-
     public function create()
     {
 
         $parentStages = ParentStage::all();
         $stages = Stage:: all();
-
-
         return view('admin.parent_stages.create', compact('parentStages','stages'));
     }
 

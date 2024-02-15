@@ -68,7 +68,7 @@ class ProjectController extends Controller
 
             $table->editColumn('actions', function ($row) use($user) {
                 $viewGate      = $user->is_superadmin || $user->is_client;
-                $editGate      = $user->is_superadmin || $user->is_client;
+                $editGate      = $user->is_superadmin ;
                 $deleteGate    = $user->is_superadmin;
                 $outgoingWebhookGate = $user->is_superadmin;
                 $crudRoutePart = 'projects';
@@ -282,7 +282,6 @@ class ProjectController extends Controller
             }
         }
     }
-
     public function getRequestBodyRow(Request $request)
     {
         if ($request->ajax()) {

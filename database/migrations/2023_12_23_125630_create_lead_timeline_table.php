@@ -15,20 +15,12 @@ class CreateLeadTimelineTable extends Migration
         $table->unsignedBigInteger('lead_id');
         $table->foreign('lead_id')->references('id')->on('leads')->onDelete('cascade');
         $table->string('activity_type');
-        $table->unsignedBigInteger('note_id')->nullable();
-        $table->unsignedBigInteger('follow_up_id')->nullable();
-        $table->unsignedBigInteger('site_visit_id')->nullable();
+        $table->bigInteger('payload');
         $table->text('description');
         $table->timestamps();
 
-        // Foreign keys for note_id, followup_id, and sitevisit_id
-        $table->foreign('note_id')->references('id')->on('notes')->onDelete('cascade');
-        $table->foreign('follow_up_id')->references('id')->on('follow_ups')->onDelete('cascade');
-        $table->foreign('site_visit_id')->references('id')->on('site_visits')->onDelete('cascade');
     });
 }
-
-
     public function down()
     {
         Schema::dropIfExists('lead_timeline');

@@ -11,6 +11,7 @@
     </div>
 
     <ul class="nav nav-tabs" id="myTabs">
+
         <li class="nav-item">
             <a class="nav-link active" id="rescheduleTab" data-toggle="tab" href="#reschedule">Upcoming SiteVisits</a>
         </li>
@@ -30,8 +31,10 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin"
+                            id="rescheduleTable">
 
-                        <table class="table table-bordered table-striped" id="rescheduleTable">
+                            {{-- <table class="table table-bordered table-striped" id="rescheduleTable"> --}}
                             <thead>
                                 <tr>
                                     <th>R.No</th>
@@ -180,25 +183,28 @@
                                             <i class="fa fa-eye-slash" style="font-size:16px"></i>
                                         </div>
                                     </td>
-
                                     <td>Rescheduled
                                         <div class="float-right"
                                             style="background-color: rgb(236, 47, 220); padding: 2px; display: inline-block; border-radius: 5px;"title="Rescheduled">
                                             <i class="fas fa-check-double" style="font-size:18px"></i>
                                         </div>
                                     </td>
-
                                     <td>Cancelled
                                         <div class="float-right"
                                             style="background-color: rgb(240, 18, 18); padding: 2px; display: inline-block; border-radius: 5px;"title="Cancelled">
                                             <i class="fa fa-close" style="font-size:20px"></i>
                                         </div>
                                     </td>
-
                                     <td>Scheduled
                                         <div class="float-right"
                                             style="background-color: rgb(47, 230, 236); padding: 2px; display: inline-block; border-radius: 5px;"title="Scheduled">
                                             <i class="fas fa-calendar-check nav-icon"></i>
+                                        </div>
+                                    </td>
+                                    <td>Application Purchased
+                                        <div style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"
+                                            title="Application Purchased">
+                                            <i class="	fas fa-receipt nav-icon"></i>
                                         </div>
                                     </td>
                                 </tr>
@@ -260,8 +266,6 @@
                     filterTable(selectedOption, 'siteVisit');
                 }
             });
-
-
 
             function filterTable(selectedOption, tableType, customRange = null) {
                 var startDate, endDate;
@@ -388,3 +392,17 @@
     }
 </style>
 <!-- resources/views/countdown/index.blade.php -->
+@section('scripts')
+    @parent
+    <script>
+        $(function() {
+            // Existing JavaScript code for DataTable initialization
+
+            // Additional customization for DataTable
+            let table = $('.datatable-walkin').DataTable();
+            table.on('draw.dt', function() {
+                // Add any additional customization after the table is drawn
+            });
+        });
+    </script>
+@endsection

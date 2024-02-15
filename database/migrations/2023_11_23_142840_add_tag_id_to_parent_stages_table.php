@@ -19,8 +19,8 @@ class AddTagIdToParentStagesTable extends Migration
     public function down()
     {
         Schema::table('parent_stages', function (Blueprint $table) {
-            $table->dropForeign(['tag_id']);
-            $table->dropColumn('tag_id');
+            // $table->dropForeign(['tag_id']);
+            // $table->dropColumn('tag_id');
         });
     }
 }

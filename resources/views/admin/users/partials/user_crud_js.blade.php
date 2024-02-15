@@ -14,12 +14,16 @@ $(function() {
         } else if(userType == 'Agency') {
             $("#agency_id").parent('div').show();
             $("#agency_id").prop('required', true);
-        } else if(userType == 'ChannelPartner') {
-            $("#projects").parent('div').show();
-            $("#projects").prop('required', true);
-        } else if(userType == 'ChannelPartnerManager') {
-            $("#assign_client").parent('div').show();
-            $("#assign_client").prop('required', true);
+        } else if(userType == 'Presales') {
+            $("#agency_id").parent('div').show();
+            $("#agency_id").prop('required', true);
+        } else if(userType == 'Frontoffice') {
+            $("#client_id").parent('div').show();
+            $("#client_id").prop('required', true);
+        }
+        else if(userType == 'Admissionteam') {
+            $("#client_id").parent('div').show();
+            $("#client_id").prop('required', true);
         }
     }
 

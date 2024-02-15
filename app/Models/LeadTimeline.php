@@ -12,34 +12,33 @@ class LeadTimeline extends Model
 
     protected $table = 'lead_timeline';
 
-    protected $fillable = ['lead_id', 'description','activity_type','activity_id','site_visit_id','follow_up_id','note_id'];
+    protected $fillable = ['lead_id', 'description','activity_type','payload'];
 
 
 
     public function lead()
     {
-        return $this->belongsTo(Lead::class);
+        return $this->belongsTo(Lead::class,'lead_id');
     }
 
     public function note()
     {
-        return $this->belongsTo(Note::class);
+        return $this->belongsTo(Note::class,'payload');
     }
 
     public function sitevisit()
     {
-        return $this->belongsTo(SiteVisit::class);
+        return $this->belongsTo(SiteVisit::class,'payload');
     }
 
     public function followup()
     {
-        return $this->belongsTo(Followup::class);
+        return $this->belongsTo(Followup::class,'payload');
     }
 
     public function callrecord()
     {
-        return $this->belongsTo(CallRecord::class);
+        return $this->belongsTo(CallRecord::class,'payload');
     }
-
 
 }

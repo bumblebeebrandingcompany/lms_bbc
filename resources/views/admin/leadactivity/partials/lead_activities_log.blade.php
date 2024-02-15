@@ -25,19 +25,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($leads_activities_history as $lead_activity)
+                    @forelse($leadactivities as $lead_activity)
                         <tr>
                             <td>
                                 {{@format_datetime($lead_activity->created_at)}}
                             </td>
                             <td>
-                                {{ucfirst(str_replace('_', ' ', $lead_activity->event_type))}}
+                                {{ucfirst(str_replace('_', ' ', $lead_activity->activity_type))}}
                             </td>
                             <td>
-                                <!-- @if(!empty($lead_activity->webhook_data))
+                                <!-- @if(!empty($lead_activity->payload))
                                     <div class="row">
                                         <div class="col-md-12 text-nowrap">
-                                            {{json_encode($lead_activity->webhook_data)}}
+                                            {{json_encode($lead_activity->payload)}}
                                         </div>
                                     </div>
                                 @endif -->

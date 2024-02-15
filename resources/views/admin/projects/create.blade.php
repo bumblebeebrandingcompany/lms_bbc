@@ -39,7 +39,6 @@
                     @endif
                     <span class="help-block">{{ trans('cruds.project.fields.end_date_helper') }}</span>
                 </div>
-
                 <div class="form-group">
                     <label class="required" for="client_id">{{ trans('cruds.project.fields.client') }}</label>
                     <br>

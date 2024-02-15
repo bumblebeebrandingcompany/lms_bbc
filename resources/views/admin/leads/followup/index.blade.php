@@ -55,7 +55,6 @@
                         <th>Campaign Name</th>
                         <th>Follow-Up Date</th>
                         <th>Follow-Up Time</th>
-                        <th>Follow-Up By</th>
                         <th>Notes</th>
                         <th>Created At</th>
                     </tr>
@@ -64,7 +63,7 @@
                     @php
                     $counter = 1;
                 @endphp
-                    @foreach ($followUps as $followUp)
+          @foreach ($followUps->where('parent_stage_id', 9) as $followUp)
 
                         <tr data-created-at="{{ $followUp->follow_up_date}}">
                             <td>{{ $counter++ }}</td>
@@ -94,9 +93,6 @@
                             </td>
                             <td>
                                 {{ $followUp->follow_up_time }}
-                            </td>
-                            <td>
-                                {{ $followUp->users->representative_name }}
                             </td>
                             <td>
                                 @foreach ($lead as $leads)
@@ -238,7 +234,6 @@
 
                             return
                         }
-
                         if (confirm('{{ trans('global.areYouSure') }}')) {
                             $.ajax({
                                     headers: {
@@ -267,31 +262,6 @@
                 retrieve: true,
                 aaSorting: [],
                 ajax: "{{ route('admin.followups.index') }}",
-                // columns: [{
-                //         data: 'placeholder',
-                //         name: 'placeholder'
-                //     },
-                //     {
-                //         data: 'name',
-                //         name: 'name'
-                //     },
-                //     {
-                //         data: 'email',
-                //         name: 'email'
-                //     },
-                //     {
-                //         data: 'website',
-                //         name: 'website'
-                //     },
-                //     {
-                //         data: 'contact_number_1',
-                //         name: 'contact_number_1'
-                //     },
-                //     {
-                //         data: 'actions',
-                //         name: '{{ trans('global.actions') }}'
-                //     }
-                // ],
                 orderCellsTop: true,
                 order: [
                     [1, 'desc']

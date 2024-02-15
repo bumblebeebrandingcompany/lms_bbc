@@ -22,7 +22,7 @@ class DocumentController extends Controller
     *
     */
     protected $util;
-    
+
     /**
     * Constructor
     *
@@ -37,7 +37,7 @@ class DocumentController extends Controller
      */
     public function index(Request $request)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin && !auth()->user()->is_client, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         if ($request->ajax()) {
 
@@ -47,7 +47,7 @@ class DocumentController extends Controller
                         ->leftJoin('users', 'documents.created_by', '=', 'users.id')
                         ->select(['documents.id as id', 'documents.title as title', 'projects.name as project_name', 'users.name as added_by', 'documents.created_at as created_at'])
                         ->groupBy('documents.id');
-            
+
             if(!empty($request->input('project_id'))) {
                 $query->where('documents.project_id', $request->input('project_id'));
             }
@@ -58,7 +58,7 @@ class DocumentController extends Controller
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) use($user) {
-                $viewGate      = $user->is_superadmin;
+                $viewGate      = $user->is_superadmin || $user->is_client;
                 $editGate      = $user->is_superadmin;
                 $deleteGate    = $user->is_superadmin;
                 $docGuestViewGate = $user->is_superadmin;
@@ -134,7 +134,7 @@ class DocumentController extends Controller
      */
     public function show(Document $document)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
+        abort_if(!auth()->user()->is_superadmin || auth()->user()->is_client, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $document->load('project', 'createdBy');
 
@@ -196,7 +196,7 @@ class DocumentController extends Controller
 
         $documents = Document::whereIn('id', request('ids'))
                     ->get();
-                    
+
         foreach ($documents as $document) {
             if(!empty($document->files)) {
                 foreach ($document->files as $file) {
@@ -211,7 +211,7 @@ class DocumentController extends Controller
     public function guestView($id)
     {
         $document = Document::findOrFail($id);
-        
+
         return view('admin.documents.guest_view')
             ->with(compact('document'));
     }
@@ -229,7 +229,7 @@ class DocumentController extends Controller
     }
 
     public function uploadFiles($request)
-    {   
+    {
         $files = [];
         $uploadable_files = $request->file('files');
         if(!empty($uploadable_files)) {
@@ -246,7 +246,7 @@ class DocumentController extends Controller
         }
         return $files;
     }
-    
+
     public function removeFile(Request $request, $id)
     {
         try {
@@ -261,7 +261,7 @@ class DocumentController extends Controller
             return response()->json(['success' => true, 'message' => __('messages.success')], 200);
         } catch (\Exception $e) {
             $msg = 'File:'.$e->getFile().' | Line:'.$e->getLine().' | Message:'.$e->getMessage();
-            return response()->json(['success' => false, 'message' => __('messages.something_went_wrong')], 404); 
+            return response()->json(['success' => false, 'message' => __('messages.something_went_wrong')], 404);
         }
     }
 
@@ -289,14 +289,14 @@ class DocumentController extends Controller
 
     public function getDocumentLogs(Request $request)
     {
-        abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
-        
+        abort_if(!auth()->user()->is_superadmin && !auth()->user()->is_client, Response::HTTP_FORBIDDEN, '403 Forbidden');
+
         $activities = LeadEvents::with(['lead'])
                         ->where('event_type', 'document_sent')
                         ->select(['webhook_data', 'lead_id', 'sell_do_lead_id', 'created_at'])
                         ->orderBy('created_at', 'desc')
                         ->cursorPaginate(30);
-                        
+
         return view('admin.documents.log')
             ->with(compact('activities'));
     }

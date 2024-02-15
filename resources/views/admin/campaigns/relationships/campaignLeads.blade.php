@@ -60,10 +60,11 @@
                                     <a class="btn btn-xs btn-primary" href="{{ route('admin.leads.show', $lead->id) }}">
                                         {{ trans('global.view') }}
                                     </a>
+                                    @if(auth()->user()->is_superadmin)
                                     <a class="btn btn-xs btn-info" href="{{ route('admin.leads.edit', $lead->id) }}">
                                         {{ trans('global.edit') }}
                                     </a>
-                                    @if(auth()->user()->is_superadmin)
+
                                         <form action="{{ route('admin.leads.destroy', $lead->id) }}" method="POST" onsubmit="return confirm('{{ trans('global.areYouSure') }}');" style="display: inline-block;">
                                             <input type="hidden" name="_method" value="DELETE">
                                             <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -124,7 +125,7 @@
       $($.fn.dataTable.tables(true)).DataTable()
           .columns.adjust();
   });
-  
+
 })
 
 </script>

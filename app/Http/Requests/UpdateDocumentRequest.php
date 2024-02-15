@@ -11,7 +11,7 @@ class UpdateDocumentRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return auth()->user()->is_superadmin;
+        return auth()->user()->is_superadmin || auth()->user()->is_client;
     }
 
     /**

@@ -64,7 +64,7 @@ let dtOverrideGlobals = {
         <!-- { data: 'sell_do_time', name: 'sell_do_time', orderable: false, searchable: false }, -->
         <!-- { data: 'sell_do_lead_id', name: 'sell_do_lead_id', orderable: false, searchable: false }, -->
         { data: 'project_name', name: 'project.name' },
-        { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
+        { data: 'campaign_campaign_name', name:'campaign.campaign_name' },
         { data: 'source_name', name: 'source.name' },
         { data: 'added_by', name: 'added_by' },
         { data: 'created_at', name: 'leads.created_at' },
@@ -74,11 +74,6 @@ let dtOverrideGlobals = {
         { data: 'essential_fields', name: 'essential_fields' },
         { data: 'essential_fields', name: 'essential_fields' },
         { data: 'essential_fields', name: 'essential_fields' }, --}}
-
-
-
-
-
         { data: 'actions', name: '{{ trans('global.actions') }}' }
     ],
     orderCellsTop: true,

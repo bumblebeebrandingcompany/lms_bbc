@@ -104,6 +104,7 @@
                             </select>
                         @endif
                     </td>
+
                     <!-- <td></td> -->
                     <td></td>
                     <td>
@@ -168,6 +169,7 @@
                 { data: 'website', name: 'website' },
                 { data: 'client_name', name: 'client.name' },
                 { data: 'agency_name', name: 'agency.name' },
+
                 // { data: 'assigned_projects', name: 'assigned_projects' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'actions', name: '{{ trans('global.actions') }}' }
@@ -182,7 +184,7 @@
             $($.fn.dataTable.tables(true)).DataTable()
                 .columns.adjust();
         });
-        
+
         let visibleColumnsIndexes = null;
         $('.datatable thead').on('input', '.search', function () {
             let strict = $(this).attr('strict') || false

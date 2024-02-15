@@ -34,7 +34,7 @@
         {{ $sitevisit->follow_up_time }}
     </td>
     <td>
-        {{ $sitevisit->users->representative_name }}
+        {{ $sitevisit->users->representative_name ?? '' }}
     </td>
     <td>
         @foreach ($lead as $leads)
@@ -48,8 +48,8 @@
     </td>
     <td style="text-align: center;">
         @if ($sitevisit->parent_stage_id == 10)
-            @if (!auth()->user()->is_client)
-                <div
+        @if (!auth()->user()->is_frontoffice)
+        <div
                     style="background-color: rgb(47, 230, 236); padding: 5px; display: inline-block; border-radius: 5px;"title="Scheduled">
                     <i class="fas fa-calendar-check nav-icon"></i>
                 </div>
@@ -61,7 +61,7 @@
                 @csrf
                 @method('PUT')
                 @if ($sitevisit->parent_stage_id == 19)
-                    @if (!auth()->user()->is_superadmin)
+                    @if (!auth()->user()->is_superadmin && !auth()->user()->is_client)
                         <div
                             style="background-color: rgb(236, 47, 220); padding: 5px; display: inline-block; border-radius: 5px;"title="Resceduled">
                             <i class="fas fa-check-double" style="font-size:17px"></i>
@@ -72,9 +72,9 @@
                             <i class="fas fa-check-double" style="font-size:17px"></i>
                         </div>
                     @endif
-                @elseif (!auth()->user()->is_client && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10]))
+                @elseif ( $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10,13]))
 
-                @elseif (!auth()->user()->is_client && $sitevisit->lead && $sitevisit->parent_stage_id != 20)
+                @elseif ( !auth()->user()->is_client && !auth()->user()->is_frontoffice && $sitevisit->lead && $sitevisit->parent_stage_id != 20)
                     <button type="button" class="btn btn-sm btn-warning" data-toggle="modal"
                         data-target="#editModal{{ $sitevisit->id }}">
                         Reschedule
@@ -91,30 +91,11 @@
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
-
                             <div class="modal-body">
-
                                 <input type="hidden" name="lead_id" value="{{ $sitevisit->lead_id }}">
                                 <h3 class="card-title">Lead Id : {{ $sitevisit->lead_id }}</h3>
-                                <br>
-                                <br>
                                 <div class="form-group">
-                                    <div class="float-left">
-                                        <label class="required"
-                                            for="user_id">{{ trans('cruds.project.fields.client') }}</label>
-                                    </div>
-                                    <select
-                                        class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
-                                        name="user_id" id="user_id" required>
-                                        @foreach ($client as $id => $clients)
-                                            @foreach ($clients->clientUsers as $user)
-                                                <option value="{{ $user->id }}"
-                                                    {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                    {{ $user->representative_name }}
-                                                </option>
-                                            @endforeach
-                                        @endforeach
-                                    </select>
+
                                     <input type="hidden" name="parent_stage_id" value="10">
                                     @if ($errors->has('client'))
                                         <span class="text-danger">{{ $errors->first('client') }}</span>
@@ -129,8 +110,13 @@
                                 <div class="float-left">
                                     <label for="Time">Select Time</label>
                                 </div>
-                                <input id="follow_up_time" name="follow_up_time" type="time"
-                                    class="form-control timepicker" value="{{ $sitevisit->follow_up_time }}">
+                                <div class="form-group">
+                                    <label for="Time">select time </label>
+                                    <input type="time"
+                                        class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                        name="follow_up_time" id="follow_up_time" rows="3"
+                                        required>{{ old('follow_up_time') }}
+                                </div>
                                 <div class="form-group">
                                     <div class="float-left">
                                         <label for="followUpContent">Notes</label>
@@ -153,7 +139,7 @@
             @csrf
             @method('PUT')
             @if ($sitevisit->parent_stage_id == 11)
-                @if (!auth()->user()->is_superadmin)
+                @if (!auth()->user()->is_superadmin && !auth()->user()->is_client)
                     <div style="background-color: green; padding: 5px; display: inline-block; border-radius: 5px;"
                         title="Conducted">
                         <i class="far fa fa-check nav-icon"></i>
@@ -164,9 +150,9 @@
                         <i class="far fa fa-check nav-icon"></i>
                     </div>
                 @endif
-            @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+            @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_client &&  $sitevisit->lead && in_array($sitevisit->parent_stage_id, [26, 27, 20, 19,13]))
 
-            @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && $sitevisit->parent_stage_id != 11)
+            @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 11)
                 @if ($sitevisit->parent_stage_id != 12)
                     <!-- Add this condition to exclude Not Visited -->
                     <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
@@ -187,12 +173,84 @@
                                 <span aria-hidden="true">&times;</span>
                             </button>
                         </div>
-
                         <div class="modal-body">
                             Are you sure this site visit is Conducted?
+                            <br>
+                            <br>
+
+                            <br>
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <input type="hidden" name="parent_stage_id" value="11">
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+        <form action="{{ route('admin.sitevisits.applicationpurchased', $sitevisit->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+            @if ($sitevisit->parent_stage_id == 13)
+                @if (!auth()->user()->is_superadmin && !auth()->user()->is_client)
+                    <div style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"
+                        title="Application Purchased">
+                        <i class="	fas fa-receipt nav-icon"></i>
+                    </div>
+                @else
+                    <div
+                        style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"title="Application Purchased">
+                        <i class="	fas fa-receipt nav-icon"></i>
+                    </div>
+                @endif
+            @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+
+            @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 13)
+                @if ($sitevisit->parent_stage_id != 12)
+                    <!-- Add this condition to exclude Not Visited -->
+                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                        data-target="#applicationpurchasedmodel{{ $sitevisit->id }}">
+                        Application Purchased </button>
+                @endif
+            @endif
+            <!-- Modal for Conducted -->
+            <div class="modal fade" id="applicationpurchasedmodel{{ $sitevisit->id }}" tabindex="-1" role="dialog"
+                aria-labelledby="applicationpurchasedLabel{{ $sitevisit->id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="applicationpurchasedLabel{{ $sitevisit->id }}">Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            Are you sure this site visit is Application purchased?
+                            <br>
+                            <br>
+                            <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
+                                name="user_id" id="user_id" required>
+
+                                    @foreach ($agencies as $user)
+                                        @if ($user->user_type == 'Admissionteam')
+                                            <option value="{{ $user->id }}"
+                                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                                {{ $user->representative_name }}
+                                            </option>
+                                        @endif
+                                @endforeach
+                            </select>
+                            <br>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="parent_stage_id" value="13">
                             <button type="submit" class="btn btn-danger">Confirm</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
@@ -208,7 +266,6 @@
                 enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
-
                 @if ($sitevisit->parent_stage_id == 20)
                     <div
                         style="background-color: rgb(240, 18, 18); padding: 5px; display: inline-block; border-radius: 5px;"title="Cancelled">
@@ -216,12 +273,11 @@
                     </div>
         </div>
         </div>
-    @elseif ($sitevisit->parent_stage_id != 11 && $sitevisit->parent_stage_id != 10 && $sitevisit->parent_stage_id != 19)
+    @elseif ($sitevisit->parent_stage_id != 11 && $sitevisit->parent_stage_id != 10 && $sitevisit->parent_stage_id != 19&& $sitevisit->parent_stage_id != 13)
         <!-- Add this condition to hide "Cancel" button if the stage is conducted or 10 -->
         @php
-            $canCancel = !auth()->user()->is_client && $sitevisit->lead && $sitevisit->parent_stage_id != 20;
+            $canCancel =!auth()->user()->is_frontoffice && !auth()->user()->is_client && $sitevisit->lead && $sitevisit->parent_stage_id != 20;
         @endphp
-
         @if ($canCancel)
             <br>
             <button type="button" class="btn btn-sm btn-danger" style="width:90px" data-toggle="modal"
@@ -229,7 +285,6 @@
                 Cancel
             </button>
         @endif
-
         <!-- Modal -->
         <div class="modal fade" id="cancelModal{{ $sitevisit->id }}" tabindex="-1" role="dialog"
             aria-labelledby="cancelModalLabel{{ $sitevisit->id }}" aria-hidden="true">
@@ -259,13 +314,12 @@
         </div>
 
         <div class="mr-2"></div>
-
         <form action="{{ route('admin.sitevisits.notvisited', $sitevisit->id) }}" method="POST">
             @csrf
             @method('PUT')
 
             @if ($sitevisit->parent_stage_id == 12)
-                @if (!auth()->user()->is_superadmin)
+                @if (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales)
                     <div class=float-center>
                         <div style="background-color: rgb(119, 84, 214); padding: 5px; display: inline-block; border-radius: 5px;"
                             title="Not Visited">
@@ -279,9 +333,9 @@
                         </div>
                 @endif
                 </div>
-            @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19]))
+            @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19,13]))
 
-            @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && $sitevisit->parent_stage_id != 12)
+            @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 12)
                 <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
                     data-target="#notVisitedModel{{ $sitevisit->id }}">
                     Not Visited
@@ -319,7 +373,6 @@
         $timeRemaining = max(0, $followUpDateTime - $currentTime); // in seconds
         ?>
         @if ($timeRemaining > 0 && $timeRemaining <= 1800)
-            <!-- 30 minutes in seconds -->
             <span class="text-danger countdown" data-time="{{ $timeRemaining }}">
                 {{ gmdate('i:s', $timeRemaining) }}
             </span>
@@ -331,7 +384,6 @@
     </td>
     <script>
         var countdownElements = document.getElementsByClassName('countdown');
-
         Array.from(countdownElements).forEach(function(countdownElement) {
             var timeRemaining = parseInt(countdownElement.getAttribute('data-time'));
             var countdownInterval = setInterval(function() {

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lead extends Model
 {
-    use Auditable, HasFactory ;
+    use Auditable, HasFactory;
 
     public $table = 'leads';
 
@@ -27,14 +27,22 @@ class Lead extends Model
     ];
 
     public const DEFAULT_WEBHOOK_FIELDS = [
-        'name', 'email',
-        'phone', 'predefined_comments',
-        'predefined_cp_comments', 'predefined_created_by',
-        'predefined_created_at', 'predefined_source_name',
-        'predefined_campaign_name', 'predefined_agency_name',
-        'predefined_additional_email', 'predefined_secondary_phone',
-        'predefined_source_field1','predefined_source_field2',
-        'predefined_source_field3','predefined_source_field4',
+        'name',
+        'email',
+        'phone',
+        'predefined_comments',
+        'predefined_cp_comments',
+        'predefined_created_by',
+        'predefined_created_at',
+        'predefined_source_name',
+        'predefined_campaign_name',
+        'predefined_agency_name',
+        'predefined_additional_email',
+        'predefined_secondary_phone',
+        'predefined_source_field1',
+        'predefined_source_field2',
+        'predefined_source_field3',
+        'predefined_source_field4',
         'predefined_lead_ref_no'
     ];
 
@@ -54,6 +62,7 @@ class Lead extends Model
         'lead_details' => 'array',
         'webhook_response' => 'array',
         'lead_event_webhook_response' => 'array',
+
     ];
 
 
@@ -87,7 +96,6 @@ class Lead extends Model
         return $this->hasMany(LeadEvents::class, 'lead_id');
     }
 
-
     public function parentStage()
     {
         return $this->belongsTo(ParentStage::class, 'parent_stage_id');
@@ -96,6 +104,11 @@ class Lead extends Model
     public function stage()
     {
         return $this->belongsTo(Stage::class, 'stage_id');
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function siteVisit()
@@ -113,8 +126,9 @@ class Lead extends Model
     {
         $singleDimArr = [];
         foreach ($datas as $key => $data) {
-            if (!empty($data) && !is_array($data)) $singleDimArr[$key] = $data;
-            if (!empty($data) &&  is_array($data)) {
+            if (!empty($data) && !is_array($data))
+                $singleDimArr[$key] = $data;
+            if (!empty($data) && is_array($data)) {
                 $singleDimArr = array_merge($singleDimArr, $this->flattenData($data));
             }
         }
@@ -129,10 +143,12 @@ class Lead extends Model
         $lead_info = [];
         $lead_details = $this->lead_details;
 
-        if (empty($lead_details)) return $lead_info;
+        if (empty($lead_details))
+            return $lead_info;
 
         foreach ($lead_details as $key => $lead_detail) {
-            if (!empty($lead_detail) && !is_array($lead_detail)) $lead_info[$key] = $lead_detail;
+            if (!empty($lead_detail) && !is_array($lead_detail))
+                $lead_info[$key] = $lead_detail;
             if (!empty($lead_detail) && is_array($lead_detail)) {
                 $lead_info = array_merge($lead_info, $this->flattenData($lead_detail));
             }
@@ -145,9 +161,8 @@ class Lead extends Model
     {
 
         $stages = Lead::whereNotNull('parent_stage_id')
-                    ->pluck('parent_stage_id',)
-                    ->toArray();
-
+            ->pluck('parent_stage_id', )
+            ->toArray();
         $unique_stages = array_unique($stages);
 
         $card_classes = ['card-primary', 'card-danger', 'card-success', 'card-info', 'card-warning', 'card-secondary', 'card-dark'];
@@ -156,38 +171,35 @@ class Lead extends Model
             $parentStage = ParentStage::find($stage); // Adjust the model name accordingly
             $dataForStage = Lead::where('parent_stage_id', $stage)->get();
             $lead_stages[$stage] = [
-                'class'  => $card_classes[array_rand($card_classes)],
+                'class' => $card_classes[array_rand($card_classes)],
                 'title' => $parentStage ? $parentStage->name : ucfirst(str_replace('_', ' ', $stage)),
-                'data'   => $dataForStage,
+                'data' => $dataForStage,
             ];
         }
         return $lead_stages;
     }
 
     public function logTimeline($description, $activityType = null, $activityId = null)
-{
-    $data = [
-        'description' => $description,
-    ];
+    {
+        $data = [
+            'description' => $description,
+        ];
 
-    if ($activityType !== null) {
-        $data['activity_type'] = $activityType;
+        if ($activityType !== null) {
+            $data['activity_type'] = $activityType;
+        }
+
+        if ($activityId !== null) {
+            $data['activity_id'] = $activityId;
+        }
+
+        $this->timeline()->create($data);
     }
-
-    if ($activityId !== null) {
-        $data['activity_id'] = $activityId;
-    }
-
-    $this->timeline()->create($data);
-}
 
 
     public function timeline()
     {
-        return $this->hasMany(LeadTimeline::class);
+        return $this->hasMany(LeadTimeline::class, 'lead_id');
     }
-
-
-
 }
 

@@ -97,7 +97,6 @@ class CallRecordController extends Controller
                                 'call_id' => $record['call_id'],
                                 'did number' => $record['did_number'],
                                 'call_flow' => json_encode($record['call_flow'],
-
                             ),
                             ]);
                         } else {
@@ -116,5 +115,4 @@ class CallRecordController extends Controller
 
         return redirect()->route('admin.callog.store')->with('success', 'Call records stored successfully.');
     }
-
 }

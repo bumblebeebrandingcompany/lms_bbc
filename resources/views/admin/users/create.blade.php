@@ -133,6 +133,7 @@
                 @endif
                 <span class="help-block">{{ trans('cruds.user.fields.agency_helper') }}</span>
             </div>
+
             <div class="form-group">
                 <label class="required" for="assign_client">{{ trans('messages.assign_client') }}</label>
                 <select class="form-control select2" name="client_assigned" id="assign_client" required>

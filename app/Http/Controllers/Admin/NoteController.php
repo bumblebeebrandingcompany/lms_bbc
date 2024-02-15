@@ -40,7 +40,7 @@ class NoteController extends Controller
         $validatedData = $request->validate([
             'note_text'=>'required',
             'lead_id' => 'required',
-            'note_content'=>'required', // Add validation for the dropdown
+
         ]);
 
         $lead = Lead::find($request->lead_id);
@@ -53,8 +53,9 @@ class NoteController extends Controller
         $noteContent = $request->input('note_content');
 
         // Debugging statements
-        dd($noteText, $noteContent);
+
         $note->lead_id = $lead->id;
+
         // $note->note_content = $request->note_content; // Save the selected option or "Others"
         $note->save();
 

@@ -47,4 +47,9 @@ class Agency extends Model
     {
         return $this->hasMany(Campaign::class, 'agency_id', 'id');
     }
+
+    public function PresalesUsers()
+    {
+        return $this->hasMany(User::class, 'presales_id', 'id');
+    }
 }

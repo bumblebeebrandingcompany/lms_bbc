@@ -6,6 +6,7 @@
         <div class="card card-primary card-outline">
             <div class="card-body">
                 {{-- Form --}}
+                @if(!auth()->user()->is_client )
                 <form method="POST" action="{{ route('admin.stages.store') }}" enctype="multipart/form-data"
                     class="my-custom-form">
                     @csrf
@@ -24,7 +25,7 @@
                             <div class="form-group">
                                 <label for="selected_child_stages">Select Child Stages:</label>
                                 <br>
-                                <select name="selected_child_stages[]" id="selected_child_stages"
+                                <select multiple name="selected_child_stages[]" id="selected_child_stages"
                                     class="form-control select2" required>
                                     @foreach ($parentStages as $childStage)
                                         <option value="{{ $childStage->id }}">{{ $childStage->name }}</option>
@@ -32,6 +33,7 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="selected_child_stages"></label>
@@ -42,10 +44,11 @@
                                     </button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </form>
-
+                @endif
 
                 {{-- Display all created stages in a table --}}
                 <h3>All Created Stages</h3>
@@ -55,7 +58,10 @@
                             <th>ID</th>
                             <th>Parent Stage</th>
                             <th>Selected Child Stages</th>
+                            @if(!auth()->user()->is_client )
+
                             <th>Actions</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -71,6 +77,7 @@
                                         {{ $parentStages->firstWhere('id', $childStageId)->name }},
                                     @endforeach
                                 </td>
+                                @if(!auth()->user()->is_client )
                                 <td>
                                     <!-- Edit Button -->
                                     <button class="btn btn-sm btn-primary" data-toggle="modal"
@@ -79,6 +86,7 @@
                                     <button class="btn btn-sm btn-danger" data-toggle="modal"
                                         data-target="#deleteStageModal{{ $stage->id }}">Delete</button>
                                 </td>
+                                @endif
                             </tr>
                         @endforeach
                     </tbody>
