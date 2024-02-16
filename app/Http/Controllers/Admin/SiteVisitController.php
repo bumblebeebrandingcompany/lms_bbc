@@ -80,21 +80,21 @@ class SiteVisitController extends Controller
     }
 
     private function logTimeline(Lead $lead, $sitevisit, $type, $description)
-    {
-        $timeline = new LeadTimeline;
-        $timeline->activity_type = $type;
-        $timeline->lead_id = $lead->id;
+{
+    $timeline = new LeadTimeline;
+    $timeline->activity_type = $type;
+    $timeline->lead_id = $lead->id;
 
-        // Combine lead and site visit data into payload
-        $payload = [
-            'lead' => $lead->toArray(),
-            'sitevisit' => $sitevisit->toArray()
-        ];
+    // Combine lead and site visit data into payload
+    $payload = [
+        'lead' => $lead->toArray(),
+        'sitevisit' => $sitevisit->toArray()
+    ];
 
-        $timeline->payload = json_encode($payload); // Convert array to JSON
-        $timeline->description = $description;
-        $timeline->save();
-    }
+    $timeline->payload = json_encode($payload); // Convert array to JSON
+    $timeline->description = $description;
+    $timeline->save();
+}
     public function rescheduleSiteVisit(Request $request)
     {
         // Validate the request data
@@ -377,8 +377,7 @@ class SiteVisitController extends Controller
             return redirect()->back()->with('success', 'Site visit cancelled successfully!');
         }
 
-        // Handle case where lead is not found
-        // You might want to return a response indicating that the lead was not found.
+
     }
 
 }
