@@ -27,16 +27,25 @@ class WalkinController extends Controller
     }
     public function index()
     {
-
+        // Get all walkins with their related leads
         $walkins = Walkin::with('leads')->get();
+
+        // Filter walkins where at least one lead was created by the authenticated user
+        $walkins = $walkins->filter(function ($walkin) {
+            return $walkin->leads->contains('created_by', auth()->id());
+        });
+
+        // Retrieve other necessary data
         $projects = Project::pluck('name', 'id');
         $client = Clients::all();
         $sources = Source::all();
         $campaign = Campaign::all();
         $projects = Project::all();
         $leads = Lead::all();
+
         return view('admin.walkinform.index', compact('walkins', 'client', 'sources', 'campaign', 'projects'));
     }
+
 
     // public function show(Walkin $cpwalkin)
     // {
@@ -161,13 +170,11 @@ class WalkinController extends Controller
 
         $walkinform->update($data);
 
-        // Check if the 'leads' relationship is defined in the 'Walkin' model
         if ($walkinform->leads()->exists()) {
             $lead = $walkinform->leads()->first();
 
             $lead->update($data);
 
-            // Assuming the 'util' property is accessible and has the 'storeUniqueWebhookFields' method
             $this->util->storeUniqueWebhookFields($lead);
         }
 
