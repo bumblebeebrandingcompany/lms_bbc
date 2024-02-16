@@ -44,7 +44,7 @@ class WalkinController extends Controller
 
     public function create()
     {
-        if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {
+        if (!(auth()->user()->is_superadmin || !auth()->user()->is_front_office)) {
             abort(403, 'Unauthorized.');
         }
         $project_ids = $this->util->getUserProjects(auth()->user());
@@ -68,11 +68,7 @@ class WalkinController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
-'source_id',
-'campaign_id',
-'project_id',
-'additional_email',
-'secondary_phone',
+
         ]);
         $walkin = Walkin::create([
             'name' => $request->input('name'),
