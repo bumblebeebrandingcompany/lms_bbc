@@ -41,6 +41,8 @@ let dtOverrideGlobals = {
         data: function (d) {
             d.project_id = $("#project_id").val();
             d.campaign_id = $("#campaign_id").val();
+            d.parent_stage_id = $("#parent_stage_id").val();
+
             <!-- d.leads_status = $("#leads_status").val(); -->
             <!-- d.no_lead_id = $("#no_lead_id").is(":checked"); -->
             if($("#source_id").length) {
@@ -57,19 +59,23 @@ let dtOverrideGlobals = {
         { data: 'ref_num', name: 'ref_num' },
         { data: 'name', name: 'name' },
         { data: 'email', name: 'email' },
+        { data: 'additional_email', name: 'additional_email' },
         { data: 'phone', name: 'phone' },
         { data: 'secondary_phone', name: 'secondary_phone' },
+        { data: 'child_name', name: 'child_name' },
+        { data: 'grade_enquired', name: 'grade_enquired' },
+        { data: 'parent_stage_name', name: 'parent_stage_id' },
+        {{-- { data: 'application_no', name: 'application_no' }, --}}
+
         <!-- { data: 'overall_status', name: 'overall_status' }, -->
         <!-- { data: 'sell_do_date', name: 'sell_do_date', orderable: false, searchable: false }, -->
         <!-- { data: 'sell_do_time', name: 'sell_do_time', orderable: false, searchable: false }, -->
         <!-- { data: 'sell_do_lead_id', name: 'sell_do_lead_id', orderable: false, searchable: false }, -->
-        { data: 'project_name', name: 'project.name' },
         { data: 'campaign_campaign_name', name:'campaign.campaign_name' },
         { data: 'source_name', name: 'source.name' },
         { data: 'added_by', name: 'added_by' },
         { data: 'created_at', name: 'leads.created_at' },
-        { data: 'updated_at', name: 'leads.updated_at' },
-        {{-- { data: 'essential_fields', name: 'essential_fields' },
+         {{-- { data: 'essential_fields', name: 'essential_fields' },
         { data: 'essential_fields', name: 'essential_fields' },
         { data: 'essential_fields', name: 'essential_fields' },
         { data: 'essential_fields', name: 'essential_fields' },
