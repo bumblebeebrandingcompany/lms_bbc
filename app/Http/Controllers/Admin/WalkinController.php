@@ -88,6 +88,7 @@ class WalkinController extends Controller
             'source_id' => $walkin->source_id,
             'project_id' => $walkin->project_id,
             'campaign_id' => $walkin->campaign_id,
+            'parent_stage_id' => 11,
             'additional_email'=>$request->additional_email,
             'secondary_phone'=>$request->secondary_phone,
         ]);
