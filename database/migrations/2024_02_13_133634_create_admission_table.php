@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->bigInteger('lead_id');
             $table->bigInteger('user_id');
-            $table->bigInteger('admission_no')->nullable;
+
             $table->date('follow_up_date');
             $table->time('follow_up_time');
             $table->string('notes');

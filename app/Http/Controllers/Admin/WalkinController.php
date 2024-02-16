@@ -98,12 +98,7 @@ class WalkinController extends Controller
         $lead->ref_num = $this->util->generateLeadRefNum($lead);
         $lead->save();
         $this->util->storeUniqueWebhookFields($lead);
-        // if(!empty($lead->project->outgoing_apis)) {
-        //     $this->util->sendApiWebhook($lead->id);
-        // }
-        // if(!empty($request->get('redirect_to')) && $request->get('redirect_to') == 'ceoi') {
-        //     return redirect()->route('admin.eoi.create', ['phone' => $lead->phone]);
-        // }
+
         return redirect()->route('admin.walkinform.index')->with('success', 'Form created successfully');
     }
 public function edit(Walkin $walkinform)

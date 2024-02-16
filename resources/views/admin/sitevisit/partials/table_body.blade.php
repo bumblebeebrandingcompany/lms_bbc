@@ -209,7 +209,6 @@
                     </div>
                 @endif
             @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
-
             @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 13)
                 @if ($sitevisit->parent_stage_id != 12)
                     <!-- Add this condition to exclude Not Visited -->
@@ -232,7 +231,6 @@
                             <p>Are you sure this site visit is Application purchased?</p>
                             <label for="application_no">Application Number:</label>
                             <input class="form-control" type="text" name="application_no"  value="">
-
                             <label for="user_id">Select Representative:</label>
                             <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}" name="user_id" id="user_id" required>
                                 @foreach ($agencies as $user)
@@ -250,7 +248,6 @@
                                     rows="4" required>{{ old('notes') }}</textarea>
                             </div>
                         </div>
-
                         <div class="modal-footer">
                             <input type="hidden" name="parent_stage_id" value="13">
                             <button type="submit" class="btn btn-danger">Confirm</button>

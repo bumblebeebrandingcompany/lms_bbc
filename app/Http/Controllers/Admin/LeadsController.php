@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\LeadDocumentShare;
 use Exception;
-
 class LeadsController extends Controller
 {
     /**
@@ -112,7 +111,6 @@ class LeadsController extends Controller
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
             } elseif ($user->is_client || $user->is_frontoffice) {
-
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
             } elseif ($user->is_admissionteam) {
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];

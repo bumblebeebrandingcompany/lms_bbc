@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Stages Popup</title>
 <style>
-    /* Styles for the popup */
     .popup {
         display: none;
         position: fixed;
@@ -40,23 +39,22 @@
 </style>
 <div class="card card-primary card-outline">
     <div class="card-body box-profile">
-
         <div style="text-align: right;">
             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
             {{-- <button type="submit" class="btn btn-primary" id="initiateCallButton">
                     <i class="fas fa-phone fa-flip-horizontal"></i>
                 </button> --}}
-                @if(!auth()->user()->is_client)
-            <div class="lead-item">
-                <a href="{{ route('admin.leads.initiateCall', [$lead->id]) }}" class="btn btn-primary"> <i
-                        class="fas fa-phone fa-flip-horizontal"></i></a>
-            </div>
+            @if (!auth()->user()->is_client)
+                <div class="lead-item">
+                    <a href="{{ route('admin.leads.initiateCall', [$lead->id]) }}" class="btn btn-primary"> <i
+                            class="fas fa-phone fa-flip-horizontal"></i></a>
+                </div>
             @endif
         </div>
         <br>
-       @if(!auth()->user()->is_client)
-        <button type="submit" class="float-right edit-button btn-primary">Edit</button>
-@endif
+        @if (!auth()->user()->is_client)
+            <button type="submit" class="float-right edit-button btn-primary">Edit</button>
+        @endif
         <div class="text-center">
             @php
                 $avatar = 'https://ui-avatars.com/api/?background=random&font-size=0.7&name=' . $lead->name;
@@ -214,7 +212,6 @@
                                     <option value="{{ $yearRange }}">{{ $yearRange }}</option>
                                 @endfor
                             </select>
-
                             @error('intake_year')
                                 <div class="text-danger">{{ $message }}</div>
                                 {{-- Show the save button when there is an error --}}
@@ -331,11 +328,12 @@
                     <b>Stage</b>
                     <div class="d-flex align-items-center">
                         <span style="margin-right: 1cm;">{{ $lead->parentStage->name ?? '' }}</span>
-                        @if(!auth()->user()->is_client)
-                        <button type="button" class="btn btn-primary rounded-circle p-2 d-flex align-items-center"
-                            data-toggle="modal" data-target="#stageModal" style="width: 30px; height: 30px;">
-                            <i class="fas fa-play fa-sm mx-auto"></i>
-                        </button>
+                        @if (!auth()->user()->is_client)
+                            <button type="button"
+                                class="btn btn-primary rounded-circle p-2 d-flex align-items-center"
+                                data-toggle="modal" data-target="#stageModal" style="width: 30px; height: 30px;">
+                                <i class="fas fa-play fa-sm mx-auto"></i>
+                            </button>
                         @endif
                     </div>
                 </li>
@@ -499,7 +497,7 @@
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                         <input type="hidden" name="parent_stage_id" value="15">
                                         <div class="form-group">
-                                             <div class="form-group">
+                                            <div class="form-group">
                                                 <label class=float-left for="noteContent">Note Content</label>
                                                 <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
                                                     rows="4" required>{{ old('note_text') }}</textarea>
@@ -512,7 +510,7 @@
                                                         {{ $notes->notes }}
                                                     </option>
                                                 @endforeach --}}
-                                                {{-- <option value="Others">Others</option> --}}
+                                            {{-- <option value="Others">Others</option> --}}
                                             {{-- </select> --}}
                                             {{-- <div id="showOthers" class="myDiv">
                                                 <label for="OthersNoteContent">Note Content</label>
@@ -536,10 +534,10 @@
                                             <input type="hidden" name="parent_stage_id" value="12">
                                             <div class="form-group">
                                                 <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
+                                                    <label class=float-left for="noteContent">Note Content</label>
+                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
+                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button class="btn btn-danger" type="submit">Save</button>
@@ -556,63 +554,42 @@
                                 @csrf
                                 <div id="showrescheduled" style="display: none;">
                                     <!-- Your follow-up content goes here -->
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="followUpModalLabel">Reschedule
-                                            </h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                            <input type="hidden" name="parent_stage_id"
-                                                value="19
+
+
+                                    <div class="modal-body">
+                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                        <input type="hidden" name="parent_stage_id"
+                                            value="19
                                             ">
-                                            <div class="form-group">
-                                                <label type="select" for="user_id">clients</label>
-                                                <select name="user_id" id="user_id"
-                                                    class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                                                    rows="3" required>{{ old('user_id') }}
-                                                    >
 
-                                                    <option value="" selected disabled>Please
-                                                        Select</option>
-                                                    @foreach ($client as $id => $clients)
-                                                        @foreach ($clients->clientUsers as $user)
-                                                            <option value="{{ $user->id }}"
-                                                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                                {{ $user->representative_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="Date">Select Date </label>
-                                                <input type="date"
-                                                    class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                    name="follow_up_date" id="follow_up_date" rows="3"
-                                                    required>{{ old('follow_up_date') }}
-                                            </div>
-
-                                            <div class="form-group">
-                                                <label for="Time">select time </label>
-                                                <input type="time"
-                                                    class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                                    name="follow_up_time" id="follow_up_time" rows="3"
-                                                    required>{{ old('follow_up_time') }}
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                    rows="4" required>{{ old('notes') }}</textarea>
-                                            </div>
+                                        <div class="form-group">
+                                            <label for="Date">Select Date </label>
+                                            <input type="date"
+                                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                                name="follow_up_date" id="follow_up_date" rows="3"
+                                                required>{{ old('follow_up_date') }}
                                         </div>
-                                        <div class="modal-footer">
-                                            <button type="button" onclick="togglePopup()">Close</button>
-                                            <button class="btn btn-danger" type="submit">
-                                                Save
-                                            </button>
+
+                                        <div class="form-group">
+                                            <label for="Time">select time </label>
+                                            <input type="time"
+                                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                                name="follow_up_time" id="follow_up_time" rows="3"
+                                                required>{{ old('follow_up_time') }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="noteContent">Note Content</label>
+                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                rows="4" required>{{ old('notes') }}</textarea>
                                         </div>
                                     </div>
+                                    <div class="modal-footer">
+                                        <button type="button" onclick="togglePopup()">Close</button>
+                                        <button class="btn btn-danger" type="submit">
+                                            Save
+                                        </button>
+                                    </div>
+
                                 </div>
                             </form>
 
@@ -648,11 +625,11 @@
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="20">
                                             <div class="form-group">
-                                                 <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label class=float-left for="noteContent">Note Content</label>
+                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
+                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                </div>
                                                 {{-- <select id="myselection">
                                                     <option>Select Option</option>
                                                     @foreach ($noteNotInterested as $id => $notes)
@@ -661,7 +638,7 @@
                                                             {{ $notes->notes }}
                                                         </option>
                                                     @endforeach --}}
-                                                    {{-- <option value="Others">Others</option> --}}
+                                                {{-- <option value="Others">Others</option> --}}
                                                 {{-- </select> --}}
                                                 {{-- <div id="showOthers" class="myDiv">
                                                     <label for="otherNoteContent">Note Content</label>
@@ -689,26 +666,12 @@
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="17">
                                             <div class="form-group">
-                                                 <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
-                                                {{-- <select id="myselection" name="note_text">
-                                                    <option>Select Option</option>
-                                                    @foreach ($noteNotInterested as $id => $notes)
-                                                        <option value="{{ $notes->notes }}"
-                                                            {{ old('notes_id') == $notes->id ? 'selected' : '' }}>
-                                                            {{ $notes->notes }}
-                                                        </option>
-                                                    @endforeach --}}
-                                                    {{-- <option value="Others">Others</option> --}}
-                                                {{-- </select> --}}
-                                                {{-- <div id="showOthers" class="myDiv">
-                                                    <label for="otherNoteContent">Note Content</label>
+                                                <div class="form-group">
+                                                    <label class=float-left for="noteContent">Note Content</label>
                                                     <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
                                                         rows="4" required>{{ old('note_text') }}</textarea>
-                                                </div> --}}
+                                                </div>
+
                                             </div>
 
                                             <div class="modal-footer">
@@ -784,11 +747,11 @@
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="18">
                                             <div class="form-group">
-                                                   <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label class=float-left for="noteContent">Note Content</label>
+                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
+                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                </div>
                                             </div>
                                             <div class="modal-footer">
                                                 <button class="btn btn-danger" type="submit">Save</button>
@@ -888,65 +851,7 @@
 
                                 </div>
                             </form>
-                            <form id="ResheduleFormId" method="POST" action="{{ route('admin.sitevisit.store') }}"
-                                enctype="multipart/form-data">
-                                @csrf
-                                <div id="rescheduleContent" style="display: none;">
-                                    <!-- Your follow-up content goes here -->
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="followUpModalLabel">Reschedule</h5>
-                                        </div>
-                                        <div class="modal-body">
-                                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                            <input type="hidden" name="parent_stage_id" value="10">
-                                            {{-- <div class="form-group">
-                                                <label type="select" for="user_id">clients</label>
-                                                <select name="user_id" id="user_id"
-                                                    class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                                                    rows="3" required>{{ old('user_id') }}
-                                                    >
-                                                    <option value="" selected disabled>Please Select</option>
-                                                    @foreach ($client as $id => $clients)
-                                                        @foreach ($clients->clientUsers as $user)
-                                                            <option value="{{ $user->id }}"
-                                                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                                {{ $user->representative_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    @endforeach
-                                                </select>
-                                            </div> --}}
-                                            <div class="form-group">
-                                                <label for="Date">Select Date </label>
-                                                <input type="date"
-                                                    class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                    name="follow_up_date" id="follow_up_date" rows="3"
-                                                    required>{{ old('follow_up_date') }}
-                                            </div>
 
-                                            <div class="form-group">
-                                                <label for="Time">select time </label>
-                                                <input type="time"
-                                                    class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                                    name="follow_up_time" id="follow_up_time" rows="3"
-                                                    type="time" required>{{ old('follow_up_time') }}
-                                            </div>
-                                            <div class="form-group">
-                                                <label for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                    rows="4" required>{{ old('notes') }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" onclick="togglePopup()">Close</button>
-                                            <button class="btn btn-danger" type="submit">
-                                                Save
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </form>
                             <form id="NotqualifiedFormId" method="POST" action="{{ route('admin.notes.store') }}"
                                 enctype="multipart/form-data">
                                 @csrf
@@ -959,11 +864,11 @@
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                             <input type="hidden" name="parent_stage_id" value="1">
                                             <div class="form-group">
-                                                 <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
+                                                <div class="form-group">
+                                                    <label class=float-left for="noteContent">Note Content</label>
+                                                    <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
+                                                        rows="4" required>{{ old('note_text') }}</textarea>
+                                                </div>
 
                                             </div>
 
@@ -1186,7 +1091,7 @@
         var selectedName = selectedOption.text.trim().toLowerCase();
 
         // Hide all modals initially
-        document.getElementById('rescheduleContent').style.display = 'none';
+
         document.getElementById('showfollowup').style.display = 'none';
         document.getElementById('showsitevisitScheduled').style.display = 'none';
         document.getElementById('showadmissionfollowup').style.display = 'none';
@@ -1282,16 +1187,3 @@
 
     #showsitevisitScheduled {}
 </style>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<script>
-    $(document).ready(function() {
-        // Assuming the form has a class 'myForm'
-        $('.myForm #myselection').on('change', function() {
-            var demovalue = $(this).val();
-            // Hide all divs with class 'myDiv' within the current form
-            $(this).closest('.myForm').find("div.myDiv").hide();
-            // Show the specific div based on the selected value
-            $(this).closest('.myForm').find("#show" + demovalue).show();
-        });
-    });
-</script>
