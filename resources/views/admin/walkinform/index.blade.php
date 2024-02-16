@@ -33,6 +33,8 @@
                             <th>Project</th>
                             <th>Campaign</th>
                             <th>Source</th>
+                            <th>Added By</th>
+
                             {{-- <th>Remarks</th> --}}
                             <th>Actions</th>
 
@@ -58,6 +60,11 @@
                                 <td> {{ $walkin->project->name ?? '' }}</td>
                                 <td> {{ $walkin->campaign->campaign_name ?? '' }}</td>
                                 <td> {{ $walkin->sources->name ?? '' }}</td>
+                                <td>
+                                    @foreach ($walkin->leads as $lead)
+                                        {{ $lead->createdBy->representative_name ?? '' }}
+                                    @endforeach
+                                </td>
                                 {{-- <td> {{ $walkin->remarks }}</td> --}}
 
                                 <td>
