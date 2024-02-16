@@ -331,11 +331,7 @@ class SiteVisitController extends Controller
 
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
 
-        // Validate the request data
-        // $request->validate([
-        //     'notes' => 'required|string',
-        // ]);
-        // Update the site visit information
+
         $sitevisit->update([
             'parent_stage_id' => $request->input('parent_stage_id'),
             'notes' => $request->input('notes'),
@@ -354,6 +350,9 @@ class SiteVisitController extends Controller
         // Redirect or return a response as needed
         return redirect()->back()->with('success', 'application purchased successfully!');
     }
+
+
+
     public function notvisited(Request $request, $sitevisitId)
     {
         $sitevisit = SiteVisit::findOrFail($sitevisitId);

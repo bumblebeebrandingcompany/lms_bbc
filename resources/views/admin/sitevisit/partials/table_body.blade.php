@@ -338,27 +338,28 @@
                     </div>
                     <input type="hidden" name="stage" value="site_visit_cancelled">
 
-                                            <div class="form-group">
-                                                 <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                    rows="4" required>{{ old('notes') }}</textarea>
-                                            </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-danger">Confirm</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label class=float-left for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        @endif
-        </form>
+            @endif
+            </form>
         </div>
 
         <div class="mr-2"></div>
         <form action="{{ route('admin.sitevisits.notvisited', $sitevisit->id) }}" method="POST">
             @csrf
             @method('PUT')
+            <input type="hidden" name="stage" value="site_not_visited">
 
             @if ($sitevisit->parent_stage_id == 12)
                 @if (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales)
