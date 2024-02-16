@@ -113,9 +113,14 @@ class LeadsController extends Controller
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
+
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
+
+
+
+
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -280,7 +285,7 @@ class LeadsController extends Controller
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
 
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];

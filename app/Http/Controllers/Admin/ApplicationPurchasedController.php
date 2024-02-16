@@ -16,6 +16,7 @@ use App\Utils\Util;
 use Illuminate\Http\Request;
 
 use Symfony\Component\HttpFoundation\Response;
+
 class ApplicationPurchasedController extends Controller
 {
     /**
@@ -33,9 +34,9 @@ class ApplicationPurchasedController extends Controller
         $lead = Lead::all();
         $agencies = User::all();
         // Alternatively, if you want to get the IDs in a loop
-$applications=ApplicationPurchased::all();
+        $applications = ApplicationPurchased::all();
 
-        return view('admin.applicationpurchased.index', compact( 'lead','applications','agencies'));
+        return view('admin.applicationpurchased.index', compact('lead', 'applications', 'agencies'));
     }
     public function store(Request $request)
     {
@@ -54,10 +55,16 @@ $applications=ApplicationPurchased::all();
             $applicationpurchased->parent_stage_id = $parentStageId;
             $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
             $applicationpurchased->save();
+
             // Check if $admitted->lead is not null before updating
-            $lead->parent_stage_id = $parentStageId;
             if ($applicationpurchased->lead) {
                 $applicationpurchased->lead->update(['parent_stage_id' => $applicationpurchased->parent_stage_id]);
+
+                // Update the latest site visit as purchased
+                $latestSiteVisit = $applicationpurchased->lead->siteVisits()->latest()->first();
+                if ($latestSiteVisit) {
+                    $latestSiteVisit->update(['parent_stage_id' => $applicationpurchased->parent_stage_id]);
+                }
             }
 
             return redirect()->back()->with('success', 'Form submitted successfully!');
@@ -66,6 +73,7 @@ $applications=ApplicationPurchased::all();
             return redirect()->back()->with('error', 'Lead not found!');
         }
     }
+
 
 }
 
