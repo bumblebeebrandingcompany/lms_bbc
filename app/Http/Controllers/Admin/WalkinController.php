@@ -157,8 +157,6 @@ class WalkinController extends Controller
             'campaign_id',
             'additional_email',
             'secondary_phone',
-            'parent_stage_id'=>11,
-            'added_by'
         ]);
 
         $walkinform->update($data);
