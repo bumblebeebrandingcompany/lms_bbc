@@ -438,7 +438,7 @@ class LeadsController extends Controller
         $input['parent_stage_id'] = $request->input('parent_stage_id');
 
         // Log the update of 'parent_stage_id'
-        $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['parent_stage_id']}");
+        $this->logTimeline($lead, 'Lead Profile Updated', "lead Profile updated");
 
         // Log the general update
 
