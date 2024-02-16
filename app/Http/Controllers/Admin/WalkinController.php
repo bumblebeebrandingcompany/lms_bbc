@@ -44,7 +44,7 @@ class WalkinController extends Controller
 
     public function create()
     {
-        if (!(auth()->user()->is_superadmin || !auth()->user()->is_front_office)) {
+        if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {
             abort(403, 'Unauthorized.');
         }
         $project_ids = $this->util->getUserProjects(auth()->user());
