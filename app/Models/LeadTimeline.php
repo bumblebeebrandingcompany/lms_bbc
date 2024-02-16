@@ -23,23 +23,22 @@ class LeadTimeline extends Model
 
     public function note()
     {
-        return $this->belongsTo(Note::class, 'payload')->where('activity_type', 'note');
+        return $this->belongsTo(Note::class,'payload');
     }
 
     public function sitevisit()
-{
-    return $this->belongsTo(SiteVisit::class, 'payload')->whereIn('activity_type', ['Site Visit created', 'Stage Changed',]);
-}
-
+    {
+        return $this->belongsTo(SiteVisit::class,'payload');
+    }
 
     public function followup()
     {
-        return $this->belongsTo(Followup::class, 'payload')->where('activity_type', 'followup');
+        return $this->belongsTo(Followup::class,'payload');
     }
 
     public function callrecord()
     {
-        return $this->belongsTo(CallRecord::class, 'payload')->where('activity_type', 'callrecord');
+        return $this->belongsTo(CallRecord::class,'payload');
     }
 
 }
