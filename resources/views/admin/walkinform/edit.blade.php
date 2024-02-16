@@ -11,8 +11,7 @@
                     <form action="{{ route('admin.walkinform.update', [$walkinform->id]) }}" method="POST">
                         @csrf
                         @method('PUT')
-                        @foreach ($walkins as $walkinform)
-                        @endforeach
+
                         <div class="form-group">
                             <label for="name">Name:</label>
                             <input type="text" name="name" class="form-control" value="{{ $walkinform->name }}"
@@ -43,9 +42,12 @@
                             <br>
                             <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
                                 @foreach($projects as $id => $entry)
-                                    <option value="{{ $id }}" {{ (old('project_id') ? old('project_id') : $lead->project->id ?? '') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                    <option value="{{ $id }}" {{ (old('project_id') ? old('project_id') : ($lead->isEmpty() ? '' : $lead->first()->project->id)) == $id ? 'selected' : '' }}>
+                                        {{ $entry }}
+                                    </option>
                                 @endforeach
                             </select>
+
                             <br>
                             @if($errors->has('project'))
                                 <span class="text-danger">{{ $errors->first('project') }}</span>

@@ -21,11 +21,9 @@
                                 <tr>
                                     <th>Ref Num</th>
                                     <td>
-                                        @foreach ($walkins as $walkin)
-                                        @endforeach
                                         @foreach ($walkin->leads as $lead)
-                                        {{ $lead->ref_num ?? '' }}
-                                    @endforeach
+                                            {{ $lead->ref_num ?? '' }}
+                                        @endforeach
                                     </td>
                                 </tr>
                                 <tr>
@@ -37,11 +35,10 @@
                                     <td>{{ $walkin->email ?? '' }}</td>
                                 </tr>
                                 <tr>
-                                    <tr>
-                                        <th> Secondary Email</th>
-                                        <td>{{ $walkin->additional_email ?? '' }}</td>
-                                    </tr>
-                                    <tr>
+                                    <th>Secondary Email</th>
+                                    <td>{{ $walkin->additional_email ?? '' }}</td>
+                                </tr>
+                                <tr>
                                     <th>Phone</th>
                                     <td class="word-break">{{ $walkin->phone ?? '' }}</td>
                                 </tr>
@@ -51,15 +48,15 @@
                                 </tr>
                                 <tr>
                                     <th>Project</th>
-                                    <td class="word-break">{{ $walkin->projects->name ?? '' }}</td>
+                                    <td class="word-break">{{ $walkin->project->name ?? '' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Campaign</th>
-                                    <td class="word-break">{{ $walkin->campaigns->campaign_name ?? '' }}</td>
+                                    <td class="word-break">{{ $walkin->campaign->campaign_name ?? '' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Source</th>
-                                    <td class="word-break">{{ $walkin->sources->name ?? '' }}</td>
+                                    <td class="word-break">{{ $walkin->source->name ?? '' }}</td>
                                 </tr>
                             </tbody>
                         </table>
