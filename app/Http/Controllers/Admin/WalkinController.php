@@ -90,6 +90,7 @@ class WalkinController extends Controller
             'project_id' => $walkin->project_id,
             'campaign_id' => $walkin->campaign_id,
             'parent_stage_id' => 11,
+            'created_by' => auth()->user()->id,
             'additional_email' => $request->additional_email,
             'secondary_phone' => $request->secondary_phone,
         ]);
@@ -156,6 +157,8 @@ class WalkinController extends Controller
             'campaign_id',
             'additional_email',
             'secondary_phone',
+            'parent_stage_id'=>11,
+            'added_by'
         ]);
 
         $walkinform->update($data);
