@@ -61,8 +61,7 @@ class WalkinController extends Controller
         $campaign_ids = $this->util->getCampaigns(auth()->user());
 
         $projects = Project::whereIn('id', $project_ids)
-            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
+            ->pluck('name', 'id');
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
@@ -86,12 +85,14 @@ class WalkinController extends Controller
         $walkin = Walkin::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
+
             'phone' => $request->input('phone'),
             'source_id' => $request->input('source_id'),
             'project_id' => $request->input('project_id'),
             'campaign_id' => $request->input('campaign_id'),
             'additional_email' => $request->input('additional_email'),
             'secondary_phone' => $request->input('secondary_phone'),
+
         ]);
         $lead = Lead::create([
             'walkin_id' => $walkin->id,
@@ -106,15 +107,17 @@ class WalkinController extends Controller
             'additional_email' => $request->additional_email,
             'secondary_phone' => $request->secondary_phone,
         ]);
+        $input = $request->except(['_method', '_token']);
+        $existingLeads = Lead::where('phone', $input['phone'])->get();
+    foreach ($existingLeads as $existingLead) {
+        // Update each existing lead with the new data
+        $existingLead->fill($input);
+        // Save the updated lead
+        $existingLead->save();
+    }
         $lead->ref_num = $this->util->generateLeadRefNum($lead);
         $lead->save();
         $this->util->storeUniqueWebhookFields($lead);
-        // if(!empty($lead->project->outgoing_apis)) {
-        //     $this->util->sendApiWebhook($lead->id);
-        // }
-        // if(!empty($request->get('redirect_to')) && $request->get('redirect_to') == 'ceoi') {
-        //     return redirect()->route('admin.eoi.create', ['phone' => $lead->phone]);
-        // }
         return redirect()->route('admin.walkinform.index')->with('success', 'Form created successfully');
     }
     public function edit(Walkin $walkinform)

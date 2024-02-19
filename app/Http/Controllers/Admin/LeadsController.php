@@ -114,13 +114,13 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp', 'application withdrawn'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application withdrawn'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application withdrawn'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application withdrawn'];
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -299,7 +299,7 @@ class LeadsController extends Controller
             ->get();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
-        $admitted = Admitted::all();
+$admitted=Admitted::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
@@ -311,16 +311,13 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
-
-
-
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application not purchased'];
 
             }
 
@@ -341,7 +338,7 @@ class LeadsController extends Controller
             $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
             $lead_stages = Lead::getStages();
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'admitted'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads','admitted'));
         }
     }
     public function create()
@@ -370,14 +367,18 @@ class LeadsController extends Controller
 
 
     public function store(StoreLeadRequest $request)
-    {
-        $input = $request->except(['_method', '_token']);
-        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
-        $input['created_by'] = auth()->user()->id;
+{
+    $input = $request->except(['_method', '_token']);
+    $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
+    $input['created_by'] = auth()->user()->id;
 
-        $input['parent_stage_id'] = $request->input('parent_stage_id');
-        $input['user_id'] = $request->input('user_id');
-        $existingLead = Lead::where('phone', $input['phone'])->first();
+    $input['parent_stage_id'] = $request->input('parent_stage_id');
+    $input['user_id'] = $request->input('user_id');
+    $existingLeads = Lead::where('phone', $input['phone'])->get();
+    foreach ($existingLeads as $existingLead) {
+        // Update each existing lead with the new data
+        $existingLead->fill($input);
+
 
         if ($existingLead) {
             // Create a new lead instance
@@ -396,37 +397,33 @@ class LeadsController extends Controller
             $lead->save();
             $this->logTimeline($lead, 'lead_created', 'Lead Created Again');
         } else {
-            $input['phone'] = $this->util->addCountryCode($input['phone']);
-
             // Create a new lead if no existing leads are found
             $lead = Lead::create($input);
             $lead->ref_num = $this->util->generateLeadRefNum($lead);
             $lead->save();
             $this->logTimeline($lead, 'lead_created', 'Lead Created Successfully');
 
-            // Update source and campaign for the new lead if necessary
-            if (auth()->user()->is_channel_partner) {
-                $source = Source::where('is_cp_source', 1)
-                    ->where('project_id', $input['project_id'])
-                    ->first();
+        // Update source and campaign for the new lead if necessary
+        if (auth()->user()->is_channel_partner) {
+            $source = Source::where('is_cp_source', 1)
+                ->where('project_id', $input['project_id'])
+                ->first();
 
-                if (!empty($source)) {
-                    $lead->source_id = $source->id;
-                    $lead->campaign = $source->campaign;
-                    $lead->save();
-                }
-            }
-
-            $this->util->storeUniqueWebhookFields($lead);
-
-            if (!empty($lead->project->outgoing_apis)) {
-                $this->util->sendApiWebhook($lead->id);
+            if (!empty($source)) {
+                $lead->source_id = $source->id;
+                $lead->campaign = $source->campaign;
+                $lead->save();
             }
         }
+        $this->util->storeUniqueWebhookFields($lead);
 
-        return redirect()->route('admin.leads.index');
+        if (!empty($lead->project->outgoing_apis)) {
+            $this->util->sendApiWebhook($lead->id);
+        }
     }
 
+    return redirect()->route('admin.leads.index');
+}}
 
 
     public function showTimeline($leadId)
@@ -474,7 +471,7 @@ class LeadsController extends Controller
         $input['parent_stage_id'] = $request->input('parent_stage_id');
 
         // Log the update of 'parent_stage_id'
-        $this->logTimeline($lead, 'Lead Profile Updated', "lead Profile updated");
+        $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['parent_stage_id']}");
 
         // Log the general update
 
@@ -513,7 +510,7 @@ class LeadsController extends Controller
         $stages = Stage::all();
         $tags = Tag::all();
         $leads = Lead::all();
-        $admitted = Admitted::all();
+         $admitted=Admitted::all();
         $sitevisits = SiteVisit::all();
         $allActivities = $this->getLeadActivities($lead);
         $noteNotInterested = NoteNotInterested::all();
@@ -521,7 +518,7 @@ class LeadsController extends Controller
         $lead->load('project', 'campaign', 'source', 'createdBy');
         $agencies = Agency::all();
         $users = User::all();
-        $application = ApplicationPurchased::all();
+        $application=ApplicationPurchased::all();
         $user_id = request()->get('user_id'); // Get the user ID from the request
         $followUps = Followup::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
@@ -533,7 +530,7 @@ class LeadsController extends Controller
                 return $query->where('user_id', $user_id);
             })
             ->get();
-        $sitevisit = SiteVisit::where('lead_id', $lead->id)
+            $sitevisit = SiteVisit::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
                 return $query->where('user_id', $user_id);
             })
@@ -556,7 +553,7 @@ class LeadsController extends Controller
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
-        return view('admin.leads.show', compact('admitted', 'lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested', 'users', 'application'));
+        return view('admin.leads.show', compact('admitted','lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested','users','application'));
     }
     public function destroy(Lead $lead)
     {

@@ -65,7 +65,6 @@
                     $counter = 1;
                 @endphp
           @foreach ($followUps->where('parent_stage_id', 28) as $followUp)
-
                         <tr data-created-at="{{ $followUp->follow_up_date}}">
                             <td>{{ $counter++ }}</td>
                             <td>

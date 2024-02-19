@@ -16,13 +16,13 @@
             @endif
         @endforeach
     </td>
-    <td>
+    {{-- <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
                 {{ $leads->campaign->campaign_name }}
             @endif
         @endforeach
-    </td>
+    </td> --}}
     <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
@@ -278,7 +278,6 @@
                                     rows="4" required>{{ old('notes') }}</textarea>
                             </div>
                         </div>
-
                         <div class="modal-footer">
                             <input type="hidden" name="parent_stage_id" value="13">
                             <button type="submit" class="btn btn-danger">Confirm</button>
@@ -360,7 +359,7 @@
             @csrf
             @method('PUT')
             <input type="hidden" name="stage" value="site_not_visited">
-
+<br>
             @if ($sitevisit->parent_stage_id == 12)
                 @if (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales)
                     <div class=float-center>

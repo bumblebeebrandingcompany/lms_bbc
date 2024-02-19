@@ -21,9 +21,9 @@
                                 value="{{ old('phone') ? old('phone') : $phone ?? '' }}" class="form-control input_number"
                                 @if (!auth()->user()->is_superadmin) required @endif>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" class="required">
                             <label for="secondary_phone">Secondary Phone:</label>
-                            <input type="phone" name="secondary_phone" class="form-control">
+                            <input type="phone" name="secondary_phone" class="form-control" required>
                         </div>
                         <div class="form-group" class="required">
                             <label for="email">Email:</label>
@@ -31,7 +31,7 @@
                         </div>
                         <div class="form-group" class="required">
                             <label for="additional_email">Additional Email:</label>
-                            <input type="email" name="additional_email" class="form-control" >
+                            <input type="email" name="additional_email" class="form-control" required>
                         </div>
 
                         <input type="hidden" name="comments" class="form-control" value= "Direct Walk-in attended"
@@ -43,10 +43,13 @@
                                 <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
                                     name="project_id" id="project_id" required>
                                     @foreach ($projects as $id => $entry)
-                                        <option value="{{ $id }}"
-                                            {{ old('project_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                        @if ($id == 44)
+                                            <option value="{{ $id }}" selected>{{ $entry }}</option>
+                                        @endif
                                     @endforeach
                                 </select>
+
+
                                 @if ($errors->has('project'))
                                     <span class="text-danger">{{ $errors->first('project') }}</span>
                                 @endif
@@ -58,9 +61,17 @@
                                 <br>
                                 <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}"
                                     name="campaign_id" id="campaign_id" required>
+                                    {{-- Outputting $campaigns array for debugging --}}
+                                    {{ var_dump($campaigns) }}
+
+                                    {{-- Loop through $campaigns and exclude option with ID 12 --}}
                                     @foreach ($campaigns as $id => $entry)
-                                        <option value="{{ $id }}"
-                                            {{ old('campaign_id') == $id ? 'selected' : '' }}>{{ $entry }}</option>
+                                        @if ($id != 12)
+                                            <option value="{{ $id }}"
+                                                {{ old('campaign_id') == $id ? 'selected' : '' }}>
+                                                {{ $entry }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 @if ($errors->has('campaign'))
@@ -72,14 +83,20 @@
                                 <label class="required" for="source_id">{{ trans('messages.source') }}</label>
                                 <br>
                                 <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}"
-                                    name="source_id" id="source_id" required>
+                                        name="source_id" id="source_id" required>
+                                    @foreach ($sources as $id => $entry)
+                                        @if ($id != 13)
+                                            <option value="{{ $id }}" {{ old('source_id') == $id ? 'selected' : '' }}>
+                                                {{ $entry }}
+                                            </option>
+                                        @endif
+                                    @endforeach
                                 </select>
                                 <br>
                                 @if ($errors->has('source_id'))
                                     <span class="text-danger">{{ $errors->first('source_id') }}</span>
                                 @endif
                             </div>
-
                             <br>
                         @endif
                         <button type="submit" class="btn btn-success">Create Walkin</button>

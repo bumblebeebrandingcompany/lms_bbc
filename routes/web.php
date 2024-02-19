@@ -79,6 +79,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     Route::resource('/walkinform', 'WalkinController');
     Route::resource('/admission', 'AdmissionFollowUpController');
+    Route::resource('/application', 'ApplicationNotPurchasedController');
+     Route::resource('/admission', 'AdmissionFollowUpController');
     // Users
     Route::get('users/{id}/edit-password', 'UsersController@editPassword')
         ->name('users.edit.password');

@@ -49,8 +49,8 @@ class WebhookReceiverController extends Controller
     {
         abort_if(!auth()->user()->is_superadmin, Response::HTTP_FORBIDDEN, '403 Forbidden');
 
-        $new_leads_history = $this->__getLeadActivityHistory($request);
-        $leads_activities_history = $this->__getNewLeadActivityHistory($request);
+        // $new_leads_history = $this->__getLeadActivityHistory($request);
+        // $leads_activities_history = $this->__getNewLeadActivityHistory($request);
 
         return view('admin.webhook.index')
             ->with(compact('new_leads_history', 'leads_activities_history'));

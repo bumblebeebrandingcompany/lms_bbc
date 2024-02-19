@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('content')
 
-    <h2>Application Purchased</h2>
+    <h2>Application Not Purchased</h2>
     <div class="card">
         <div class="card-body">
 <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followups" id="followUpTable">
@@ -9,8 +9,6 @@
                     <tr>
                         <th>ID</th>
                         <th>Reference Number</th>
-
-                        <th>Application No</th>
                         <th>Parent Name</th>
                         <th>Child name</th>
                         <th>Grade</th>
@@ -25,13 +23,10 @@
                     @php
                     $counter = 1;
                 @endphp
-          @foreach ($applications->where('parent_stage_id',13 ) as $applicationpurchased)
+          @foreach ($applications->where('parent_stage_id',30 ) as $applicationpurchased)
           <td>{{ $counter++ }}</td>
           <td>
             {{ $applicationpurchased->lead->ref_num  ??  ''}}
-        </td>
-        <td>
-            {{ $applicationpurchased->application_no  ??  ''}}
         </td>
         <td>
             {{ $applicationpurchased->lead->name ?? '' }}

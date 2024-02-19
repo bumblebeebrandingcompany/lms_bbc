@@ -30,11 +30,10 @@
                             <th>Additional Email</th>
                             <th>Phone</th>
                             <th>Secondary Phone</th>
-                            <th>Project</th>
-                            <th>Campaign</th>
+                            {{-- <th>Project</th> --}}
+                            {{-- <th>Campaign</th> --}}
                             <th>Source</th>
                             <th>Added By</th>
-
                             {{-- <th>Remarks</th> --}}
                             <th>Actions</th>
 
@@ -57,8 +56,8 @@
                                 <td> {{ $walkin->additional_email }}</td>
                                 <td> {{ $walkin->phone }}</td>
                                 <td> {{ $walkin->secondary_phone }}</td>
-                                <td> {{ $walkin->project->name ?? '' }}</td>
-                                <td> {{ $walkin->campaign->campaign_name ?? '' }}</td>
+                                {{-- <td> {{ $walkin->project->name ?? '' }}</td> --}}
+                                {{-- <td> {{ $walkin->campaign->campaign_name ?? '' }}</td> --}}
                                 <td> {{ $walkin->sources->name ?? '' }}</td>
                                 <td>
                                     @foreach ($walkin->leads as $lead)

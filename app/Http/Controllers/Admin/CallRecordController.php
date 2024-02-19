@@ -56,54 +56,63 @@ class CallRecordController extends Controller
         // Pass the call flow data to the view
         return view('admin.callog.show', compact('callFlow', 'callRecord'));
     }
+
     public function store(Request $request)
     {
-        // Validate incoming webhook request
-        $request->validate([
-            // Add necessary validation rules based on Servetel webhook payload
-        ]);
-        // Process Servetel webhook data
-        $webhookData = $request->all();
+        $apiKey = config('eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2N1c3RvbWVyLnNlcnZldGVsLmluL2FwaS92MS9hdXRoL2xvZ2luIiwiaWF0IjoxNjk4NjY0NTAxLCJleHAiOjE2OTg2NjgxMDEsIm5iZiI6MTY5ODY2NDUwMSwianRpIjoiaFBDRUIwblllUjBjU2N2MCIsInN1YiI6IjE3MDQ0MCJ9.V_qQ_Vtm9d2ojWyqR1ZBfxjQRt2JJnz3YHXgXJ3WIxQ');
+        $apiKey = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxNzA0NDAiLCJpc3MiOiJodHRwczovL2N1c3RvbWVyLnNlcnZldGVsLmluL3Rva2VuL2dlbmVyYXRlIiwiaWF0IjoxNjk4NjYxMjYwLCJleHAiOjE5OTg2NjEyNjAsIm5iZiI6MTY5ODY2MTI2MCwianRpIjoiTWtYY0h0OXlpNG5Ea2FuaSJ9.L23vhUJ0UIGc3nffLeMK0NMczroLgwwkECFnaCaY-A8';
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer ' . $apiKey,
+        ])->get('https://api.servetel.in/v1/call/records');
 
-        if (isset($webhookData['recording_url'], $webhookData['client_number'], $webhookData['date'], $webhookData['time'], $webhookData['answered_seconds'], $webhookData['status'])) {
-            $recordingUrl = $webhookData['recording_url'];
-            $audioData = file_get_contents($recordingUrl);
+        $callRecords = $response->json();
 
-            $calledBy = $webhookData['client_number'] ?? null;
-            $lead = Lead::where('phone', $calledBy)->first();
+        if (isset($callRecords['results']) && is_array($callRecords['results'])) {
+            foreach ($callRecords['results'] as $record) {
+                if (isset($record['recording_url'], $record['client_number'], $record['date'], $record['time'], $record['answered_seconds'], $record['status'])) {
+                    $recordingUrl = $record['recording_url'];
+                    $audioData = file_get_contents($recordingUrl);
 
-            if ($calledBy !== null) {
-                $fileName = 'audio_' . time() . '.mp3';
-                $path = 'audio/' . $fileName;
-                $absolutePath = public_path($path);
+                    $calledBy = $record['client_number'] ?? null;
+                    $lead = Lead::where('phone', $calledBy)->first();
 
-                File::makeDirectory(dirname($absolutePath), 0755, true, true);
+                    if ($calledBy !== null) {
+                        $fileName = 'audio_' . time() . '.mp3';
+                        $path = 'audio/' . $fileName;
+                        $absolutePath = public_path($path);
 
-                if (file_put_contents($absolutePath, $audioData) !== false) {
-                    CallRecord::create([
-                        'lead_id' => $lead->id ?? 21,
-                        'client_number' => $webhookData['client_number'],
-                        'called_on' => $webhookData['date'],
-                        'call_on_time' => $webhookData['time'],
-                        'call_duration' => $webhookData['answered_seconds'],
-                        'call_recordings' => $path,
-                        'status' => $webhookData['status'],
-                        'direction' => $webhookData['direction'],
-                        'description' => $webhookData['description'],
-                        'call_id' => $webhookData['call_id'],
-                        'did number' => $webhookData['did_number'],
-                        'call_flow' => json_encode($webhookData['call_flow']),
-                    ]);
+                        File::makeDirectory(dirname($absolutePath), 0755, true, true);
+
+                        if (file_put_contents($absolutePath, $audioData) !== false) {
+                            CallRecord::create([
+                                'lead_id' => $lead->id ?? 21,
+                                'client_number' => $record['client_number'],
+                                'called_on' => $record['date'],
+                                'call_on_time' => $record['time'],
+                                'call_duration' => $record['answered_seconds'],
+                                'call_recordings' => $path,
+                                'status' => $record['status'],
+                                'direction' => $record['direction'],
+                                'description' => $record['description'],
+                                'call_id' => $record['call_id'],
+                                'did number' => $record['did_number'],
+                                'call_flow' => json_encode($record['call_flow'],
+                            ),
+                            ]);
+                        } else {
+                            // Log or handle the case where file_put_contents fails
+                        }
+                    } else {
+                        // Log or handle the case where 'called_by' is null
+                    }
                 } else {
-                    // Log or handle the case where file_put_contents fails
+                    // Log or handle the case where required keys are missing in the record
                 }
-            } else {
-                // Log or handle the case where 'called_by' is null
             }
         } else {
-            // Log or handle the case where required keys are missing in the webhook data
+            // Log or handle the case where 'results' key is missing in the API response
         }
 
-        return response()->json(['success' => true]); // Respond to the webhook request
+        return redirect()->route('admin.callog.store')->with('success', 'Call records stored successfully.');
     }
 }

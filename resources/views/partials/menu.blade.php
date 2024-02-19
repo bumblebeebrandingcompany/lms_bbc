@@ -41,19 +41,19 @@
                         </a>
                     </li>
                 @endif
-                @if ((auth()->user()->is_admissionteam|| auth()->user()->is_superadmin || auth()->user()->is_client))
-                <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('admin.admission.index') ? 'active' : '' }}"
-                        href="{{ route('admin.admission.index') }}">
-                        <i class="far fa-newspaper nav-icon"></i>
-                        </i>
-                        <p>
-                           Admission followup
-                        </p>
-                    </a>
-                </li>
-            @endif
-            {{-- @if ((auth()->user()->is_admissionteam|| auth()->user()->is_superadmin))
+                @if (auth()->user()->is_admissionteam || auth()->user()->is_superadmin || auth()->user()->is_client)
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('admin.admission.index') ? 'active' : '' }}"
+                            href="{{ route('admin.admission.index') }}">
+                            <i class="far fa-newspaper nav-icon"></i>
+                            </i>
+                            <p>
+                                Admission followup
+                            </p>
+                        </a>
+                    </li>
+                @endif
+                {{-- @if (auth()->user()->is_admissionteam || auth()->user()->is_superadmin)
             <li class="nav-item">
                 <a class="nav-link {{ request()->routeIs('admin.home') ? 'active' : '' }}"
                     href="{{ route('admin.home') }}">
@@ -131,7 +131,7 @@
                                     </p>
                                 </a>
                             </li>
-                            @if (auth()->user()->is_superadmin|| auth()->user()->is_client)
+                            @if (auth()->user()->is_superadmin || auth()->user()->is_client)
                                 <li class="nav-item">
                                     <a href="{{ route('admin.audit-logs.index') }}"
                                         class="nav-link {{ request()->is('admin/audit-logs') || request()->is('admin/audit-logs/*') ? 'active' : '' }}">
@@ -210,7 +210,7 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->is_superadmin|| auth()->user()->is_presales || auth()->user()->is_client)
+                @if (auth()->user()->is_superadmin || auth()->user()->is_presales || auth()->user()->is_client)
                     <li class="nav-item">
                         <a href="{{ route('admin.followups.index') }}"
                             class="nav-link {{ request()->is('admin/followups') || request()->is('admin/followups/*') ? 'active' : '' }}">
@@ -219,18 +219,21 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->is_superadmin|| auth()->user()->is_presales|| auth()->user()->is_frontoffice|| auth()->user()->is_client)
-                <li class="nav-item">
-                    <a href="{{ route('admin.sitevisit.index') }}"
-                        class="nav-link {{ request()->is('admin/sitevisit') || request()->is('admin/sitevisit/*') ? 'active' : '' }}">
-                        <i class="fas fa-map-marker-alt nav-icon">
+                @if (auth()->user()->is_superadmin ||
+                        auth()->user()->is_presales ||
+                        auth()->user()->is_frontoffice ||
+                        auth()->user()->is_client)
+                    <li class="nav-item">
+                        <a href="{{ route('admin.sitevisit.index') }}"
+                            class="nav-link {{ request()->is('admin/sitevisit') || request()->is('admin/sitevisit/*') ? 'active' : '' }}">
+                            <i class="fas fa-map-marker-alt nav-icon">
 
-                        </i>
-                        <p>
-                            Site Visit
-                        </p>
-                    </a>
-                </li>
+                            </i>
+                            <p>
+                                Site Visit
+                            </p>
+                        </a>
+                    </li>
                 @endif
                 @if (auth()->user()->is_superadmin || auth()->user()->is_client)
                     <li class="nav-item">
@@ -323,20 +326,24 @@
                         </p>
                     </a>
                 </li>
-                @if (auth()->user()->is_client || auth()->user()->is_frontoffice || auth()->user()->is_superadmin || auth()->user()->is_client)
 
-                <li class="nav-item">
-                    <a href="{{ route('admin.walkinform.index') }}"
-                        class="nav-link {{ request()->is('admin/walkin') || request()->is('admin/walkin/*') ? 'active' : '' }}">
-                        <i class="fas fa-phone fa-flip-horizontal nav-icon"></i>
-                        </i>
-                        <p>
-                           Walkin Form
-                        </p>
-                    </a>
-                </li>
+                @if (auth()->user()->is_client ||
+                        auth()->user()->is_frontoffice ||
+                        auth()->user()->is_superadmin ||
+                        auth()->user()->is_client)
+                    <li class="nav-item">
+                        <a href="{{ route('admin.walkinform.index') }}"
+                            class="nav-link {{ request()->is('admin/walkinform') || request()->is('admin/walkinform/*') ? 'active' : '' }}">
+                            {{-- <i class='fas fa-walking' style='font-size:20px'></i> --}}
+                            <i class="fa-fw nav-icon fas fa-walking" style='font-size:22px'>
+                            </i>
+                            <p>
+                                Walkin Form
+                            </p>
+                        </a>
+                    </li>
                 @endif
-                @if (auth()->user()->is_superadmin )
+                @if (auth()->user()->is_superadmin)
                     <li class="nav-item">
                         <a href="{{ route('admin.systemCalendar') }}"
                             class="nav-link {{ request()->is('admin/system-calendar') || request()->is('admin/system-calendar/*') ? 'active' : '' }}">
@@ -348,29 +355,41 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->is_superadmin ||auth()->user()->is_frontoffice || auth()->user()->is_client)
+                @if (auth()->user()->is_superadmin || auth()->user()->is_frontoffice || auth()->user()->is_client)
+                    <li class="nav-item">
+                        <a href="{{ route('admin.applications.index') }}"
+                            class="nav-link {{ request()->is('admin/applications') || request()->is('admin/applications/*') ? 'active' : '' }}">
+                            <i class="	fas fa-receipt nav-icon"></i>
+                            </i>
+                            <p>
+                                Application Purchased
+                            </p>
+                        </a>
+                    </li>
+                @endif
+                @if (auth()->user()->is_superadmin || auth()->user()->is_admissionteam )
                 <li class="nav-item">
-                    <a href="{{ route('admin.applications.index') }}"
-                        class="nav-link {{ request()->is('admin/applications') || request()->is('admin/applications/*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.application.index') }}"
+                        class="nav-link {{ request()->is('admin/application') || request()->is('admin/application/*') ? 'active' : '' }}">
                         <i class="	fas fa-receipt nav-icon"></i>
                         </i>
                         <p>
-                          Application Purchased
+                            App not Purchased
                         </p>
                     </a>
                 </li>
-                @endif
-                @if (auth()->user()->is_admissionteam|| auth()->user()->is_superadmin || auth()->user()->is_client)
-                <li class="nav-item">
-                    <a href="{{ route('admin.admitted.index') }}"
-                        class="nav-link {{ request()->is('admin/admitted') || request()->is('admin/admitted/*') ? 'active' : '' }}">
-                        <i class="fas fa fa-check nav-icon"></i>
-                        </i>
-                        <p>
-                         Admitted
-                        </p>
-                    </a>
-                </li>
+            @endif
+                @if (auth()->user()->is_admissionteam || auth()->user()->is_superadmin || auth()->user()->is_client)
+                    <li class="nav-item">
+                        <a href="{{ route('admin.admitted.index') }}"
+                            class="nav-link {{ request()->is('admin/admitted') || request()->is('admin/admitted/*') ? 'active' : '' }}">
+                            <i class="fas fa fa-check nav-icon"></i>
+                            </i>
+                            <p>
+                                Admitted
+                            </p>
+                        </a>
+                    </li>
                 @endif
                 @if (file_exists(app_path('Http/Controllers/Auth/ChangePasswordController.php')))
                     <li class="nav-item">
