@@ -215,5 +215,9 @@ public function application()
 {
     return $this->hasOne(ApplicationPurchased::class);
 }
+public function walkin()
+{
+    return $this->hasMany(Walkin::class,'walkin_id');
+}
 }
 

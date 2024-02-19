@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
@@ -21,7 +20,6 @@ use App\Models\ParentStage;
 use App\Models\Tag;
 use App\Models\Admitted;
 use App\Models\NoteNotInterested;
-
 use App\Models\User;
 use Gate;
 use GuzzleHttp\Client;
@@ -93,7 +91,6 @@ class LeadsController extends Controller
 
         return back();
     }
-
     public function index(Request $request)
     {
         $lead_view = empty($request->view) ? 'list' : (in_array($request->view, $this->lead_view) ? $request->view : 'list');
@@ -294,7 +291,6 @@ $admitted=Admitted::all();
                 $query->whereHas('parentStage', function ($q) use ($lead_stage) {
                     $q->whereIn('name', $lead_stage);
                 });
-
                 if ($user->is_admissionteam) {
                     // If the user is part of the admission team, filter by user_id
                     $query->where('user_id', $user->id);
@@ -334,46 +330,33 @@ $admitted=Admitted::all();
     $input = $request->except(['_method', '_token']);
     $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
     $input['created_by'] = auth()->user()->id;
-
     $input['parent_stage_id'] = $request->input('parent_stage_id');
     $input['user_id'] = $request->input('user_id');
     $existingLeads = Lead::where('phone', $input['phone'])->get();
+$lead=Lead::all();
     foreach ($existingLeads as $existingLead) {
         // Update each existing lead with the new data
         $existingLead->fill($input);
-
-        // Save the updated lead
         $existingLead->save();
-        $this->logTimeline($existingLead, 'lead_recreated', 'Lead Recreated Again');
     }
 
-    if ($existingLeads->isEmpty()) {
-        // Create a new lead if no existing leads are found
-        $lead = Lead::create($input);
-        $lead->ref_num = $this->util->generateLeadRefNum($lead);
-        $lead->save();
-        $this->logTimeline($lead, 'lead_created', 'Lead Created Successfully');
+    $lead->ref_num = $this->util->generateLeadRefNum($lead);
+    $lead->save();
+    $this->util->storeUniqueWebhookFields($lead);
 
-        // Update source and campaign for the new lead if necessary
-        if (auth()->user()->is_channel_partner) {
-            $source = Source::where('is_cp_source', 1)
-                ->where('project_id', $input['project_id'])
-                ->first();
+    // Assuming you want to show the lead details in a view
+    if ($existingLeads->isNotEmpty()) {
+        // Assuming you want to use the first existing lead (you may adjust this based on your logic)
+        $existingLead = $existingLeads->first();
 
-            if (!empty($source)) {
-                $lead->source_id = $source->id;
-                $lead->campaign = $source->campaign;
-                $lead->save();
-            }
-        }
-        $this->util->storeUniqueWebhookFields($lead);
+        // You can access the 'ref_num' attribute
+        $ref_num = $existingLead->ref_num;
 
-        if (!empty($lead->project->outgoing_apis)) {
-            $this->util->sendApiWebhook($lead->id);
-        }
+        // Add the necessary variables to the compact function
+        return view('lead_details', compact('existingLead', 'ref_num'));
+    } else {
+        return response()->json(['error' => 'Lead not found'], 404);
     }
-
-    return redirect()->route('admin.leads.index');
 }
 
 
@@ -565,18 +548,15 @@ $admitted=Admitted::all();
     public function getLeadDetailsRows(Request $request)
     {
         if ($request->ajax()) {
-
             $lead_details = [];
             $project_id = $request->input('project_id');
             $lead_id = $request->input('lead_id');
             $project = Project::findOrFail($project_id);
             $webhook_fields = $project->webhook_fields ?? [];
-
             if (!empty($lead_id)) {
                 $lead = Lead::findOrFail($lead_id);
                 $lead_details = $lead->lead_info;
             }
-
             $html = View::make('admin.leads.partials.lead_details_rows')
                 ->with(compact('webhook_fields', 'lead_details'))
                 ->render();

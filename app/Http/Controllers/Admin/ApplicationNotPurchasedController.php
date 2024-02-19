@@ -28,16 +28,14 @@ class ApplicationNotPurchasedController extends Controller
     {
         $this->util = $util;
     }
-
     public function index(Request $request)
     {
         $lead = Lead::all();
         $agencies = User::all();
-        // Alternatively, if you want to get the IDs in a loop
-        $applications = ApplicationPurchased::all();
-
+        $applications = ApplicationPurchased::all()->where('for_whom', auth()->id());
         return view('admin.application_not_purchased.index', compact('lead', 'applications', 'agencies'));
     }
+
     public function store(Request $request)
     {
         $lead = Lead::find($request->lead_id);

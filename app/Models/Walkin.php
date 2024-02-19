@@ -5,6 +5,8 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rule;
+
 class Walkin extends Model
 {
     use  HasFactory;
@@ -23,13 +25,7 @@ class Walkin extends Model
 
     protected $fillable = [
         'name',
-        'email' => [
-            auth()->user()->is_superadmin ? '' : 'required',
-            auth()->user()->is_superadmin ? '' : 'email',
-            Rule::unique('leads')->where(function ($query) use ($project_id) {
-                return $query->whereNotNull('email')->where('project_id', $project_id);
-            }),
-        ],
+        'email',
         'phone',
 'secondary_phone',
 'additional_email',
@@ -37,12 +33,32 @@ class Walkin extends Model
         'project_id',
         'campaign_id',
     ];
+    public function rules()
+    {
+        $project_id = request()->input('project_id');
+        return [
+            'name' => 'required',
+            'email' => [
+                auth()->user()->is_superadmin ? '' : 'required',
+                auth()->user()->is_superadmin ? '' : 'email',
+                Rule::unique('leads')->where(function ($query) use ($project_id) {
+                    return $query->whereNotNull('email')->where('project_id', $project_id);
+                }),
+            ],
+            'phone' => [
+                auth()->user()->is_superadmin ? '' : 'required',
+                Rule::unique('leads')->where(function ($query) use ($project_id) {
+                    return $query->whereNotNull('phone')->where('project_id', $project_id);
+                }),
+            ],
+        ];
+
+    }
 
     public function leads()
 {
-    return $this->hasMany(Lead::class);
+    return $this->belongsTo(Lead::class,'walkin_id');
 }
-
     public function sources()
     {
         return $this->belongsTo(Source::class, 'source_id');

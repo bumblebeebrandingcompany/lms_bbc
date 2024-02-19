@@ -11,8 +11,6 @@
     <div class="card-body">
         <form method="POST" action="{{ route("admin.leads.store") }}" enctype="multipart/form-data">
             @csrf
-        {{-- <input type="hidden" name="parent_stage_id" id="parent_stage_id" value="{{ $selectedStageId }}"> --}}
-
             <div class="form-group">
                 <label for="name" class="required">
                     @lang('messages.name')

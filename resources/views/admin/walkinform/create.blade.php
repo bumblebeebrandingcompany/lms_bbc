@@ -1,5 +1,29 @@
 @extends('layouts.admin')
 
+<div class="modal fade" id="existingLeadModal" tabindex="-1" role="dialog" aria-labelledby="existingLeadModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="existingLeadModalLabel">Existing Lead Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @foreach ($leads as $lead)
+                    <div id="existingLeadDetails_{{ $lead->id }}">
+                        <p>Lead ID: {{ $lead->id }}</p> <!-- Add more details as needed -->
+                    </div>
+                @endforeach
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @section('content')
     <div class="row">
         <div class="col-md-12">
@@ -48,8 +72,6 @@
                                         @endif
                                     @endforeach
                                 </select>
-
-
                                 @if ($errors->has('project'))
                                     <span class="text-danger">{{ $errors->first('project') }}</span>
                                 @endif
@@ -85,7 +107,7 @@
                                 <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}"
                                         name="source_id" id="source_id" required>
                                     @foreach ($sources as $id => $entry)
-                                        @if ($id != 13)
+                                        @if ($id != 25)
                                             <option value="{{ $id }}" {{ old('source_id') == $id ? 'selected' : '' }}>
                                                 {{ $entry }}
                                             </option>
@@ -214,4 +236,28 @@
             getCampaigns();
         });
     </script>
+
+<script>
+    $(document).ready(function () {
+        @if ($errors->has('lead_exists'))
+            // Display the existing lead details modal if the 'lead_exists' error exists
+            $('#existingLeadModal').modal('show');
+
+            // Retrieve and display existing lead details in the modal body
+            $.ajax({
+                method: "GET",
+                url: "{{ route('admin.lead.details.rows') }}", // Update with your route
+                data: {
+
+                    // email: $('#email').val(), // Assuming 'email' is the input field name
+                    // phone: $('#phone').val()
+                },
+                dataType: "html",
+                success: function (response) {
+                    $("#existingLeadDetails").html(response);
+                }
+            });
+        @endif
+    });
+</script>
 @endsection
