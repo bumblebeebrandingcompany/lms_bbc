@@ -1,5 +1,6 @@
 <?php
 use App\Http\Controllers\Admin\StagesController;
+use App\Http\Controllers\Admin\WebhookReceiverController;
 
 Route::redirect('/', '/login');
 Route::get('/home', function () {
@@ -15,11 +16,14 @@ Auth::routes(['register' => false]);
 //webhook receiver
 Route::any('webhook/new-lead', 'Admin\WebhookReceiverController@storeNewLead')
     ->name('webhook.store.new.lead');
+Route::any('webhook/servetel', 'Admin\WebhookReceiverController@handleServetelWebhook')->name('webhook.store.servetel');
 Route::any('webhook/lead-activity', 'Admin\WebhookReceiverController@storeLeadActivity')
     ->name('webhook.store.lead.activity');
 Route::any('webhook/{secret}', 'Admin\WebhookReceiverController@processor')->name('webhook.processor');
 Route::any('webhook/call-record', 'Admin\CallRecordController@storeNewRecord')
-->name('webhook.store.new.record');
+    ->name('webhook.store.new.record');
+
+
 Route::get('document/{id}/view', 'Admin\DocumentController@guestView')->name('document.guest.view');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'middleware' => ['auth']], function () {
@@ -39,35 +43,35 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('roles/destroy', 'RolesController@massDestroy')->name('roles.massDestroy');
     Route::resource('roles', 'RolesController');
 
-//sitevist
-Route::resource('/sitevisit', 'SiteVisitController');
-Route::resource('/notes', 'NoteController');
-Route::resource('/notenotinterested', 'NoteNotInterestedController');
+    //sitevist
+    Route::resource('/sitevisit', 'SiteVisitController');
+    Route::resource('/notes', 'NoteController');
+    Route::resource('/notenotinterested', 'NoteNotInterestedController');
 
-Route::resource('/admitted', 'AdmittedController');
-Route::resource('/followups', 'FollowUpController');
-Route::delete('followups/destroy', 'FollowUpController@massDestroy')->name('followups.massDestroy');
-Route::get('leads/{lead}/initiate-call', 'LeadsController@initiateCall')
-->name('leads.initiateCall');
+    Route::resource('/admitted', 'AdmittedController');
+    Route::resource('/followups', 'FollowUpController');
+    Route::delete('followups/destroy', 'FollowUpController@massDestroy')->name('followups.massDestroy');
+    Route::get('leads/{lead}/initiate-call', 'LeadsController@initiateCall')
+        ->name('leads.initiateCall');
 
-Route::put('/admin/sitevisits/{sitevisit}/cancel', 'SiteVisitController@cancelSiteVisit')
-    ->name('sitevisits.cancel');
+    Route::put('/admin/sitevisits/{sitevisit}/cancel', 'SiteVisitController@cancelSiteVisit')
+        ->name('sitevisits.cancel');
     Route::put('/admin/sitevisits/{sitevisit}/conducted', 'SiteVisitController@conducted')
-    ->name('sitevisits.conducted');
+        ->name('sitevisits.conducted');
 
     Route::put('/admin/sitevisits/{sitevisit}/notvisited', 'SiteVisitController@notVisited')
-    ->name('sitevisits.notvisited');
+        ->name('sitevisits.notvisited');
     Route::put('/admin/sitevisits/{sitevisit}/applicationpurchased', 'SiteVisitController@applicationpurchased')
-    ->name('sitevisits.applicationpurchased');
-Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitController@reschedule')->name('sitevisits.reschedule');
-Route::match(['post', 'put'], '/admin/sitevisit/reschedule', 'SiteVisitController@rescheduleSiteVisit')->name('sitevisit.reschedule');
-Route::match(['post', 'put'], '/admin/sitevisit/conducted', 'SiteVisitController@conductedstage')->name('sitevisit.conducted');
-Route::match(['post', 'put'], '/admin/sitevisit/notvisited', 'SiteVisitController@notvisitedstage')->name('sitevisit.notvisited');
-Route::match(['post', 'put'], '/admin/sitevisit/cancel', 'SiteVisitController@cancelstage')->name('sitevisit.cancel');
+        ->name('sitevisits.applicationpurchased');
+    Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitController@reschedule')->name('sitevisits.reschedule');
+    Route::match(['post', 'put'], '/admin/sitevisit/reschedule', 'SiteVisitController@rescheduleSiteVisit')->name('sitevisit.reschedule');
+    Route::match(['post', 'put'], '/admin/sitevisit/conducted', 'SiteVisitController@conductedstage')->name('sitevisit.conducted');
+    Route::match(['post', 'put'], '/admin/sitevisit/notvisited', 'SiteVisitController@notvisitedstage')->name('sitevisit.notvisited');
+    Route::match(['post', 'put'], '/admin/sitevisit/cancel', 'SiteVisitController@cancelstage')->name('sitevisit.cancel');
 
 
 
-// Route::put('sitevisit/{sitevisit}', 'SiteVisitController@update')->name('admin.sitevisit.update');
+    // Route::put('sitevisit/{sitevisit}', 'SiteVisitController@update')->name('admin.sitevisit.update');
 
     //call record
     Route::resource('/callog', 'CallRecordController');

@@ -32,7 +32,16 @@ class ApplicationNotPurchasedController extends Controller
     {
         $lead = Lead::all();
         $agencies = User::all();
-        $applications = ApplicationPurchased::all()->where('for_whom', auth()->id());
+        $user = auth()->user();
+        if($user->is_superadmin)
+        {
+            $applications = ApplicationPurchased::all();
+        }
+        else
+        {
+            $applications = ApplicationPurchased::where('for_whom', auth()->id())->get();
+        }
+
         return view('admin.application_not_purchased.index', compact('lead', 'applications', 'agencies'));
     }
 

@@ -39,6 +39,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\LeadDocumentShare;
 use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+
+
 
 class LeadsController extends Controller
 {
@@ -107,12 +111,13 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp', 'Application not purchased'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application withdrawn'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application not purchased'];
+
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application withdrawn'];
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -219,6 +224,33 @@ class LeadsController extends Controller
             $table->addColumn('parent_stage_name', function ($row) {
                 return $row->parentStage ? $row->parentStage->name : '';
             });
+            $table->addColumn('application_num', function ($row) {
+                return $row->application ? $row->application->application_no : 'Yet to be Updated';
+            });
+
+            $table->addColumn('supervised_by', function ($row) {
+                if ($row->application) {
+                    if ($row->application->user) {
+                        return $row->application->user->representative_name;
+                    } else {
+                        return 'User not found';
+                    }
+                } else {
+                    return 'Yet to be Updated';
+                }
+            });
+            $table->addColumn('admission_team_name', function ($row) {
+                if ($row->application) {
+                    if ($row->application->users) {
+                        return $row->application->users->representative_name;
+                    } else {
+                        return 'User not found';
+                    }
+                } else {
+                    return 'Yet to be Updated';
+                }
+            });
+
             $table->addColumn('campaign_campaign_name', function ($row) {
                 return $row->campaign ? $row->campaign->campaign_name : '';
             });
@@ -279,7 +311,7 @@ $admitted=Admitted::all();
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
 
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application not purchased'];
@@ -324,6 +356,11 @@ $admitted=Admitted::all();
 
         return view('admin.leads.create', compact('campaigns', 'projects', 'project_id'));
     }
+    // Add country code to phone number if missing
+
+
+
+
 
     public function store(StoreLeadRequest $request)
 {
@@ -337,26 +374,39 @@ $lead=Lead::all();
     foreach ($existingLeads as $existingLead) {
         // Update each existing lead with the new data
         $existingLead->fill($input);
+
+        // Save the updated lead
         $existingLead->save();
+        $this->logTimeline($existingLead, 'lead_recreated', 'Lead Recreated Again');
     }
 
-    $lead->ref_num = $this->util->generateLeadRefNum($lead);
-    $lead->save();
-    $this->util->storeUniqueWebhookFields($lead);
+    if ($existingLeads->isEmpty()) {
+        // Create a new lead if no existing leads are found
+        $lead = Lead::create($input);
+        $lead->ref_num = $this->util->generateLeadRefNum($lead);
+        $lead->save();
+        $this->logTimeline($lead, 'lead_created', 'Lead Created Successfully');
 
-    // Assuming you want to show the lead details in a view
-    if ($existingLeads->isNotEmpty()) {
-        // Assuming you want to use the first existing lead (you may adjust this based on your logic)
-        $existingLead = $existingLeads->first();
+        // Update source and campaign for the new lead if necessary
+        if (auth()->user()->is_channel_partner) {
+            $source = Source::where('is_cp_source', 1)
+                ->where('project_id', $input['project_id'])
+                ->first();
 
-        // You can access the 'ref_num' attribute
-        $ref_num = $existingLead->ref_num;
+            if (!empty($source)) {
+                $lead->source_id = $source->id;
+                $lead->campaign = $source->campaign;
+                $lead->save();
+            }
+        }
+        $this->util->storeUniqueWebhookFields($lead);
 
-        // Add the necessary variables to the compact function
-        return view('lead_details', compact('existingLead', 'ref_num'));
-    } else {
-        return response()->json(['error' => 'Lead not found'], 404);
+        if (!empty($lead->project->outgoing_apis)) {
+            $this->util->sendApiWebhook($lead->id);
+        }
     }
+
+    return redirect()->route('admin.leads.index');
 }
 
 

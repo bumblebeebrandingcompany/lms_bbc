@@ -33,27 +33,7 @@ class Walkin extends Model
         'project_id',
         'campaign_id',
     ];
-    public function rules()
-    {
-        $project_id = request()->input('project_id');
-        return [
-            'name' => 'required',
-            'email' => [
-                auth()->user()->is_superadmin ? '' : 'required',
-                auth()->user()->is_superadmin ? '' : 'email',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('email')->where('project_id', $project_id);
-                }),
-            ],
-            'phone' => [
-                auth()->user()->is_superadmin ? '' : 'required',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('phone')->where('project_id', $project_id);
-                }),
-            ],
-        ];
 
-    }
 
     public function leads()
 {

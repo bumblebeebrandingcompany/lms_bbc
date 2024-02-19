@@ -19,7 +19,7 @@ class Util
     {
         $query = new Project();
 
-        if (!($user->is_superadmin||$user->is_front_office)) {
+        if (!($user->is_superadmin || $user->is_front_office)) {
             $cp_project_ids = $user->project_assigned ?? [];
             $query = $query->where(function ($q) use ($user, $cp_project_ids) {
                 if ($user->is_channel_partner) {
@@ -33,7 +33,18 @@ class Util
         $project_ids = $query->pluck('id')->toArray();
         return $project_ids;
     }
+    public function addCountryCode($phoneNumber)
+    {
+        if (!Str::startsWith($phoneNumber, '+')) {
+            // Assuming the country code is +91 for India
+            $phoneNumber = '+91' . ltrim($phoneNumber, '0');
+        }
 
+        // Log the modified phone number for debugging
+        Log::info('Modified phone number: ' . $phoneNumber);
+
+        return $phoneNumber;
+    }
     public function getCampaigns($user, $project_ids = [])
     {
         $query = new Campaign();
@@ -517,7 +528,7 @@ class Util
 
         return $sources->pluck('name', 'id')->toArray();
     }
-// public function getSourcesForProjectAndCampaign($project_id, $campaign_id)
+    // public function getSourcesForProjectAndCampaign($project_id, $campaign_id)
 // {
 //     $sources = Source::whereHas('project', function ($query) use ($project_id) {
 //             $query->where('id', $project_id);
@@ -527,7 +538,7 @@ class Util
 //         })
 //         ->get();
 
-//     return $sources->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+    //     return $sources->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 // }
 
     public function postWebhook($url, $method, $headers = [], $body = [])
@@ -725,9 +736,9 @@ class Util
             'Superadmin' => 'SU',
             'Clients' => 'CL',
             'Agency' => 'AG',
-            'Presales'=>'PR',
+            'Presales' => 'PR',
             'Admissionteam' => 'AD',
-            'Frontoffice'=>'FR'
+            'Frontoffice' => 'FR'
 
             // 'ChannelPartner' => 'CP',
             // 'ChannelPartnerManager' => 'CPM',

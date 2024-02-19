@@ -54,7 +54,10 @@ class WalkinController extends Controller
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $project_id = request()->get('project_id', null);
-        $sources = Source::where('id','!=',25)->get();
+        $excludedSourceIds = [13];
+        $sources = Source::whereNotIn('id', $excludedSourceIds)->get();
+
+
         $client = Clients::all();
         $leads = Lead::all();
 
