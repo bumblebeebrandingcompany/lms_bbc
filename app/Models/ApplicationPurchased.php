@@ -36,6 +36,11 @@ class ApplicationPurchased extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'who_assigned');
+        return $this->belongsTo(User::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsTo(User::class,'for_whom');
     }
 }

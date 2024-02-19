@@ -30,12 +30,15 @@
             <th>
                 Stage
             </th>
-            {{-- <th>
+            <th>
                 Application No
-            </th> --}}
-            {{-- <th>
+            </th>
+            <th>
                 Supervised By
-            </th>  --}}
+            </th>
+            <th>
+                Admission Team Name
+            </th>
 
 
 

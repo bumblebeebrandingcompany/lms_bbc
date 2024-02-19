@@ -41,6 +41,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\LeadDocumentShare;
 use Exception;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
+
+
 
 class LeadsController extends Controller
 {
@@ -110,13 +114,13 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application withdrawn'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp', 'application withdrawn'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application withdrawn'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application withdrawn'];
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -223,6 +227,33 @@ class LeadsController extends Controller
             $table->addColumn('parent_stage_name', function ($row) {
                 return $row->parentStage ? $row->parentStage->name : '';
             });
+            $table->addColumn('application_num', function ($row) {
+                return $row->application ? $row->application->application_no : 'Yet to be Updated';
+            });
+
+            $table->addColumn('supervised_by', function ($row) {
+                if ($row->application) {
+                    if ($row->application->user) {
+                        return $row->application->user->representative_name;
+                    } else {
+                        return 'User not found';
+                    }
+                } else {
+                    return 'Yet to be Updated';
+                }
+            });
+            $table->addColumn('admission_team_name', function ($row) {
+                if ($row->application) {
+                    if ($row->application->users) {
+                        return $row->application->users->representative_name;
+                    } else {
+                        return 'User not found';
+                    }
+                } else {
+                    return 'Yet to be Updated';
+                }
+            });
+
             $table->addColumn('campaign_campaign_name', function ($row) {
                 return $row->campaign ? $row->campaign->campaign_name : '';
             });
@@ -283,7 +314,7 @@ class LeadsController extends Controller
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
 
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
@@ -332,6 +363,11 @@ class LeadsController extends Controller
 
         return view('admin.leads.create', compact('campaigns', 'projects', 'project_id'));
     }
+    // Add country code to phone number if missing
+
+
+
+
 
     public function store(StoreLeadRequest $request)
     {
@@ -360,6 +396,8 @@ class LeadsController extends Controller
             $lead->save();
             $this->logTimeline($lead, 'lead_created', 'Lead Created Again');
         } else {
+            $input['phone'] = $this->util->addCountryCode($input['phone']);
+
             // Create a new lead if no existing leads are found
             $lead = Lead::create($input);
             $lead->ref_num = $this->util->generateLeadRefNum($lead);

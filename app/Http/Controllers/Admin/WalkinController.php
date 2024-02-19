@@ -67,7 +67,10 @@ class WalkinController extends Controller
             ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $project_id = request()->get('project_id', null);
-        $sources = Source::all();
+        $excludedSourceIds = [13];
+        $sources = Source::whereNotIn('id', $excludedSourceIds)->get();
+
+
         $client = Clients::all();
 
         return view('admin.walkinform.create', compact('projects', 'project_ids', 'client', 'sources', 'campaigns', 'campaign_ids', 'project_id'));

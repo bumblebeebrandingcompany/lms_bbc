@@ -11,33 +11,34 @@ use Exception;
 use App\Models\LeadEvents;
 use App\Models\Lead;
 use App\Models\User;
+
 class WebhookReceiverController extends Controller
 {
     /**
-    * All Utils instance.
-    *
-    */
+     * All Utils instance.
+     *
+     */
     protected $util;
 
     /**
-    * Constructor
-    *
-    */
+     * Constructor
+     *
+     */
     public function __construct(Util $util)
     {
         $this->util = $util;
     }
 
     /**
-    * webhook coming during
-    * form submission
-    */
+     * webhook coming during
+     * form submission
+     */
     public function processor(Request $request, $secret)
     {
         $source = Source::where('webhook_secret', $secret)
-                    ->firstOrFail();
+            ->firstOrFail();
 
-        if(!empty($source) && !empty($request->all())) {
+        if (!empty($source) && !empty($request->all())) {
             $response = $this->util->createLead($source, $request->all());
             return response()->json($response['msg']);
         }
@@ -56,9 +57,9 @@ class WebhookReceiverController extends Controller
     }
 
     /**
-    * new lead coming
-    * from sell.do
-    */
+     * new lead coming
+     * from sell.do
+     */
     public function storeNewLead(Request $request)
     {
         try {
@@ -103,12 +104,43 @@ class WebhookReceiverController extends Controller
         }
     }
 
+    public function handleServetelWebhook(Request $request)
+    {
+        // Parse the incoming webhook payload
+        $payload = $request->all();
+        if (empty($payload)) {
+            return response()->json(['message' => 'Request data is empty.'], 200);
+        }
+        // Extract lead information from the payload
+        $phoneNumber = $payload['caller_id_number']; // Caller ID number
+        // $callToNumber = $payload['call_to_number']; // Number called by the caller
+        // $startTimeStamp = $payload['start_stamp']; // Start timestamp of the call
+
+        // Check if a lead with the provided phone number already exists
+        $existingLead = Lead::where('phone', $phoneNumber)->first();
+
+        if ($existingLead) {
+            // Lead with this phone number already exists
+            // Log the duplicate lead or handle as needed
+            \Log::info('Duplicate lead received from Servetel: ' . json_encode($payload));
+            return response()->json(['message' => 'Duplicate lead received'], 200);
+        }
+
+        // If lead doesn't exist, create a new lead
+        Lead::create([
+            'phone' => $phoneNumber,
+
+        ]);
+
+        // Respond to Servetel with a success message
+        return response()->json(['message' => 'Lead created successfully'], 200);
+    }
 
     protected function __getLeadActivityHistory()
     {
         $leads = Lead::whereNotNull('lead_event_webhook_response')
-                ->orderBy('created_at', 'desc')
-                ->cursorPaginate(4);
+            ->orderBy('created_at', 'desc')
+            ->cursorPaginate(4);
 
         return $leads;
     }
@@ -116,10 +148,10 @@ class WebhookReceiverController extends Controller
     protected function __getNewLeadActivityHistory()
     {
         $activities = LeadEvents::with(['lead'])
-                        ->whereNotIn('event_type', ['document_sent'])
-                        ->select(['webhook_data', 'lead_id', 'sell_do_lead_id', 'created_at', 'event_type'])
-                        ->orderBy('created_at', 'desc')
-                        ->cursorPaginate(4);
+            ->whereNotIn('event_type', ['document_sent'])
+            ->select(['webhook_data', 'lead_id', 'sell_do_lead_id', 'created_at', 'event_type'])
+            ->orderBy('created_at', 'desc')
+            ->cursorPaginate(4);
 
         return $activities;
     }
