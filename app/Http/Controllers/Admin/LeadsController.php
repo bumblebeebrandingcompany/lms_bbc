@@ -219,7 +219,9 @@ class LeadsController extends Controller
             $table->addColumn('project_name', function ($row) {
                 return $row->project ? $row->project->name : '';
             });
-
+            $table->addColumn('parent_stage_name', function ($row) {
+                return $row->parentStage ? $row->parentStage->name : '';
+            });
             $table->addColumn('campaign_campaign_name', function ($row) {
                 return $row->campaign ? $row->campaign->campaign_name : '';
             });
