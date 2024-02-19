@@ -19,7 +19,7 @@ class Util
     {
         $query = new Project();
 
-        if (!$user->is_superadmin) {
+        if (!($user->is_superadmin||$user->is_front_office)) {
             $cp_project_ids = $user->project_assigned ?? [];
             $query = $query->where(function ($q) use ($user, $cp_project_ids) {
                 if ($user->is_channel_partner) {

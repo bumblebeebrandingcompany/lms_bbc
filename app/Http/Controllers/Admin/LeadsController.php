@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\LeadDocumentShare;
 use Exception;
+
 class LeadsController extends Controller
 {
     /**
@@ -109,11 +110,12 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp', 'Application not purchased'];
             } elseif ($user->is_client || $user->is_frontoffice) {
+
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
             } elseif ($user->is_admissionteam) {
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application not purchased'];
             }
 
             $query = $this->util->getFIlteredLeads($request);
@@ -275,16 +277,13 @@ $admitted=Admitted::all();
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted'];
-
-
-
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application not purchased'];
 
             }
 
@@ -337,7 +336,6 @@ $admitted=Admitted::all();
     $input['parent_stage_id'] = $request->input('parent_stage_id');
     $input['user_id'] = $request->input('user_id');
     $existingLeads = Lead::where('phone', $input['phone'])->get();
-
     foreach ($existingLeads as $existingLead) {
         // Update each existing lead with the new data
         $existingLead->fill($input);
@@ -366,7 +364,6 @@ $admitted=Admitted::all();
                 $lead->save();
             }
         }
-
         $this->util->storeUniqueWebhookFields($lead);
 
         if (!empty($lead->project->outgoing_apis)) {

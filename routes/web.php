@@ -54,11 +54,19 @@ Route::put('/admin/sitevisits/{sitevisit}/cancel', 'SiteVisitController@cancelSi
     ->name('sitevisits.cancel');
     Route::put('/admin/sitevisits/{sitevisit}/conducted', 'SiteVisitController@conducted')
     ->name('sitevisits.conducted');
+
     Route::put('/admin/sitevisits/{sitevisit}/notvisited', 'SiteVisitController@notVisited')
     ->name('sitevisits.notvisited');
     Route::put('/admin/sitevisits/{sitevisit}/applicationpurchased', 'SiteVisitController@applicationpurchased')
     ->name('sitevisits.applicationpurchased');
 Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitController@reschedule')->name('sitevisits.reschedule');
+Route::match(['post', 'put'], '/admin/sitevisit/reschedule', 'SiteVisitController@rescheduleSiteVisit')->name('sitevisit.reschedule');
+Route::match(['post', 'put'], '/admin/sitevisit/conducted', 'SiteVisitController@conductedstage')->name('sitevisit.conducted');
+Route::match(['post', 'put'], '/admin/sitevisit/notvisited', 'SiteVisitController@notvisitedstage')->name('sitevisit.notvisited');
+Route::match(['post', 'put'], '/admin/sitevisit/cancel', 'SiteVisitController@cancelstage')->name('sitevisit.cancel');
+
+
+
 // Route::put('sitevisit/{sitevisit}', 'SiteVisitController@update')->name('admin.sitevisit.update');
 
     //call record
@@ -67,6 +75,8 @@ Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitCon
 
     Route::resource('/walkinform', 'WalkinController');
     Route::resource('/admission', 'AdmissionFollowUpController');
+    Route::resource('/application', 'ApplicationNotPurchasedController');
+     Route::resource('/admission', 'AdmissionFollowUpController');
     // Users
     Route::get('users/{id}/edit-password', 'UsersController@editPassword')
         ->name('users.edit.password');
@@ -139,6 +149,8 @@ Route::match(['post', 'put'], '/admin/sitevisits/{id}/reschedule', 'SiteVisitCon
     Route::get('get-sources', 'SourceController@getSource')->name('get.sources');
     Route::delete('sources/destroy', 'SourceController@massDestroy')->name('sources.massDestroy');
     Route::resource('sources', 'SourceController');
+    Route::resource('stage-notes', 'StageNotesController');
+
 
     Route::get('system-calendar', 'SystemCalendarController@index')->name('systemCalendar');
     Route::get('global-search', 'GlobalSearchController@search')->name('globalSearch');

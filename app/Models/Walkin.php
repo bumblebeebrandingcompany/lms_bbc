@@ -23,7 +23,13 @@ class Walkin extends Model
 
     protected $fillable = [
         'name',
-        'email',
+        'email' => [
+            auth()->user()->is_superadmin ? '' : 'required',
+            auth()->user()->is_superadmin ? '' : 'email',
+            Rule::unique('leads')->where(function ($query) use ($project_id) {
+                return $query->whereNotNull('email')->where('project_id', $project_id);
+            }),
+        ],
         'phone',
 'secondary_phone',
 'additional_email',

@@ -8,14 +8,14 @@
     </div>
 
     <div class="card card-primary card-outline">
-@if(!auth()->user()->is_client)
-        <div class="card-header">
-            {{-- @if (auth()->user()->checkPermission('client_create')) --}}
-            <a class="btn btn-success float-right" href="{{ route('admin.walkinform.create') }}">
-                {{ trans('global.add') }} Walkin
-            </a>
-            {{-- @endif --}}
-        </div>
+        @if (!auth()->user()->is_client)
+            <div class="card-header">
+                {{-- @if (auth()->user()->checkPermission('client_create')) --}}
+                <a class="btn btn-success float-right" href="{{ route('admin.walkinform.create') }}">
+                    {{ trans('global.add') }} Walkin
+                </a>
+                {{-- @endif --}}
+            </div>
         @endif
         <div class="card-body">
             <div class="table-responsive">
@@ -30,9 +30,10 @@
                             <th>Additional Email</th>
                             <th>Phone</th>
                             <th>Secondary Phone</th>
-                            <th>Project</th>
-                            <th>Campaign</th>
+                            {{-- <th>Project</th> --}}
+                            {{-- <th>Campaign</th> --}}
                             <th>Source</th>
+                            <th>Added By</th>
                             {{-- <th>Remarks</th> --}}
                             <th>Actions</th>
 
@@ -55,9 +56,14 @@
                                 <td> {{ $walkin->additional_email }}</td>
                                 <td> {{ $walkin->phone }}</td>
                                 <td> {{ $walkin->secondary_phone }}</td>
-                                <td> {{ $walkin->project->name ?? '' }}</td>
-                                <td> {{ $walkin->campaign->campaign_name ?? '' }}</td>
+                                {{-- <td> {{ $walkin->project->name ?? '' }}</td> --}}
+                                {{-- <td> {{ $walkin->campaign->campaign_name ?? '' }}</td> --}}
                                 <td> {{ $walkin->sources->name ?? '' }}</td>
+                                <td>
+                                    @foreach ($walkin->leads as $lead)
+                                        {{ $lead->createdBy->representative_name ?? '' }}
+                                    @endforeach
+                                </td>
                                 {{-- <td> {{ $walkin->remarks }}</td> --}}
 
                                 <td>
@@ -85,18 +91,22 @@
                                             <div class="col-md-4">
                                                 <div class="form-group">
                                                     <!-- Button to trigger the delete modal -->
+                                                    <!-- Button to trigger the delete modal -->
                                                     <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
-                                                        data-target="#deleteModal">
+                                                        data-target="#deleteModal_{{ $walkin->id }}">
                                                         Delete
                                                     </button>
 
                                                     <!-- Delete Confirmation Modal -->
-                                                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog"
-                                                        aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                                    <div class="modal fade" id="deleteModal_{{ $walkin->id }}"
+                                                        tabindex="-1" role="dialog"
+                                                        aria-labelledby="deleteModalLabel_{{ $walkin->id }}"
+                                                        aria-hidden="true">
                                                         <div class="modal-dialog" role="document">
                                                             <div class="modal-content">
                                                                 <div class="modal-header">
-                                                                    <h5 class="modal-title" id="deleteModalLabel">Confirm
+                                                                    <h5 class="modal-title"
+                                                                        id="deleteModalLabel_{{ $walkin->id }}">Confirm
                                                                         Deletion</h5>
                                                                     <button type="button" class="close"
                                                                         data-dismiss="modal" aria-label="Close">
@@ -122,19 +132,19 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @endif
-                                                </div>
-                                            </div>
-
+                                        @endif
                                     </div>
-                                </td>
-                                {{-- @endforeach --}}
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
             </div>
+
         </div>
+        </td>
+        {{-- @endforeach --}}
+        </tr>
+        @endforeach
+        </tbody>
+        </table>
+    </div>
+    </div>
     </div>
 @endsection
 

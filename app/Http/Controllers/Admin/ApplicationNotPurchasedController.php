@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class ApplicationPurchasedController extends Controller
+class ApplicationNotPurchasedController extends Controller
 {
     /**
      * All Utils instance.
@@ -36,7 +36,7 @@ class ApplicationPurchasedController extends Controller
         // Alternatively, if you want to get the IDs in a loop
         $applications = ApplicationPurchased::all();
 
-        return view('admin.applicationpurchased.index', compact('lead', 'applications', 'agencies'));
+        return view('admin.application_not_purchased.index', compact('lead', 'applications', 'agencies'));
     }
     public function store(Request $request)
     {

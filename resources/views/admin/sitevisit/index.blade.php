@@ -39,7 +39,7 @@
                                 <tr>
                                     <th>R.No</th>
                                     <th>Parent Name</th>
-                                    <th>Campaign Name</th>
+                                    {{-- <th>Campaign Name</th> --}}
                                     <th>Site Visit Date</th>
                                     <th>Site Visit Time</th>
                                     <th>Supervise By</th>
@@ -216,7 +216,7 @@
                                     <tr>
                                         <th>R.No</th>
                                         <th>Parent Name</th>
-                                        <th>Campaign Name</th>
+                                        {{-- <th>Campaign Name</th> --}}
                                         <th>Site Visit Date</th>
                                         <th>Site Visit Time</th>
                                         <th>Supervise By</th>

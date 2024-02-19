@@ -367,6 +367,18 @@
                         </a>
                     </li>
                 @endif
+                @if (auth()->user()->is_superadmin || auth()->user()->is_admissionteam )
+                <li class="nav-item">
+                    <a href="{{ route('admin.application.index') }}"
+                        class="nav-link {{ request()->is('admin/application') || request()->is('admin/application/*') ? 'active' : '' }}">
+                        <i class="	fas fa-receipt nav-icon"></i>
+                        </i>
+                        <p>
+                            App not Purchased
+                        </p>
+                    </a>
+                </li>
+            @endif
                 @if (auth()->user()->is_admissionteam || auth()->user()->is_superadmin || auth()->user()->is_client)
                     <li class="nav-item">
                         <a href="{{ route('admin.admitted.index') }}"
