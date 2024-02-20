@@ -209,7 +209,7 @@
             </div>
 
         </form>
-        <form action="{{ route('admin.sitevisits.applicationpurchased', $sitevisit->id) }}" method="POST">
+        <form action="{{ route('admin.applications.applicationpurchased', $sitevisit->id) }}" method="POST">
             @csrf
             @method('PUT')
             @if ($sitevisit->parent_stage_id == 13)
