@@ -29,19 +29,29 @@ class WalkinController extends Controller
     {
         // Get all walkins with their related leads
         $walkins = Walkin::with('leads')->get();
-        // Filter walkins where at least one lead was created by the authenticated user
+
         $walkins = $walkins->filter(function ($walkin) {
-            return $walkin->leads->contains('created_by', auth()->id());
+            // Check if the 'leads' relationship is not null
+            return $walkin->leads && $walkin->leads->contains('created_by', auth()->id());
         });
+        // $user = auth()->user();
+        // if($user->is_superadmin)
+        // {
+        //     $walkin = Walkin::all();
+        // }
+        // else
+        // {
+        //     $walkin = Walkin::where('created_by', auth()->id())->get();
+        // }
         // Retrieve other necessary data
         $projects = Project::pluck('name', 'id');
-        $client = Clients::all();
+        $clients = Clients::all();
         $sources = Source::all();
-        $campaign = Campaign::all();
-        $projects = Project::all();
+        $campaigns = Campaign::all();
 
-        return view('admin.walkinform.index', compact('walkins', 'client', 'sources', 'campaign', 'projects'));
+        return view('admin.walkinform.index', compact('walkins', 'clients', 'sources', 'campaigns', 'projects'));
     }
+
     public function create()
     {
         if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {

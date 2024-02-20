@@ -271,6 +271,20 @@
                                     @endif
                                 @endforeach
                             </select>
+                            <div class="form-group">
+                                <label for="Date">Select Date </label>
+                                <input type="date"
+                                    class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                    name="follow_up_date" id="follow_up_date" rows="3"
+                                    required>{{ old('follow_up_date') }}
+                            </div>
+                            <div class="form-group">
+                                <label for="Time">Select Time </label>
+                                <input type="time"
+                                    class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                    name="follow_up_time" id="follow_up_time" rows="3"
+                                    required>{{ old('follow_up_time') }}
+                            </div>
                             <br>
                             <div class="form-group">
                                 <label class=float-left for="noteContent">Note Content</label>
@@ -280,6 +294,96 @@
                         </div>
                         <div class="modal-footer">
                             <input type="hidden" name="parent_stage_id" value="13">
+                            <button type="submit" class="btn btn-danger">Confirm</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form action="{{ route('admin.sitevisits.applicationpurchased', $sitevisit->id) }}" method="POST">
+            @csrf
+            @method('PUT')
+            @if ($sitevisit->parent_stage_id == 13)
+                @if (!auth()->user()->is_superadmin && !auth()->user()->is_client)
+                    <div style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"
+                        title="Application Purchased">
+                        <i class="	fas fa-receipt nav-icon"></i>
+                    </div>
+                @else
+                    <div
+                        style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"title="Application Purchased">
+                        <i class="	fas fa-receipt nav-icon"></i>
+                    </div>
+                @endif
+            @elseif (
+                !auth()->user()->is_superadmin &&
+                    !auth()->user()->is_client &&
+                    $sitevisit->lead &&
+                    in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+
+            @elseif (
+                !auth()->user()->is_superadmin &&
+                    !auth()->user()->is_client &&
+                    !auth()->user()->is_presales &&
+                    $sitevisit->lead &&
+                    $sitevisit->parent_stage_id != 13)
+                @if ($sitevisit->parent_stage_id != 12)
+                    <!-- Add this condition to exclude Not Visited -->
+                    <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
+                        data-target="#applicationnotpurchasedmodel{{ $sitevisit->id }}">
+                        Application Not Purchased </button>
+                @endif
+            @endif
+            <div class="modal fade" id="applicationnotpurchasedmodel{{ $sitevisit->id }}" tabindex="-1"
+                role="dialog" aria-labelledby="applicationpurchasedLabel{{ $sitevisit->id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="applicationpurchasedLabel{{ $sitevisit->id }}">Confirmation
+                            </h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+
+
+                            <label for="user_id">Select Representative:</label>
+                            <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
+                                name="user_id" id="user_id" required>
+                                @foreach ($agencies as $user)
+                                    @if ($user->user_type == 'Admissionteam')
+                                        <option value="{{ $user->id }}"
+                                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                            {{ $user->representative_name }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            <div class="form-group">
+                                <label for="Date">Select Date </label>
+                                <input type="date"
+                                    class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                    name="follow_up_date" id="follow_up_date" rows="3"
+                                    required>{{ old('follow_up_date') }}
+                            </div>
+                            <div class="form-group">
+                                <label for="Time">Select Time </label>
+                                <input type="time"
+                                    class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                    name="follow_up_time" id="follow_up_time" rows="3"
+                                    required>{{ old('follow_up_time') }}
+                            </div>
+                            <br>
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="hidden" name="parent_stage_id" value="30">
                             <button type="submit" class="btn btn-danger">Confirm</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>

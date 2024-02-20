@@ -41,7 +41,7 @@
             {{ $applicationpurchased->lead->child_name ?? '' }}
         </td>
         <td>
-            {{ $applicationpurchased->lead->grade_enquired }}
+            {{ $applicationpurchased->lead->grade_enquired ?? '' }}
         </td>
         <td>
             @if($applicationpurchased->for_whom)
