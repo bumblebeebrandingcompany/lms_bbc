@@ -211,6 +211,11 @@ class Lead extends Model
         return $this->hasMany(Admitted::class);
     }
 
+
+public function walkin()
+{
+    return $this->hasMany(Walkin::class,'walkin_id');
+}
     public function application()
     {
         return $this->hasOne(ApplicationPurchased::class);

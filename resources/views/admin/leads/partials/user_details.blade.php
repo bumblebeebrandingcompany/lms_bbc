@@ -758,9 +758,7 @@
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                         <input type="hidden" name="parent_stage_id" value="30">
-                                        {{-- <label for="application_no">Application Number:</label>
-                                        <input class="form-control" type="text" name="application_no"
-                                            value=""> --}}
+
                                         <label for="user_id">Select Representative:</label>
                                         <select
                                             class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
@@ -800,7 +798,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                         </form>
                             <form id="FututeprospectFormId" method="POST"
                                 action="{{ route('admin.stage-notes.store') }}" class="myForm"
@@ -835,6 +832,7 @@
                                     <div>
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                         <p> Lead ID: {{ $lead->id }}</p>
+
                                         <div class="modal-body">
                                             <input type="hidden" name="parent_stage_id" value="14">
                                             <div class="form-group">

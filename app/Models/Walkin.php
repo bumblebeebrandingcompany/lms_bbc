@@ -33,6 +33,7 @@ class Walkin extends Model
         'campaign_id',
     ];
 
+
     public function leads()
     {
         return $this->hasMany(Lead::class);

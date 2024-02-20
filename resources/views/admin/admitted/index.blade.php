@@ -26,7 +26,6 @@
                     @endphp
                     @foreach ($admitteds as $admitted)
                         <td>{{ $counter++ }}</td>
-
                         <td>
                             {{ $admitted->lead->ref_num ?? '' }}
                         </td>
@@ -42,7 +41,6 @@
                         <td>
                             {{ $admitted->application->application_no ?? '' }}
                         </td>
-
                         <td>
                             {{ $admitted->application->user->representative_name ?? 'No User Assigned' }}
                         </td>

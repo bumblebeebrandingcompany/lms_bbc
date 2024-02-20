@@ -38,10 +38,8 @@ class NoteController extends Controller
     public function store(Request $request)
     {
         $lead = Lead::find($request->lead_id);
-
         if ($lead) {
             $parentStageId = $request->input('parent_stage_id');
-
             $note = new Note();
             $note->lead_id = $lead->id;
             $note->parent_stage_id = $parentStageId;

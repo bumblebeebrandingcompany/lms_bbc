@@ -10,7 +10,7 @@ use App\Models\Lead;
 use App\Models\LeadTimeline;
 use App\Models\SiteVisit;
 use App\Models\ParentStage;
-use App\Models\Source;
+use App\Models\ApplicationPurchased;
 use App\Models\StageNotes;
 use App\Models\Tag;
 use App\Models\User;
@@ -331,7 +331,6 @@ class SiteVisitController extends Controller
 
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
 
-
         $sitevisit->update([
             'parent_stage_id' => $request->input('parent_stage_id'),
             'notes' => $request->input('notes'),
@@ -346,6 +345,18 @@ class SiteVisitController extends Controller
                 'application_no' => $sitevisit->application_no,
                 'notes' => $sitevisit->notes,
             ]);
+            $parentStageId = $request->input('parent_stage_id');
+            $applicationpurchased = new ApplicationPurchased();
+            $applicationpurchased->lead_id = $sitevisit->lead_id;
+            $applicationpurchased->who_assigned = auth()->user()->id; // Store current user_id
+            $applicationpurchased->for_whom = $request->input('user_id');
+            $applicationpurchased->application_no = $request->input('application_no');
+            $applicationpurchased->follow_up_date = $request->input('follow_up_date');
+            $applicationpurchased->notes = $request->input('notes');
+            $applicationpurchased->follow_up_time = $request->input('follow_up_time');
+            $applicationpurchased->parent_stage_id = $parentStageId;
+            $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
+            $applicationpurchased->save();
         }
         // Redirect or return a response as needed
         return redirect()->back()->with('success', 'application purchased successfully!');

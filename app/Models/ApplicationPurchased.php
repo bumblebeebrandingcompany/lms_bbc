@@ -21,10 +21,8 @@ class ApplicationPurchased extends Model
         'follow_up_date',
 
     ];
-    protected $fillable = [
-        'parent_stage_id','lead_id','user_id','application_no','follow_up_time',
-        'notes','application_id','who_assigned'
-    ];
+    protected $fillable = ['lead_id', 'who_assigned', 'for_whom', 'application_no', 'follow_up_date', 'notes', 'follow_up_time', 'parent_stage_id'];
+
     public function lead()
     {
         return $this->belongsTo(Lead::class,'lead_id');

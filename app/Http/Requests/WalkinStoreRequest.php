@@ -8,15 +8,16 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 
-class StoreLeadRequest extends FormRequest
+class WalkinStoreRequest extends FormRequest
 {
     public function authorize()
     {
-        return auth()->user()->is_superadmin || auth()->user()->is_channel_partner;
+        return auth()->user()->is_superadmin || auth()->user()->is_frontoffice;
     }
+
     public function rules()
     {
-        $project_id = request()->input('project_id');
+        $project_id = $this->input('project_id');
 
         return [
             'name' => 'required',
@@ -38,4 +39,23 @@ class StoreLeadRequest extends FormRequest
         ];
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $project_id = $this->input('project_id');
+            $email = $this->input('email');
+            $phone = $this->input('phone');
+
+            $existingLead = Lead::where('project_id', $project_id)
+                ->where(function ($query) use ($email, $phone) {
+                    $query->where('email', $email)->orWhere('phone', $phone);
+                })
+                ->first();
+
+            if ($existingLead) {
+                $validator->errors()->add('lead_exists', 'Lead already exists.');
+                // You may add more details of the existing lead to the message here
+            }
+        });
+    }
 }
