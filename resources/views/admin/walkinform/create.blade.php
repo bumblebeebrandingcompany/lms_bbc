@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 
-<div class="modal fade" id="existingLeadModal" tabindex="-1" role="dialog" aria-labelledby="existingLeadModalLabel"
+{{-- <div class="modal fade" id="existingLeadModal" tabindex="-1" role="dialog" aria-labelledby="existingLeadModalLabel"
      aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -23,7 +23,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 @section('content')
     <div class="row">
         <div class="col-md-12">
@@ -237,7 +237,7 @@
         });
     </script>
 
-<script>
+{{-- <script>
     $(document).ready(function () {
         @if ($errors->has('lead_exists'))
             // Display the existing lead details modal if the 'lead_exists' error exists
@@ -259,5 +259,5 @@
             });
         @endif
     });
-</script>
+</script> --}}
 @endsection

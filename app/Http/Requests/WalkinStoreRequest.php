@@ -12,7 +12,7 @@ class WalkinStoreRequest extends FormRequest
 {
     public function authorize()
     {
-        return auth()->user()->is_superadmin || auth()->user()->is_channel_partner;
+        return auth()->user()->is_superadmin || auth()->user()->is_frontoffice;
     }
 
     public function rules()
@@ -39,23 +39,23 @@ class WalkinStoreRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $project_id = $this->input('project_id');
-            $email = $this->input('email');
-            $phone = $this->input('phone');
+    // public function withValidator($validator)
+    // {
+    //     $validator->after(function ($validator) {
+    //         $project_id = $this->input('project_id');
+    //         $email = $this->input('email');
+    //         $phone = $this->input('phone');
 
-            $existingLead = Lead::where('project_id', $project_id)
-                ->where(function ($query) use ($email, $phone) {
-                    $query->where('email', $email)->orWhere('phone', $phone);
-                })
-                ->first();
+    //         $existingLead = Lead::where('project_id', $project_id)
+    //             ->where(function ($query) use ($email, $phone) {
+    //                 $query->where('email', $email)->orWhere('phone', $phone);
+    //             })
+    //             ->first();
 
-            if ($existingLead) {
-                $validator->errors()->add('lead_exists', 'Lead already exists.');
-                // You may add more details of the existing lead to the message here
-            }
-        });
-    }
+    //         if ($existingLead) {
+    //             $validator->errors()->add('lead_exists', 'Lead already exists.');
+    //             // You may add more details of the existing lead to the message here
+    //         }
+    //     });
+    // }
 }

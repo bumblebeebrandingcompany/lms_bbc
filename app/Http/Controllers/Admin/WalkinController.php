@@ -31,9 +31,10 @@ class WalkinController extends Controller
         $walkins = Walkin::with('leads')->get();
 
         $walkins = $walkins->filter(function ($walkin) {
-            // Check if the 'leads' relationship is not null
+
             return $walkin->leads && $walkin->leads->contains('created_by', auth()->id());
         });
+
         // $user = auth()->user();
         // if($user->is_superadmin)
         // {
@@ -48,13 +49,12 @@ class WalkinController extends Controller
         $clients = Clients::all();
         $sources = Source::all();
         $campaigns = Campaign::all();
-
         return view('admin.walkinform.index', compact('walkins', 'clients', 'sources', 'campaigns', 'projects'));
     }
 
     public function create()
     {
-        if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {
+        if (!(auth()->user()->is_superadmin || auth()->user()->is_frontoffice)) {
             abort(403, 'Unauthorized.');
         }
         $project_ids = $this->util->getUserProjects(auth()->user());
@@ -107,28 +107,28 @@ class WalkinController extends Controller
         ]);
 
         $input = $request->except(['_method', '_token']);
-        $existingLeads = Lead::where('phone', $input['phone'])->get();
+        // $existingLeads = Lead::where('phone', $input['phone'])->get();
 
-        foreach ($existingLeads as $existingLead) {
-            // Update each existing lead with the new data
-            $existingLead->fill($input);
-            $existingLead->save();
-        }
+        // foreach ($existingLeads as $existingLead) {
+        //     // Update each existing lead with the new data
+        //     $existingLead->fill($input);
+        //     $existingLead->save();
+        // }
 
-        $lead->ref_num = $this->util->generateLeadRefNum($lead);
-        $lead->save();
-        $this->util->storeUniqueWebhookFields($lead);
+        // $lead->ref_num = $this->util->generateLeadRefNum($lead);
+        // $lead->save();
+        // $this->util->storeUniqueWebhookFields($lead);
 
-        // Define $existingLeads as an empty array
-        $existingLeads = [];
+        // // Define $existingLeads as an empty array
+        // $existingLeads = [];
 
-        if ($existingLead) {
-            // You can access the 'ref_no' attribute
-            $ref_num = $existingLead->ref_num;
-            return view('admin.walkinform.create')->with(compact('existingLead', 'ref_num', 'existingLeads'));
-        } else {
-            return response()->json(['error' => 'Lead not found'], 404);
-        }
+        // if ($existingLead) {
+        //     // You can access the 'ref_no' attribute
+        //     $ref_num = $existingLead->ref_num;
+            return view('admin.walkinform.create');
+        // } else {
+        //     return response()->json(['error' => 'Lead not found'], 404);
+        // }
     }
 
 
@@ -161,7 +161,6 @@ class WalkinController extends Controller
         ]);
 
         $walkinform->update($data);
-
         if ($walkinform->leads()->exists()) {
             $lead = $walkinform->leads()->first();
 
