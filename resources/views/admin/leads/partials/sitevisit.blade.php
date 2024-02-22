@@ -239,9 +239,9 @@
                                     </div>
 
                                 </form>
-                                <form action="{{ route('admin.sitevisits.applicationpurchased', $sitevisit->id) }}" method="POST">
+                                <form action="{{ route('admin.applications.store') }}" method="POST">
                                     @csrf
-                                    @method('PUT')
+
                                     @if ($sitevisit->parent_stage_id == 13)
                                         @if (!auth()->user()->is_superadmin)
                                             <div style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"

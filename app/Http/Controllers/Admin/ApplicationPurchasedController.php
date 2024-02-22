@@ -46,7 +46,7 @@ class ApplicationPurchasedController extends Controller
             $parentStageId = $request->input('parent_stage_id');
             $applicationpurchased = new ApplicationPurchased();
             $applicationpurchased->lead_id = $lead->id;
-            $applicationpurchased->who_assigned = auth()->user()->id; // Store current user_id
+            $applicationpurchased->who_assigned = auth()->user()->id;
             $applicationpurchased->for_whom = $request->input('user_id');
             $applicationpurchased->application_no = $request->input('application_no');
             $applicationpurchased->follow_up_date = $request->input('follow_up_date');

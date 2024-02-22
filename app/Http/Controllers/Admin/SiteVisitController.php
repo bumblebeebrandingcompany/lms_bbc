@@ -69,6 +69,7 @@ class SiteVisitController extends Controller
         $sitevisit->follow_up_date = $input['follow_up_date']; // Assign the date
         $sitevisit->follow_up_time = $input['follow_up_time']; // Assign the time
         $sitevisit->notes = $input['notes'];
+        $sitevisit->user_id = auth()->user()->id;
         $sitevisit->parent_stage_id = $parentStageId;
         $sitevisit->save();
 
@@ -296,8 +297,6 @@ class SiteVisitController extends Controller
             return redirect()->back()->with('success', 'Site visit conducted successfully!');
         }
     }
-
-
     public function conducted(Request $request, $sitevisitId)
     {
         $sitevisit = SiteVisit::findOrFail($sitevisitId);

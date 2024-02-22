@@ -152,23 +152,29 @@
             }
 
             function getSource() {
-                let data = {
-                    project_id: $('#project_id').val(),
-                    campaign_id: $('#campaign_id').val(),
-                };
-                $.ajax({
-                    method: "GET",
-                    url: "{{ route('admin.get.sources') }}",
-                    data: data,
-                    dataType: "json",
-                    success: function(response) {
-                        $('#source_id').select2('destroy').empty().select2({
-                            data: response
-                        });
+    let data = {
+        project_id: $('#project_id').val(),
+        campaign_id: $('#campaign_id').val(),
+    };
 
-                    }
-                });
-            }
+    $.ajax({
+        method: "GET",
+        url: "{{ route('admin.get.sources') }}",
+        data: data,
+        dataType: "json",
+        success: function(response) {
+            // Remove option with value '25'
+            response = response.filter(function(item) {
+                return item.id !== 25;
+            });
+            // Initialize Select2 after removing the option
+            $('#source_id').select2('destroy').empty().select2({
+                data: response
+            });
+        }
+    });
+}
+
             $(document).on('change', '#project_id', function() {
                 getCampaigns();
                 getLeadDetailsRowHtml();
@@ -237,6 +243,8 @@
         });
     </script>
 
+
+@endsection
 {{-- <script>
     $(document).ready(function () {
         @if ($errors->has('lead_exists'))
@@ -260,4 +268,3 @@
         @endif
     });
 </script> --}}
-@endsection

@@ -33,8 +33,11 @@
     <td>
         {{ $sitevisit->follow_up_time }}
     </td>
-    <td>
+    {{-- <td>
         {{ $sitevisit->users->representative_name ?? '' }}
+    </td> --}}
+    <td>
+        {{ $sitevisit->user->representative_name ?? 'No User Assigned' }}
     </td>
     <td>
         @foreach ($lead as $leads)
@@ -462,7 +465,6 @@
             @csrf
             @method('PUT')
             <input type="hidden" name="stage" value="site_not_visited">
-
             @if ($sitevisit->parent_stage_id == 12)
                 @if (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales)
                 <br>

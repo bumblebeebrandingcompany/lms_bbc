@@ -5,12 +5,11 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\Rule;
 
 class Walkin extends Model
 {
-    use  HasFactory;
-    protected $appends = ['is_superadmin', 'is_client', 'is_agency','is_admissionteam','is_frontoffice', ];
+    use HasFactory;
+    protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_admissionteam', 'is_frontoffice',];
 
     public $table = 'walkinform';
 
@@ -27,8 +26,8 @@ class Walkin extends Model
         'name',
         'email',
         'phone',
-'secondary_phone',
-'additional_email',
+        'secondary_phone',
+        'additional_email',
         'source_id',
         'project_id',
         'campaign_id',
@@ -36,9 +35,10 @@ class Walkin extends Model
 
 
     public function leads()
-{
-    return $this->belongsTo(Lead::class,'walkin_id');
-}
+    {
+        return $this->hasMany(Lead::class);
+    }
+
     public function sources()
     {
         return $this->belongsTo(Source::class, 'source_id');
