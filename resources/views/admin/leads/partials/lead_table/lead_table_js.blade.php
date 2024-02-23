@@ -42,13 +42,14 @@ let dtOverrideGlobals = {
         data: function (d) {
             d.project_id = $("#project_id").val();
             d.campaign_id = $("#campaign_id").val();
-            {{-- d.parent_stage_id = $("#parent_stage_id").val(); --}}
+            d.parent_stage_id = $("#parent_stage_id").val();
+            d.admission_team_name = $('#admission_team_name').val();
+            d.supervised_by = $('#supervised_by').val()
+
+             // Ensure this line is correct
 
             if ($("#source_id").length) {
                 d.source = $("#source_id").val();
-            }
-            if ($("#parent_stage_id").length) {
-                d.parentStage = $("#parent_stage_id").val();
             }
             if ($(".date_range").length) {
                 d.start_date = $('#added_on').data('daterangepicker').startDate.format('YYYY-MM-DD');
@@ -56,6 +57,7 @@ let dtOverrideGlobals = {
             }
         }
     },
+
     columns: [
         { data: 'placeholder', name: 'placeholder' },
         { data: 'ref_num', name: 'ref_num' },
@@ -97,7 +99,7 @@ table.on('draw', function () {
 });
 
 // Call updateLeadCount after any filtering or data change
-$(document).on('change', '#project_id, #campaign_id, #source_id, #added_on, #leads_status, #no_lead_id', function () {
+$(document).on('change', '#project_id, #campaign_id, #source_id, #added_on, #leads_status, #no_lead_id, #parent_stage_id, #admission_team_name, #supervised_by', function () {
     table.ajax.reload(function () {
         updateLeadCount();
     });
