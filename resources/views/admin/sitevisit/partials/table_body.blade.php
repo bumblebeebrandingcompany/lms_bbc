@@ -33,8 +33,11 @@
     <td>
         {{ $sitevisit->follow_up_time }}
     </td>
-    <td>
+    {{-- <td>
         {{ $sitevisit->users->representative_name ?? '' }}
+    </td> --}}
+    <td>
+        {{ $sitevisit->users->representative_name ?? 'No User Assigned' }}
     </td>
     <td>
         @foreach ($lead as $leads)
@@ -304,15 +307,15 @@
         <form action="{{ route('admin.sitevisits.applicationpurchased', $sitevisit->id) }}" method="POST">
             @csrf
             @method('PUT')
-            @if ($sitevisit->parent_stage_id == 13)
+            @if ($sitevisit->parent_stage_id == 30)
                 @if (!auth()->user()->is_superadmin && !auth()->user()->is_client)
-                    <div style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"
-                        title="Application Purchased">
+                    <div style="background-color: rgb(201, 19, 28); padding: 5px; display: inline-block; border-radius: 5px;"
+                        title="Application Not Purchased">
                         <i class="	fas fa-receipt nav-icon"></i>
                     </div>
                 @else
                     <div
-                        style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"title="Application Purchased">
+                        style="background-color: rgb(201, 19, 28); padding: 5px; display: inline-block; border-radius: 5px;"title="Application Not Purchased">
                         <i class="	fas fa-receipt nav-icon"></i>
                     </div>
                 @endif
@@ -321,7 +324,6 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
-
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -421,6 +423,8 @@
                 data-target="#cancelModal{{ $sitevisit->id }}">
                 Cancel
             </button>
+            <br>
+            <br>
         @endif
         <!-- Modal -->
         <div class="modal fade" id="cancelModal{{ $sitevisit->id }}" tabindex="-1" role="dialog"
@@ -435,7 +439,6 @@
                         </button>
                     </div>
                     <input type="hidden" name="parent_stage_id" value="20">
-
                     <div class="modal-body">
                         Are you sure you want to cancel?
                     </div>
@@ -457,15 +460,14 @@
             @endif
             </form>
         </div>
-
         <div class="mr-2"></div>
         <form action="{{ route('admin.sitevisits.notvisited', $sitevisit->id) }}" method="POST">
             @csrf
             @method('PUT')
             <input type="hidden" name="stage" value="site_not_visited">
-            <br>
             @if ($sitevisit->parent_stage_id == 12)
                 @if (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales)
+                <br>
                     <div class=float-center>
                         <div style="background-color: rgb(119, 84, 214); padding: 5px; display: inline-block; border-radius: 5px;"
                             title="Not Visited">
@@ -484,7 +486,6 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19, 13]))
-
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&

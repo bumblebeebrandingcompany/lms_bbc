@@ -73,8 +73,6 @@ class WalkinController extends Controller
         $project_id = request()->get('project_id', null);
         $excludedSourceIds = [13];
         $sources = Source::whereNotIn('id', $excludedSourceIds)->get();
-
-
         $client = Clients::all();
         $leads = Lead::all();
 

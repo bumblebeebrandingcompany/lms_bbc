@@ -1,4 +1,10 @@
-<table class=" table table-bordered table-striped table-hover ajaxTable datatable datatable-Lead">
+
+<div class="row mb-2">
+    <div class="col">
+        <h5 id="leadCount"></h5>
+    </div>
+</div>
+<table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-Lead">
     <thead>
         <tr>
             <th width="10">

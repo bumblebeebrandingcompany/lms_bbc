@@ -300,20 +300,20 @@ $admitted=Admitted::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
+            $parentStages  = ParentStage::all(); // Fetch all parent stages
 
         $leads = Lead::all();
         if (in_array($lead_view, ['list'])) {
-            return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads'));
+            return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads','parentStages'));
         } elseif ($lead_view === 'kanban') {
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased','admission withdrawn'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
             } elseif ($user->is_admissionteam) {
-
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted','application not purchased'];
 
             }
