@@ -55,11 +55,9 @@ class ApplicationPurchasedController extends Controller
             $applicationpurchased->parent_stage_id = $parentStageId;
             $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
             $applicationpurchased->save();
-
             // Check if $admitted->lead is not null before updating
             if ($applicationpurchased->lead) {
                 $applicationpurchased->lead->update(['parent_stage_id' => $applicationpurchased->parent_stage_id]);
-
                 // Update the latest site visit as purchased
                 $latestSiteVisit = $applicationpurchased->lead->siteVisits()->latest()->first();
                 if ($latestSiteVisit) {

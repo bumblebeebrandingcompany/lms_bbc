@@ -20,7 +20,6 @@
                 <thead>
                     <tr>
                         <th width="10">
-
                         </th>
                         <th>
                             {{ trans('cruds.campaign.fields.campaign_name') }}
@@ -174,14 +173,13 @@
                 order: [
                     [1, 'desc']
                 ],
-                pageLength: 100,
+                pageLength: 1000,
             };
             let table = $('.datatable-Campaign').DataTable(dtOverrideGlobals);
             $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e) {
                 $($.fn.dataTable.tables(true)).DataTable()
                     .columns.adjust();
             });
-
             let visibleColumnsIndexes = null;
             $('.datatable thead').on('input', '.search', function() {
                 let strict = $(this).attr('strict') || false

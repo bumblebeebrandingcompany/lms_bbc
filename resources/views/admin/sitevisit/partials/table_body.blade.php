@@ -2,6 +2,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <tr data-created-at="{{ $sitevisit->follow_up_date }}">
+    <td>{{ $counter++ }}</td>
     <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
@@ -33,11 +34,8 @@
     <td>
         {{ $sitevisit->follow_up_time }}
     </td>
-    {{-- <td>
-        {{ $sitevisit->users->representative_name ?? '' }}
-    </td> --}}
     <td>
-        {{ $sitevisit->user->representative_name ?? 'No User Assigned' }}
+        {{ $sitevisit->users->representative_name ?? '' }}
     </td>
     <td>
         @foreach ($lead as $leads)
@@ -76,7 +74,6 @@
                         </div>
                     @endif
                 @elseif ($sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10, 13]))
-
                 @elseif (
                     !auth()->user()->is_client &&
                         !auth()->user()->is_frontoffice &&
@@ -232,7 +229,6 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
-
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&

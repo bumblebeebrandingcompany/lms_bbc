@@ -99,6 +99,7 @@
                                             <strong></strong>:
                                             {{ $lead->project->name ?? '' }}
                                         </div>
+
                                         <div class="col-md-12">
                                             <strong>{{ trans('messages.cp_comments') }}</strong>:
                                             {{ $lead->cp_comments ?? '' }}

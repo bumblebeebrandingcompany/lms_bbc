@@ -562,8 +562,7 @@
                 <!-- Your follow-up content goes here -->
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="parent_stage_id"
-                        value="19">
+                    <input type="hidden" name="parent_stage_id" value="19">
 
                     <div class="form-group">
                         <label for="Date">Select Date </label>
@@ -595,8 +594,6 @@
 
             </div>
         </form>
-
-
         <form id="ConductedFormId" method="POST" action="{{ route('admin.sitevisit.conducted') }}" class="myForm"
             enctype="multipart/form-data">
             @csrf
@@ -858,7 +855,6 @@
 
             </div>
         </form>
-
         <form id="NotqualifiedFormId" method="POST" action="{{ route('admin.notes.store') }}"
             enctype="multipart/form-data">
             @csrf
@@ -916,32 +912,32 @@
                 </div>
             </div>
         </form>
-        <form id="ApplicationwithdrawnFormId" method="POST" action="{{ route('admin.notes.store') }}"
-        enctype="multipart/form-data">
-        @csrf
-        <div id="applicationwithdrawnContent" style="display: none;">
-            <div class="modal-content">
+        <form id="ApplicationwithdrawnFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="applicationwithdrawnContent" style="display: none;">
+                <div class="modal-content">
 
-                <div class="modal-body">
-                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="parent_stage_id" value="29">
-                    <input type="hidden" name="stage" value="application withdrawn">
-                    <div class="form-group">
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="29">
+                        <input type="hidden" name="stage" value="application withdrawn">
                         <div class="form-group">
-                            <label for="noteContent">Note Content</label>
-                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                rows="4" required>{{ old('notes') }}</textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-danger" type="submit">
-                                Save
-                            </button>
+                            <div class="form-group">
+                                <label for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" type="submit">
+                                    Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
         <form id="applicationnotpurchasedFormId" method="POST" action="{{ route('admin.applications.store') }}"
             class="myForm" enctype="multipart/form-data">
             @csrf
@@ -995,9 +991,6 @@
 </div>
 </form>
 </div>
-
-
-
 </div>
 </div>
 @php
@@ -1221,7 +1214,7 @@
             document.getElementById('admittedContent').style.display = 'block';
         } else if (selectedName === 'application not purchased') {
             document.getElementById('applicationnotpurchasedContent').style.display = 'block';
-        }else if (selectedName === 'application withdrawn') {
+        } else if (selectedName === 'application withdrawn') {
             document.getElementById('applicationwithdrawnContent').style.display = 'block';
         }
     }

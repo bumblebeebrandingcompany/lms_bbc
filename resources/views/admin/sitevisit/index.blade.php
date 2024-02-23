@@ -34,12 +34,12 @@
                         <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin"
                             id="rescheduleTable">
 
-                            {{-- <table class="table table-bordered table-striped" id="rescheduleTable"> --}}
+
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>R.No</th>
                                     <th>Parent Name</th>
-                                    {{-- <th>Campaign Name</th> --}}
                                     <th>Site Visit Date</th>
                                     <th>Site Visit Time</th>
                                     <th>Supervise By</th>
@@ -51,8 +51,7 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $todayData = [];
-                                    $tomorrowData = [];
+                                $counter = 1;
                                 @endphp
                                 @foreach ($sitevisits as $sitevisit)
                                     @php
@@ -159,11 +158,11 @@
                                     </option>
                                     <option value="200" {{ request('perPage', 10) == 200 ? 'selected' : '' }}>200
                                     </option>
+                                    <option value="1000"{{request('perpage',10) == 1000 ? 'selected' : '' }}>1000</option>
                                 </select>
                             </form>
                         </div>
                         <div class="col-md-1">
-
                             <table class="table table-bordered table-striped" id="siteVisiticon">
 
                                 <tr>

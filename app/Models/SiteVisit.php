@@ -10,8 +10,6 @@ class SiteVisit extends Model
 {
 
     use HasFactory;
-
-
     public $table = 'site_visits';
 
     protected $dates = [
@@ -28,12 +26,12 @@ class SiteVisit extends Model
         'user_id',
         'application_no',
     ];
-
     protected $fillable = [
         'parent_stage_id',
         'user_id',
         'notes',
         'application_no',
+        'created_by'
     ];
     public function users()
     {

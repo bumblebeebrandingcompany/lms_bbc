@@ -41,6 +41,7 @@
                     <option value="50" {{ request('perPage', 10) == 50 ? 'selected' : '' }}>50</option>
                     <option value="100" {{ request('perPage', 10) == 100 ? 'selected' : '' }}>100</option>
                     <option value="200" {{ request('perPage', 10) == 200 ? 'selected' : '' }}>200</option>
+                    <option value="1000" {{ request('perPage', 10) == 100 ? 'selected' : '' }}>1000</option>
                 </select>
             </form>
 
