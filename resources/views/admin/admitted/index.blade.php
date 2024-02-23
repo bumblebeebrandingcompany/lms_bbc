@@ -36,7 +36,7 @@
                             {{ $admitted->lead->child_name ?? 'Not Updated' }}
                         </td>
                         <td>
-                            {{ $admitted->lead->grade_enquired }}
+                            {{ $admitted->lead->grade_enquired ?? ''}}
                         </td>
                         <td>
                             {{ $admitted->application->application_no ?? '' }}
@@ -45,13 +45,13 @@
                             {{ $admitted->application->user->representative_name ?? 'No User Assigned' }}
                         </td>
                         <td>
-                            {{ $admitted->follow_up_date }}
+                            {{ $admitted->follow_up_date ?? ''}}
                         </td>
                         <td>
-                            {{ $admitted->follow_up_time }}
+                            {{ $admitted->follow_up_time ?? ''}}
                         </td>
                         <td>
-                            {{ $admitted->notes }}
+                            {{ $admitted->notes ?? ''}}
                         </td>
                         <td>
                             {{ $admitted->created_at->format('Y-m-d') }}

@@ -21,7 +21,8 @@ if($(".date_range").length) {
             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
             'Last 60 Days': [moment().subtract(59, 'days'), moment()],
             'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'All Dates': [moment().subtract(100, 'years'), moment()] // Add option for all dates
         },
         locale: {
             cancelLabel: 'Clear'
@@ -91,6 +92,7 @@ function getProjectAdditionalFields() {
 $(document).on('change', '#project_id', function() {
     getProjectCampaigns();
     getProjectAdditionalFields();
+
 });
 
 $(document).on('change', '#campaign_id', function() {
@@ -108,16 +110,23 @@ $(document).on('change', '#campaign_id', function() {
     });
 });
 
+$(document).on('change', '#parent_stage_id', function () {
+    table.ajax.reload();
+});
 function generateUrl(url, view='') {
     let filters = {};
 
     filters.project_id = $("#project_id").val();
     filters.campaign_id = $("#campaign_id").val();
     filters.leads_status = $("#leads_status").val();
+    filters.parent_stage_id = $("#parent_stage_id").val();
     filters.no_lead_id = $("#no_lead_id").is(":checked");
 
     if($("#source_id").length) {
         filters.source = $("#source_id").val();
+    }
+    if($("#parent_stage_id").length) {
+        filters.parentStage = $("#parent_stage_id").val();
     }
 
     if($(".date_range").length) {
@@ -133,6 +142,11 @@ function generateUrl(url, view='') {
         filters.view = view;
     }
 
+    // Add parent_stage_id filter
+    if($("#parent_stage_id").length) {
+        filters.parent_stage_id = $("#parent_stage_id").val();
+    }
+
     const query = Object.keys(filters)
                     .map(key =>`${encodeURIComponent(key)}=${encodeURIComponent(filters[key])}`)
                     .join('&');
@@ -143,6 +157,7 @@ function generateUrl(url, view='') {
 
     return url;
 }
+
 
 $(document).on('click', '#download_excel', function(){
     let url = generateUrl("{{route('admin.leads.export')}}");

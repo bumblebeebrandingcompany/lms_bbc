@@ -77,21 +77,21 @@ class SiteVisitController extends Controller
     }
 
     private function logTimeline(Lead $lead, $sitevisit, $type, $description)
-{
-    $timeline = new LeadTimeline;
-    $timeline->activity_type = $type;
-    $timeline->lead_id = $lead->id;
+    {
+        $timeline = new LeadTimeline;
+        $timeline->activity_type = $type;
+        $timeline->lead_id = $lead->id;
 
-    // Combine lead and site visit data into payload
-    $payload = [
-        'lead' => $lead->toArray(),
-        'sitevisit' => $sitevisit->toArray()
-    ];
+        // Combine lead and site visit data into payload
+        $payload = [
+            'lead' => $lead->toArray(),
+            'sitevisit' => $sitevisit->toArray()
+        ];
 
-    $timeline->payload = json_encode($payload); // Convert array to JSON
-    $timeline->description = $description;
-    $timeline->save();
-}
+        $timeline->payload = json_encode($payload); // Convert array to JSON
+        $timeline->description = $description;
+        $timeline->save();
+    }
     public function rescheduleSiteVisit(Request $request)
     {
         // Validate the request data
@@ -224,7 +224,7 @@ class SiteVisitController extends Controller
             // Update the parent_stage_id of the latest SiteVisit
             $latestSiteVisit = $lead->siteVisits()->latest()->first();
             if ($latestSiteVisit) {
-                $latestSiteVisit->update(['parent_stage_id' => $parentStageId]);
+                $latestSiteVisit->update(['parent_stage_id' => $parentStageId, 'user_id' => auth()->user()->id]);
             }
 
             $lead->parent_stage_id = $parentStageId;

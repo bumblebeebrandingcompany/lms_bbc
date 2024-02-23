@@ -19,7 +19,10 @@
             <a class="nav-link" id="siteVisitTab" data-toggle="tab" href="#sitevisit">Site Visit</a>
         </li>
     </ul>
-
+    <div>
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button onclick="searchTable()">Search</button>
+    </div>
     <div class="tab-content">
         <!-- Site Visit Tab -->
 
@@ -31,10 +34,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin"
-                            id="rescheduleTable">
-
-
+                        <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -62,7 +62,6 @@
                                         $currentTime = \Carbon\Carbon::now();
                                         $timeRemaining = $followUpTime->diffInMinutes($currentTime);
                                     @endphp
-
                                     @if ($visitDate->eq($today))
                                         @php
                                             $todayData[] = $sitevisit;
@@ -81,7 +80,6 @@
                                             <h4 class="custom-today-heading">Today</h4>
                                         </td>
                                     </tr>
-
                                     @foreach ($todayData as $sitevisit)
                                         @include('admin.sitevisit.partials.table_body')
                                     @endforeach
@@ -100,7 +98,6 @@
                                     @endforeach
                                 @endif
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -158,7 +155,7 @@
                                     </option>
                                     <option value="200" {{ request('perPage', 10) == 200 ? 'selected' : '' }}>200
                                     </option>
-                                    <option value="1000"{{request('perpage',10) == 1000 ? 'selected' : '' }}>1000</option>
+                                    {{-- <option value="1000"{{request('perpage',10) == 1000 ? 'selected' : '' }}>1000</option> --}}
                                 </select>
                             </form>
                         </div>
@@ -209,8 +206,7 @@
                         </div>
                         <div class="table-responsive">
 
-                            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-lead"
-                                id="siteVisitTable">
+                            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin">
                                 <thead>
                                     <tr>
                                         <th>R.No</th>
@@ -389,6 +385,43 @@
     }
 </style>
 <!-- resources/views/countdown/index.blade.php -->
+@section('scripts')
+    @parent
+    <script>
+        $(function() {
+
+
+            let table = $('.datatable-walkin').DataTable();
+            table.on('draw.dt', function() {
+
+            });
+        });
+    </script>
+    <script>
+        function searchTable() {
+
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("sitevisitTable");
+            tr = table.getElementsByTagName("tr");
+
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+@endsection
+
 @section('scripts')
     @parent
     <script>

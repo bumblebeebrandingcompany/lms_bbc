@@ -79,6 +79,24 @@
                             <input class="form-control date_range" type="text" name="date" id="added_on" readonly>
                         </div>
                     @endif
+                    @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
+                    <div class="col-md-3">
+                        <label for="parent_stage_id"> Stage</label>
+                        <select class="search form-control" name="parentStage" id="parent_stage_id">
+                            <option value="">{{ trans('global.all') }}</option>
+                            @foreach($parentStages as $parentStage)
+                                <option value="{{$parentStage->id}}" @if(isset($filters['parent_stage_id']) && $filters['parent_stage_id'] == $parentStage->id) selected @endif>{{ $parentStage->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="added_on">{{ trans('messages.added_on') }}</label>
+                        <input class="form-control date_range" type="text" name="date" id="added_on" readonly
+                               value="{{ isset($filters['start_date']) ? $filters['start_date'] : '' }} - {{ isset($filters['end_date']) ? $filters['end_date'] : '' }}">
+                    </div>
+                @endif
+
+
                     <!-- <div class="col-md-3">
                         <label for="leads_status">
                             @lang('messages.status')

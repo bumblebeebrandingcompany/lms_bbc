@@ -296,19 +296,21 @@ class LeadsController extends Controller
             ->get();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
+            $parentStages=ParentStage::all();
 $admitted=Admitted::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
+            $parentStages  = ParentStage::all(); // Fetch all parent stages
 
         $leads = Lead::all();
         if (in_array($lead_view, ['list'])) {
-            return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads'));
+            return view('admin.leads.index', compact('projects', 'campaigns', 'sources', 'lead_view', 'leads','parentStages'));
         } elseif ($lead_view === 'kanban') {
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased','application withdrawn'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp','application not purchased','admission withdrawn'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled','rescheduled'];
@@ -333,7 +335,7 @@ $admitted=Admitted::all();
             $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
             $lead_stages = Lead::getStages();
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads','admitted'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads','admitted','parentStages'));
         }
     }
     public function create()

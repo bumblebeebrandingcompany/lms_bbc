@@ -30,11 +30,17 @@ class WalkinController extends Controller
     {
         // Get all walkins with their related leads
         $walkins = Walkin::with('leads')->get();
+        $user = auth()->user();
+        if ($user->is_superadmin || $user->is_client) {
+            $walkins = Walkin::with('leads')->get();
 
-        $walkins = $walkins->filter(function ($walkin) {
-            // Check if the 'leads' relationship is not null
-            return $walkin->leads && $walkin->leads->contains('created_by', auth()->id());
-        });
+        } else {
+            $walkins = $walkins->filter(function ($walkin) {
+                // Check if the 'leads' relationship is not null
+                return $walkin->leads && $walkin->leads->contains('created_by', auth()->id());
+            });
+        }
+
         // $user = auth()->user();
         // if($user->is_superadmin)
         // {
