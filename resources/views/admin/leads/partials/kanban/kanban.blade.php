@@ -76,7 +76,21 @@
                                         </strong>:
                                         {{ $lead->grade_enquired ?? '' }}
                                     </div>
-
+                                    <div class="col-md-12">
+                                        <strong> Application No
+                                        </strong>:
+                                        {{ $lead->application_no ?? '' }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        <strong> Front Office
+                                        </strong>:
+                                        {{ $lead->application->user->representative_name ?? '' }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        <strong> Admission Team
+                                        </strong>:
+                                        {{ $lead->application->users->representative_name ?? '' }}
+                                    </div>
                                     <div id="additional-details-{{ $lead->id }}"
                                         class="additional-details-container">
                                         <!-- <div class="col-md-12">

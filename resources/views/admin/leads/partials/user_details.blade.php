@@ -61,33 +61,35 @@
             @endphp
             <img class="profile-user-img img-fluid img-circle" src="{{ $avatar }}" alt="{{ $lead->name ?? '' }}">
         </div>
-
-        <button type="submit" class="float-right save-button btn-success" style="display:none;">Save</button>
-        <h3 class="profile-username text-center">
-            {{ $lead->name ?? '' }}
-        </h3>
-        <ul class="list-group list-group-unbordered mb-3">
-            <li class="list-group-item">
-                <b>{{ trans('messages.ref_num') }}</b>
-                <a class="float-right">{{ $lead->ref_num }}</a>
-            </li>
-            <!-- <li class="list-group-item">
+        <form method="POST" action="{{ route('admin.leads.update', [$lead->id]) }}" enctype="multipart/form-data">
+            @method('PUT')
+            @csrf
+            <button type="submit" class="float-right save-button btn-success" style="display:none;">Save</button>
+            <h3 class="profile-username text-center">
+                {{ $lead->name ?? '' }}
+            </h3>
+            <ul class="list-group list-group-unbordered mb-3">
+                <li class="list-group-item">
+                    <b>{{ trans('messages.ref_num') }}</b>
+                    <a class="float-right">{{ $lead->ref_num }}</a>
+                </li>
+                <!-- <li class="list-group-item">
                 <b>@lang('messages.sell_do_lead_id')</b>
                 <a class="float-right">
                     {!! $lead->sell_do_lead_id ?? '' !!}
                 </a>
-                </li> -->
-            <li class="list-group-item">
-                <b> @lang('messages.email')</b>
-                <a class="float-right">
-                    @if (auth()->user()->is_channel_partner_manager && !empty($lead->email))
-                        {{ maskEmail($lead->email) }}
-                    @else
-                        {{ $lead->email ?? '' }}
-                    @endif
-                </a>
-            </li>
-            {{-- <li class="list-group-item">
+            </li> -->
+                <li class="list-group-item">
+                    <b> @lang('messages.email')</b>
+                    <a class="float-right">
+                        @if (auth()->user()->is_channel_partner_manager && !empty($lead->email))
+                            {{ maskEmail($lead->email) }}
+                        @else
+                            {{ $lead->email ?? '' }}
+                        @endif
+                    </a>
+                </li>
+                {{-- <li class="list-group-item">
                 <b>@lang('messages.additional_email_key')</b>
                 <a class="float-right">
                     @if (auth()->user()->is_channel_partner_manager && !empty($lead->additional_email))
@@ -96,56 +98,23 @@
                         {{ $lead->additional_email ?? '' }}
                     @endif
                 </a>
-                </li> --}}
-            <li class="list-group-item">
-                <b>{{ trans('messages.additional_email_key') }}</b>
-                <a class="float-right">
+            </li> --}}
+                <li class="list-group-item">
+                    <b>{{ trans('messages.additional_email_key') }}</b>
+                    <a class="float-right">
 
-                    <span class="value-container">
-                        @if (!$errors->has('additional_email'))
-                            <span class="display-value">
-                                {{ $lead->additional_email }}
-                            </span>
-                        @endif
-                        <input type="email" name="additional_email" class="edit-field"
-                            placeholder="Enter additional mail"
-                            style="{{ $errors->has('additional_email') ? '' : 'display:none;' }}"
-                            value="{{ old('additional_email') }}">
-                    </span>
-                    @error('additional_email')
-                        <div class="text-danger">{{ $message }}</div>
-                        <script>
-                            // Show save button when there is an error
-                            $(document).ready(function() {
-                                $('.save-button').show();
-                            });
-                        </script>
-                    @enderror
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>@lang('messages.phone')</b>
-                <a class="float-right">
-                    @if (auth()->user()->is_channel_partner_manager && !empty($lead->phone))
-                        {{ maskNumber($lead->phone) }}
-                    @else
-                        {{ $lead->phone ?? '' }}
-                    @endif
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>{{ trans('messages.secondary_phone_key') }}</b>
-                <a class="float-right">
-                    <span class="value-container">
-                        <span class="display-value"
-                            style="{{ $errors->has('secondary_phone') ? 'display:none;' : '' }}">
-                            {{ $lead->secondary_phone }}
+                        <span class="value-container">
+                            @if (!$errors->has('additional_email'))
+                                <span class="display-value">
+                                    {{ $lead->additional_email }}
+                                </span>
+                            @endif
+                            <input type="email" name="additional_email" class="edit-field"
+                                placeholder="Enter additional mail"
+                                style="{{ $errors->has('additional_email') ? '' : 'display:none;' }}"
+                                value="{{ old('additional_email') }}">
                         </span>
-                        <input type="phone" name="secondary_phone" class="edit-field"
-                            placeholder="Enter Alternative Number"
-                            style="{{ $errors->has('secondary_phone') ? '' : 'display:none;' }}"
-                            value="{{ old('secondary_phone') }}">
-                        @error('secondary_phone')
+                        @error('additional_email')
                             <div class="text-danger">{{ $message }}</div>
                             <script>
                                 // Show save button when there is an error
@@ -154,10 +123,43 @@
                                 });
                             </script>
                         @enderror
-                    </span>
-                </a>
-            </li>
-            {{-- <li class="list-group-item">
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <b>@lang('messages.phone')</b>
+                    <a class="float-right">
+                        @if (auth()->user()->is_channel_partner_manager && !empty($lead->phone))
+                            {{ maskNumber($lead->phone) }}
+                        @else
+                            {{ $lead->phone ?? '' }}
+                        @endif
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <b>{{ trans('messages.secondary_phone_key') }}</b>
+                    <a class="float-right">
+                        <span class="value-container">
+                            <span class="display-value"
+                                style="{{ $errors->has('secondary_phone') ? 'display:none;' : '' }}">
+                                {{ $lead->secondary_phone }}
+                            </span>
+                            <input type="phone" name="secondary_phone" class="edit-field"
+                                placeholder="Enter Alternative Number"
+                                style="{{ $errors->has('secondary_phone') ? '' : 'display:none;' }}"
+                                value="{{ old('secondary_phone') }}">
+                            @error('secondary_phone')
+                                <div class="text-danger">{{ $message }}</div>
+                                <script>
+                                    // Show save button when there is an error
+                                    $(document).ready(function() {
+                                        $('.save-button').show();
+                                    });
+                                </script>
+                            @enderror
+                        </span>
+                    </a>
+                </li>
+                {{-- <li class="list-group-item">
                 <b>@lang('messages.secondary_phone_key')</b>
                 <a class="float-right">
                     @if (auth()->user()->is_channel_partner_manager && !empty($lead->secondary_phone))
@@ -166,293 +168,226 @@
                         {{ $lead->secondary_phone ?? '' }}
                     @endif
                 </a>
-               </li> --}}
-            <li class="list-group-item">
-                <b>{{ trans('cruds.lead.fields.project') }}</b>
-                <a class="float-right">
-                    {{ $lead->project->name ?? '' }}
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>{{ trans('cruds.lead.fields.campaign') }}</b>
-                <a class="float-right">
-                    {{ $lead->campaign->campaign_name ?? '' }}
-                </a>
-            </li>
-            <li class="list-group-item">
-
-                <b>{{ trans('messages.source') }}</b>
-                <a class="float-right">
-                    {{ $lead->source->name ?? '' }}
-                </a>
-            </li>
-
-            <li class="list-group-item">
-                <b>Intake Year</b>
-                <a class="float-right">
-                    <span class="value-container">
-                        <span class="display-value">{{ $lead->intake_year }}</span>
-
-                        <select name="intake_year" class="edit-field"
-                            style="{{ $errors->has('intake_year') ? '' : 'display:none;' }}"
-                            value="{{ old('intake_year') }}">
-                            @if ($lead->intake_year)
-                                <option value="{{ $lead->intake_year }}" selected>{{ $lead->intake_year }}
-                                </option>
-                            @else
-                                <option value="" selected> Select Year</option>
-                            @endif
-                            @for ($startYear = date('Y'); $startYear >= 2000; $startYear--)
-                                @php
-                                    $endYear = $startYear + 1;
-                                    $yearRange = $startYear . '-' . $endYear;
-                                @endphp
-                                <option value="{{ $yearRange }}">{{ $yearRange }}</option>
-                            @endfor
-                        </select>
-                        @error('intake_year')
-                            <div class="text-danger">{{ $message }}</div>
-                            {{-- Show the save button when there is an error --}}
-                            <script>
-                                $(document).ready(function() {
-                                    $('.save-button').show();
-                                });
-                            </script>
-                        @enderror
-
-                        {{-- Check if there are no errors related to 'intake_year' --}}
-                    </span>
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>Grade enquired</b>
-                <a class="float-right">
-                    <span class="value-container">
-                        <span class="display-value">{{ $lead->grade_enquired }}</span>
-
-                        <select name="grade_enquired" class="edit-field"
-                            style="{{ $errors->has('grade_enquired') ? '' : 'display:none;' }} ">
-
-                            @if ($lead->grade_enquired)
-                                <option value="{{ $lead->grade_enquired }}" selected>{{ $lead->grade_enquired }}
-                                </option>
-                            @else
-                                <option value="" selected> Select Grade</option>
-                            @endif
-
-                            @for ($i = -2; $i <= 12; $i++)
-                                @php
-                                    if ($i == -2) {
-                                        $grade = 'Pre-KG';
-                                    } elseif ($i == -1) {
-                                        $grade = 'LKG';
-                                    } elseif ($i == 0) {
-                                        $grade = 'UKG';
-                                    } else {
-                                        $grade = $i;
-                                    }
-                                @endphp
-                                <option value="{{ $grade }}" @if (old('grade_enquired', $lead->grade_enquired) == $grade) selected @endif>
-                                    {{ $grade }}
-                                </option>
-                            @endfor
-                        </select>
-
-                        @error('grade_enquired')
-                            <div class="text-danger">{{ $message }}</div>
-                            {{-- Show the save button when there is an error --}}
-                            <script>
-                                $(document).ready(function() {
-                                    $('.save-button').show();
-                                });
-                            </script>
-                        @enderror
-
-                        {{-- Check if there are no errors related to 'intake_year' --}}
-                    </span>
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>Child Name</b>
-                <a class="float-right">
-                    <span class="value-container">
-                        <span class="display-value" style="{{ $errors->has('child_name') ? 'display:none;' : '' }}">
-                            {{ $lead->child_name }}
-                        </span>
-                        <input type="text" name="child_name" class="edit-field" placeholder="Enter Current School"
-                            style="{{ $errors->has('child_name') ? '' : 'display:none;' }}"
-                            value="{{ old('child_name') }}">
-                        @error('child_name')
-                            <div class="text-danger">{{ $message }}</div>
-                            {{-- Show the save button when there is an error --}}
-                            <script>
-                                $(document).ready(function() {
-                                    $('.save-button').show();
-                                });
-                            </script>
-                        @enderror
-                    </span>
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>Current School</b>
-                <a class="float-right">
-                    <span class="value-container">
-                        <span class="display-value"
-                            style="{{ $errors->has('current_school') ? 'display:none;' : '' }}">
-                            {{ $lead->current_school }}
-                        </span>
-                        <input type="text" name="current_school" class="edit-field"
-                            placeholder="Enter Current School"
-                            style="{{ $errors->has('current_school') ? '' : 'display:none;' }}"
-                            value="{{ old('current_school') }}">
-                        @error('current_school')
-                            <div class="text-danger">{{ $message }}</div>
-                            {{-- Show the save button when there is an error --}}
-                            <script>
-                                $(document).ready(function() {
-
-                                    $('.save-button').show();
-                                });
-                            </script>
-                        @enderror
-                    </span>
-                </a>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                <b>Stage</b>
-                <div class="d-flex align-items-center">
-                    <span style="margin-right: 1cm;">{{ $lead->parentStage->name ?? '' }}</span>
-                    @if (!auth()->user()->is_client)
-                        <button type="button" class="btn btn-primary rounded-circle p-2 d-flex align-items-center"
-                            data-toggle="modal" data-target="#stageModal" style="width: 30px; height: 30px;">
-                            <i class="fas fa-play fa-sm mx-auto"></i>
-                        </button>
-                    @endif
-                </div>
-            </li>
-            @php
-                $lead_info = $lead->lead_info;
-                if (!empty($lead->source) && !empty($lead->source->name_key) && isset($lead_info[$lead->source->name_key]) && !empty($lead_info[$lead->source->name_key])) {
-                    unset($lead_info[$lead->source->name_key]);
-                }
-
-                if (!empty($lead->source) && !empty($lead->source->email_key) && isset($lead_info[$lead->source->email_key]) && !empty($lead_info[$lead->source->email_key])) {
-                    unset($lead_info[$lead->source->email_key]);
-                }
-
-                if (!empty($lead->source) && !empty($lead->source->phone_key) && isset($lead_info[$lead->source->phone_key]) && !empty($lead_info[$lead->source->phone_key])) {
-                    unset($lead_info[$lead->source->phone_key]);
-                }
-
-                if (!empty($lead->source) && !empty($lead->source->additional_email_key) && isset($lead_info[$lead->source->additional_email_key]) && !empty($lead_info[$lead->source->additional_email_key])) {
-                    unset($lead_info[$lead->source->additional_email_key]);
-                }
-
-                if (!empty($lead->source) && !empty($lead->source->secondary_phone_key) && isset($lead_info[$lead->source->secondary_phone_key]) && !empty($lead_info[$lead->source->secondary_phone_key])) {
-                    unset($lead_info[$lead->source->secondary_phone_key]);
-                }
-            @endphp
-            @foreach ($lead_info as $key => $value)
+            </li> --}}
                 <li class="list-group-item">
-                    <b>{!! $key !!}</b>
+                    <b>{{ trans('cruds.lead.fields.project') }}</b>
                     <a class="float-right">
-                        {!! $value !!}
+                        {{ $lead->project->name ?? '' }}
                     </a>
                 </li>
-            @endforeach
-            <!-- <li class="list-group-item">
-                <b>@lang('messages.sell_do_created_date')</b>
-                <a class="float-right">
-                    @if (!empty($lead->sell_do_lead_created_at))
-{{ @format_datetime($lead->sell_do_lead_created_at) }}
-@endif
-                </a>
-            </li> -->
-            <!-- <li class="list-group-item">
-                <b>@lang('messages.sell_do_status')</b>
-                <a class="float-right">
-                    {!! $lead->sell_do_status ?? '' !!}
-                </a>
-            </li> -->
-            <!-- <li class="list-group-item">
-                <b>@lang('messages.sell_do_stage')</b>
-                <a class="float-right">
-                    {!! $lead->sell_do_stage ?? '' !!}
-                </a>
-            </li> -->
-            <li class="list-group-item">
-                <b>@lang('messages.customer_comments')</b>
-                <a class="float-right">
-                    {!! $lead->comments ?? '' !!}
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>@lang('messages.cp_comments')</b>
-                <a class="float-right">
-                    {!! $lead->cp_comments ?? '' !!}
-                </a>
-            </li>
-            <li class="list-group-item">
-                <b>@lang('messages.added_by')</b>
-                <a class="float-right">
-                    {{ $lead->createdBy ? $lead->createdBy->name : '' }}
-                </a>
-            </li>
-            <div class="modal fade" id="stageModal" tabindex="-1" role="dialog"
-                aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Child Stages</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
+                <li class="list-group-item">
+                    <b>{{ trans('cruds.lead.fields.campaign') }}</b>
+                    <a class="float-right">
+                        {{ $lead->campaign->campaign_name ?? '' }}
+                    </a>
+                </li>
+                <li class="list-group-item">
+
+                    <b>{{ trans('messages.source') }}</b>
+                    <a class="float-right">
+                        {{ $lead->source->name ?? '' }}
+                    </a>
+                </li>
+
+                <li class="list-group-item">
+                    <b>Intake Year</b>
+                    <a class="float-right">
+                        <span class="value-container">
+                            <span class="display-value">{{ $lead->intake_year }}</span>
+
+                            <select name="intake_year" class="edit-field"
+                                style="{{ $errors->has('intake_year') ? '' : 'display:none;' }}"
+                                value="{{ old('intake_year') }}">
+                                @if ($lead->intake_year)
+                                    <option value="{{ $lead->intake_year }}" selected>{{ $lead->intake_year }}
+                                    </option>
+                                @else
+                                    <option value="" selected> Select Year</option>
+                                @endif
+                                @for ($startYear = date('Y'); $startYear >= 2000; $startYear--)
+                                    @php
+                                        $endYear = $startYear + 1;
+                                        $yearRange = $startYear . '-' . $endYear;
+                                    @endphp
+                                    <option value="{{ $yearRange }}">{{ $yearRange }}</option>
+                                @endfor
+                            </select>
+                            @error('intake_year')
+                                <div class="text-danger">{{ $message }}</div>
+                                {{-- Show the save button when there is an error --}}
+                                <script>
+                                    $(document).ready(function() {
+                                        $('.save-button').show();
+                                    });
+                                </script>
+                            @enderror
+
+                            {{-- Check if there are no errors related to 'intake_year' --}}
+                        </span>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <b>Grade enquired</b>
+                    <a class="float-right">
+                        <span class="value-container">
+                            <span class="display-value">{{ $lead->grade_enquired }}</span>
+
+                            <select name="grade_enquired" class="edit-field"
+                                style="{{ $errors->has('grade_enquired') ? '' : 'display:none;' }} ">
+
+                                @if ($lead->grade_enquired)
+                                    <option value="{{ $lead->grade_enquired }}" selected>{{ $lead->grade_enquired }}
+                                    </option>
+                                @else
+                                    <option value="" selected> Select Grade</option>
+                                @endif
+
+                                @for ($i = -2; $i <= 12; $i++)
+                                    @php
+                                        if ($i == -2) {
+                                            $grade = 'Pre-KG';
+                                        } elseif ($i == -1) {
+                                            $grade = 'LKG';
+                                        } elseif ($i == 0) {
+                                            $grade = 'UKG';
+                                        } else {
+                                            $grade = $i;
+                                        }
+                                    @endphp
+                                    <option value="{{ $grade }}"
+                                        @if (old('grade_enquired', $lead->grade_enquired) == $grade) selected @endif>
+                                        {{ $grade }}
+                                    </option>
+                                @endfor
+                            </select>
+
+                            @error('grade_enquired')
+                                <div class="text-danger">{{ $message }}</div>
+                                {{-- Show the save button when there is an error --}}
+                                <script>
+                                    $(document).ready(function() {
+                                        $('.save-button').show();
+                                    });
+                                </script>
+                            @enderror
+
+                            {{-- Check if there are no errors related to 'intake_year' --}}
+                        </span>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <b>Child Name</b>
+                    <a class="float-right">
+                        <span class="value-container">
+                            <span class="display-value"
+                                style="{{ $errors->has('child_name') ? 'display:none;' : '' }}">
+                                {{ $lead->child_name }}
+                            </span>
+                            <input type="text" name="child_name" class="edit-field"
+                                placeholder="Enter Current School"
+                                style="{{ $errors->has('child_name') ? '' : 'display:none;' }}"
+                                value="{{ old('child_name') }}">
+                            @error('child_name')
+                                <div class="text-danger">{{ $message }}</div>
+                                {{-- Show the save button when there is an error --}}
+                                <script>
+                                    $(document).ready(function() {
+                                        $('.save-button').show();
+                                    });
+                                </script>
+                            @enderror
+                        </span>
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <b>Current School</b>
+                    <a class="float-right">
+                        <span class="value-container">
+                            <span class="display-value"
+                                style="{{ $errors->has('current_school') ? 'display:none;' : '' }}">
+                                {{ $lead->current_school }}
+                            </span>
+                            <input type="text" name="current_school" class="edit-field"
+                                placeholder="Enter Current School"
+                                style="{{ $errors->has('current_school') ? '' : 'display:none;' }}"
+                                value="{{ old('current_school') }}">
+                            @error('current_school')
+                                <div class="text-danger">{{ $message }}</div>
+                                {{-- Show the save button when there is an error --}}
+                                <script>
+                                    $(document).ready(function() {
+
+                                        $('.save-button').show();
+                                    });
+                                </script>
+                            @enderror
+                        </span>
+                    </a>
+                </li>
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <b>Stage</b>
+                    <div class="d-flex align-items-center">
+                        <span style="margin-right: 1cm;">{{ $lead->parentStage->name ?? '' }}</span>
+                        @if (!auth()->user()->is_client)
+                            <button type="button"
+                                class="btn btn-primary rounded-circle p-2 d-flex align-items-center"
+                                data-toggle="modal" data-target="#stageModal" style="width: 30px; height: 30px;">
+                                <i class="fas fa-play fa-sm mx-auto"></i>
                             </button>
-                        </div>
-                        <form method="POST" action="{{ route('admin.leads.update', [$lead->id]) }}"
-                            enctype="multipart/form-data">
-                            @method('PUT')
-                            @csrf
-                            <div class="modal-body">
-                                <p><b>Parent Stage:</b> {{ $lead->parentStage->name ?? ' ' }}</p>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="tag_id">Select Tag:</label>
-                                        <select name="tag_id" id="tag_id" class="form-control">
-                                            <option value="" selected disabled>Please Select</option>
-                                            @foreach ($tags as $tag)
-                                                <option value="{{ $tag->id }}">{{ $tag->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                    <input type="hidden" name="parent_stage_id" id="selected_stage_id"
-                                        value="{{ $lead->parentstage->id ?? '' }}">
-                                    <div class="form-group">
-                                        <label for="child_stage_id">Select Stage:</label>
-                                        <select name="child_stage_id" id="child_stage_id" class="form-control"
-                                            onchange="checkParentStageId(this)">
-                                            <option value="" selected disabled>Please Select</option>
-                                        </select>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">
-                                                Save
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
+                        @endif
+                    </div>
+                </li>
+                <div class="modal fade" id="stageModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Child Stages</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
                             </div>
-                        </form>
-                        <form id="FollowupFormId" method="POST" action="{{ route('admin.followups.store') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="showfollowup" class="myDiv">
-                                <!-- Your follow-up content goes here -->
-                                <div>
-                                </div>
+                            <form method="POST" action="{{ route('admin.leads.update', [$lead->id]) }}"
+                                enctype="multipart/form-data">
+                                @method('PUT')
+                                @csrf
                                 <div class="modal-body">
-                                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                    <input type="hidden" name="parent_stage_id" value="9">
-                                    {{-- <div class="form-group">
+                                    <p><b>Parent Stage:</b> {{ $lead->parentStage->name ?? ' ' }}</p>
+                                    <div class="modal-body">
+                                        <div class="form-group">
+                                            <label for="tag_id">Select Tag:</label>
+                                            <select name="tag_id" id="tag_id" class="form-control">
+                                                <option value="" selected disabled>Please Select</option>
+                                                @foreach ($tags as $tag)
+                                                    <option value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <input type="hidden" name="parent_stage_id" id="selected_stage_id"
+                                            value="{{ $lead->parentstage->id ?? '' }}">
+                                        <div class="form-group">
+                                            <label for="child_stage_id">Select Stage:</label>
+                                            <select name="child_stage_id" id="child_stage_id" class="form-control"
+                                                onchange="checkParentStageId(this)">
+                                                <option value="" selected disabled>Please Select</option>
+                                            </select>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-danger" type="submit">
+                                                    Save
+                                                </button>
+                                            </div>
+                            </form>
+                            <form id="FollowupFormId" method="POST" action="{{ route('admin.followups.store') }}"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div id="showfollowup" class="myDiv">
+                                    <!-- Your follow-up content goes here -->
+                                    <div>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                        <input type="hidden" name="parent_stage_id" value="9">
+                                        {{-- <div class="form-group">
                                             <label type="select" for="user_id">clients</label>
                                             <select name="user_id" id="user_id"
                                                 class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
@@ -470,47 +405,47 @@
                                                 @endforeach
                                             </select>
                                         </div> --}}
-                                    <div class="form-group">
-                                        <label for="Date">Select Date </label>
-                                        <input type="date"
-                                            class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                            name="follow_up_date" id="follow_up_date" rows="3"
-                                            required>{{ old('follow_up_date') }}
+                                        <div class="form-group">
+                                            <label for="Date">Select Date </label>
+                                            <input type="date"
+                                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                                name="follow_up_date" id="follow_up_date" rows="3"
+                                                required>{{ old('follow_up_date') }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="Time">Select Time </label>
+                                            <input type="time"
+                                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                                name="follow_up_time" id="follow_up_time" rows="3"
+                                                required>{{ old('follow_up_time') }}
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="noteContent">Note Content</label>
+                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                rows="4" required>{{ old('notes') }}</textarea>
+                                        </div>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="Time">Select Time </label>
-                                        <input type="time"
-                                            class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                            name="follow_up_time" id="follow_up_time" rows="3"
-                                            required>{{ old('follow_up_time') }}
+                                    <div class="modal-footer">
+                                        <button class="btn btn-danger" type="submit">
+                                            Save
+                                        </button>
                                     </div>
-                                    <div class="form-group">
-                                        <label for="noteContent">Note Content</label>
-                                        <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                            rows="4" required>{{ old('notes') }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-danger" type="submit">
-                                        Save
-                                    </button>
-                                </div>
-
-                            </div>
-                        </form>
-                        <form id="SitevisitFormId" method="POST" action="{{ route('admin.sitevisit.store') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="showsitevisitScheduled" class="myDiv" style="display: none;">
-                                <div>
 
                                 </div>
-                                <div class="modal-body">
-                                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                    <input type="hidden" name="parent_stage_id" value="10">
+                            </form>
+                            <form id="SitevisitFormId" method="POST" action="{{ route('admin.sitevisit.store') }}"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div id="showsitevisitScheduled" class="myDiv" style="display: none;">
+                                    <div>
 
-                                    <div class="form-group">
-                                        {{-- <label type="select" for="user_id">clients</label>
+                                    </div>
+                                    <div class="modal-body">
+                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                        <input type="hidden" name="parent_stage_id" value="10">
+
+                                        <div class="form-group">
+                                            {{-- <label type="select" for="user_id">clients</label>
                                             <select name="user_id" id="user_id"
                                                 class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
                                                 rows="3" required>{{ old('user_id') }}
@@ -527,49 +462,49 @@
                                                     @endforeach
                                                 @endforeach
                                             </select> --}}
-                                        <div class="form-group">
-                                            <label for="Date">Select Date </label>
-                                            <input type="date"
-                                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_date" id="follow_up_date" rows="3"
-                                                required>{{ old('follow_up_date') }}
-                                        </div>
-                                        <label for="Time">Select Time</label>
-                                        <input id="follow_up_time" name="follow_up_time" type="time"
-                                            class="form-control timepicker" value="{{ old('follow_up_time') }}">
-                                        <div class="form-group">
-                                            <label for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
+                                            <div class="form-group">
+                                                <label for="Date">Select Date </label>
+                                                <input type="date"
+                                                    class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                                    name="follow_up_date" id="follow_up_date" rows="3"
+                                                    required>{{ old('follow_up_date') }}
+                                            </div>
+                                            <label for="Time">Select Time</label>
+                                            <input id="follow_up_time" name="follow_up_time" type="time"
+                                                class="form-control timepicker" value="{{ old('follow_up_time') }}">
+                                            <div class="form-group">
+                                                <label for="noteContent">Note Content</label>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
 
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button class="btn btn-danger" type="submit">
+                                                    Save
+                                                </button>
+                                            </div>
                                         </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">
-                                                Save
-                                            </button>
-                                        </div>
+
                                     </div>
-
                                 </div>
-                            </div>
-                        </form>
-                        <form id="SpamFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
-                            class="myForm" enctype="multipart/form-data">
-                            @csrf
-                            <div id="spamContent" style="display: none;">
+                            </form>
+                            <form id="SpamFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
+                                class="myForm" enctype="multipart/form-data">
+                                @csrf
+                                <div id="spamContent" style="display: none;">
 
-                                <div class="modal-body">
-                                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                    <input type="hidden" name="parent_stage_id" value="15">
-                                    <input type="hidden" name="stage" value="spam">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                        <input type="hidden" name="parent_stage_id" value="15">
+                                        <input type="hidden" name="stage" value="spam">
 
-                                    <div class="form-group">
                                         <div class="form-group">
-                                            <label class=float-left for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
-                                        </div>
-                                        {{-- <select id="myselection" name="notes">
+                                            <div class="form-group">
+                                                <label class=float-left for="noteContent">Note Content</label>
+                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                    rows="4" required>{{ old('notes') }}</textarea>
+                                            </div>
+                                            {{-- <select id="myselection" name="notes">
                                                 <option>Select Option</option>
                                                 @foreach ($noteNotInterested as $id => $notes)
                                                     <option value="{{ $notes->notes }}"
@@ -577,256 +512,37 @@
                                                         {{ $notes->notes }}
                                                     </option>
                                                 @endforeach --}}
-                                        {{-- <option value="Others">Others</option> --}}
-                                        {{-- </select> --}}
-                                        {{-- <div id="showOthers" class="myDiv">
+                                            {{-- <option value="Others">Others</option> --}}
+                                            {{-- </select> --}}
+                                            {{-- <div id="showOthers" class="myDiv">
                                                 <label for="OthersNoteContent">Note Content</label>
                                                 <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
                                                     rows="4" required>{{ old('notes') }}</textarea>
                                             </div> --}}
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn btn-danger" type="submit">Save</button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button class="btn btn-danger" type="submit">Save</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                        <form id="NotvisitedFormId" method="POST"
-                            action="{{ route('admin.sitevisit.notvisited') }}" class="myForm"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="notvisitedContent" style="display: none;">
-                                <div>
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="12">
-                                        <input type="hidden" name="stage" value="not_visited">
+                            </form>
+                            <form id="NotvisitedFormId" method="POST"
+                                action="{{ route('admin.sitevisit.notvisited') }}" class="myForm"
+                                enctype="multipart/form-data">
+                                @csrf
+                                <div id="notvisitedContent" style="display: none;">
+                                    <div>
+                                        <div class="modal-body">
+                                            <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                                            <input type="hidden" name="parent_stage_id" value="12">
+                                            <input type="hidden" name="stage" value="not_visited">
 
-                                        <div class="form-group">
                                             <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
-                                            <label class=float-left for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button class="btn btn-danger" type="submit">Save</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <form id="ResheduleFormId" method="POST" action="{{ route('admin.sitevisit.reschedule') }}"
-                            class="" enctype="multipart/form-data">
-                            @csrf
-                            <div id="showrescheduled" style="display: none;">
-                                <!-- Your follow-up content goes here -->
-                                <div class="modal-body">
-                                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                    <input type="hidden" name="parent_stage_id" value="19">
-
-                                    <div class="form-group">
-                                        <label for="Date">Select Date </label>
-                                        <input type="date"
-                                            class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                            name="follow_up_date" id="follow_up_date" rows="3"
-                                            required>{{ old('follow_up_date') }}
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="Time">select time </label>
-                                        <input type="time"
-                                            class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                            name="follow_up_time" id="follow_up_time" rows="3"
-                                            required>{{ old('follow_up_time') }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="noteContent">Note Content</label>
-                                        <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                            rows="4" required>{{ old('notes') }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" onclick="togglePopup()">Close</button>
-                                    <button class="btn btn-danger" type="submit">
-                                        Save
-                                    </button>
-                                </div>
-
-                            </div>
-                        </form>
-
-
-                        <form id="ConductedFormId" method="POST" action="{{ route('admin.sitevisit.conducted') }}"
-                            class="myForm" enctype="multipart/form-data">
-                            @csrf
-                            <div id="sitevisitconductedContent" style="display: none;">
-                                <div>
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="11">
-                                        <input type="hidden" name="stage" value="site_visit_conducted">
-
-                                        <div class="form-group">
-                                            <label for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <form id="CancelledFormId" method="POST" action="{{ route('admin.sitevisit.cancel') }}"
-                            class="myForm" enctype="multipart/form-data">
-                            @csrf
-                            <div id="cancelledContent" style="display: none;">
-                                <div>
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="20">
-                                        <input type="hidden" name="stage" value="site_visit_cancelled">
-
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
-                                            {{-- <select id="myselection">
-                                                            <option>Select Option</option>
-                                                            @foreach ($noteNotInterested as $id => $notes)
-                                                                <option value="{{ $notes->notes }}"
-                                                                    {{ old('notes_id') == $notes->id ? 'selected' : '' }}>
-                                                                    {{ $notes->notes }}
-                                                                </option>
-                                                            @endforeach --}}
-                                            {{-- <option value="Others">Others</option> --}}
-                                            {{-- </select> --}}
-                                            {{-- <div id="showOthers" class="myDiv">
-                                                            <label for="otherNoteContent">Note Content</label>
-                                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                                rows="4" required>{{ old('notes') }}</textarea>
-                                                        </div> --}}
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div>
-                        </form>
-                        <form id="LostFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
-                            class="myForm" enctype="multipart/form-data">
-                            @csrf
-                            <div id="lostContent" style="display: none;">
-                                <div>
-                                    <h5 class="modal-title" id="followUpModalLabel">Lost
-                                    </h5>
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="17">
-                                        <input type="hidden" name="stage" value="lost">
-
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-
-                        <form id="applicationpurchasedFormId" method="POST"
-                            action="{{ route('admin.applications.store') }}" class="myForm"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="applicationpurchasedContent" style="display: none;">
-                                <div>
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="13">
-                                        <label for="application_no">Application Number:</label>
-                                        <input class="form-control" type="text" name="application_no"
-                                            value="">
-                                        <label for="user_id">Select Representative:</label>
-                                        <select
-                                            class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
-                                            name="user_id" id="user_id" required>
-                                            @foreach ($users as $user)
-                                                @if ($user->user_type == 'Admissionteam')
-                                                    <option value="{{ $user->id }}"
-                                                        {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                        {{ $user->representative_name }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                        <div class="form-group">
-                                            <label for="Date">Select Date </label>
-                                            <input type="date"
-                                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_date" id="follow_up_date" rows="3"
-                                                required>{{ old('follow_up_date') }}
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="Time">Select Time </label>
-                                            <input type="time"
-                                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_time" id="follow_up_time" rows="3"
-                                                required>{{ old('follow_up_time') }}
-                                        </div>
-                                        <br>
-                                        <div class="form-group">
-                                            <label class=float-left for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-
-                        <form id="FututeprospectFormId" method="POST"
-                            action="{{ route('admin.stage-notes.store') }}" class="myForm"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="futureprospectContent" style="display: none;">
-                                <div>
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="18">
-                                        <input type="hidden" name="stage" value="future_prospect">
-
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
+                                                <div class="form-group">
+                                                    <label class=float-left for="noteContent">Note Content</label>
+                                                    <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                        rows="4" required>{{ old('notes') }}</textarea>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="modal-footer">
@@ -834,238 +550,448 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </form>
-                        <form id="AdmittedFormId" method="POST" action="{{ route('admin.admitted.store') }}"
-                            class="myForm" enctype="multipart/form-data">
-                            @csrf
-                            <div id="admittedContent" style="display: none;">
-                                <div>
-                                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                    <p> Lead ID: {{ $lead->id }}</p>
+                        </div>
+        </form>
+        <form id="ResheduleFormId" method="POST" action="{{ route('admin.sitevisit.reschedule') }}" class=""
+            enctype="multipart/form-data">
+            @csrf
+            <div id="showrescheduled" style="display: none;">
+                <!-- Your follow-up content goes here -->
+                <div class="modal-body">
+                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                    <input type="hidden" name="parent_stage_id"
+                        value="19">
 
-                                    <div class="modal-body">
-                                        <input type="hidden" name="parent_stage_id" value="14">
-                                        <div class="form-group">
-                                            <label for="Date">Select Date </label>
-                                            <input type="date"
-                                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_date" id="follow_up_date" rows="3"
-                                                required>{{ old('follow_up_date') }}
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="Time">Select Time </label>
-                                            <input type="time"
-                                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_time" id="follow_up_time" rows="3"
-                                                required>{{ old('follow_up_time') }}
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <form id="AdmissionFollowupFormId" method="POST"
-                            action="{{ route('admin.followups.store') }}" enctype="multipart/form-data">
-                            @csrf
-                            <div id="showadmissionfollowup" class="myDiv" style="display: none;">
+                    <div class="form-group">
+                        <label for="Date">Select Date </label>
+                        <input type="date"
+                            class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                            name="follow_up_date" id="follow_up_date" rows="3"
+                            required>{{ old('follow_up_date') }}
+                    </div>
 
-                                <div class="modal-body">
-                                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                    <input type="hidden" name="parent_stage_id" value="28">
-                                    {{-- <div class="form-group">
-                                                <label type="select" for="user_id">clients</label>
-                                                <select name="user_id" id="user_id"
-                                                    class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                                                    rows="3" required>{{ old('user_id') }}
-                                                    >
-                                                    <option value="" selected disabled>Please
-                                                        Select</option>
-                                                    @foreach ($agencies as $id => $agency)
-                                                        @foreach ($agency->agencyUsers as $user)
-                                                            <option value="{{ $user->id }}"
-                                                                {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                                {{ $user->representative_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    @endforeach
-                                                </select>
-                                            </div> --}}
-                                    <div class="form-group">
-                                        <label for="Date">Select Date </label>
-                                        <input type="date"
-                                            class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                            name="follow_up_date" id="follow_up_date" rows="3"
-                                            required>{{ old('follow_up_date') }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="Time">Select Time </label>
-                                        <input type="time"
-                                            class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                            name="follow_up_time" id="follow_up_time" rows="3"
-                                            required>{{ old('follow_up_time') }}
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="noteContent">Note Content</label>
+                    <div class="form-group">
+                        <label for="Time">select time </label>
+                        <input type="time"
+                            class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                            name="follow_up_time" id="follow_up_time" rows="3"
+                            required>{{ old('follow_up_time') }}
+                    </div>
+                    <div class="form-group">
+                        <label for="noteContent">Note Content</label>
+                        <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                            rows="4" required>{{ old('notes') }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="togglePopup()">Close</button>
+                    <button class="btn btn-danger" type="submit">
+                        Save
+                    </button>
+                </div>
 
-                                        <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                            rows="4" required>{{ old('notes') }}</textarea>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button class="btn btn-danger" type="submit">
-                                        Save
-                                    </button>
-                                </div>
+            </div>
+        </form>
 
-                            </div>
-                        </form>
 
-                        <form id="NotqualifiedFormId" method="POST" action="{{ route('admin.notes.store') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="notqualifiedContent" style="display: none;">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="followUpModalLabel">Not Qualified</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="1">
-                                        <input type="hidden" name="stage" value="not_qualified">
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <label class=float-left for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('note_text') ? 'is-invalid' : '' }}" name="note_text" id="note_text"
-                                                    rows="4" required>{{ old('note_text') }}</textarea>
-                                            </div>
+        <form id="ConductedFormId" method="POST" action="{{ route('admin.sitevisit.conducted') }}" class="myForm"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="sitevisitconductedContent" style="display: none;">
+                <div>
 
-                                        </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="11">
+                        <input type="hidden" name="stage" value="site_visit_conducted">
 
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <form id="rnrFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="rnrContent" style="display: none;">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="followUpModalLabel">RNR</h5>
-                                    </div>
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="21">
-                                        <input type="hidden" name="stage" value="rnr">
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <label for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                    rows="4" required>{{ old('notes') }}</textarea>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button class="btn btn-danger" type="submit">
-                                                    Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <form id="ApplicationwithdrawnFormId" method="POST"
-                            action="{{ route('admin.notes.store') }}" enctype="multipart/form-data">
-                            @csrf
-                            <div id="admissionwithdrawnContent" style="display: none;">
-                                <div class="modal-content">
-
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="29">
-                                        <input type="hidden" name="stage" value="application withdrawn">
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <label for="noteContent">Note Content</label>
-                                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                    rows="4" required>{{ old('notes') }}</textarea>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button class="btn btn-danger" type="submit">
-                                                    Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <form id="applicationnotpurchasedFormId" method="POST"
-                            action="{{ route('admin.applications.store') }}" class="myForm"
-                            enctype="multipart/form-data">
-                            @csrf
-                            <div id="applicationnotpurchasedContent" style="display: none;">
-                                <div>
-                                    <div class="modal-body">
-                                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="30">
-
-                                        <label for="user_id">Select Representative:</label>
-                                        <select
-                                            class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
-                                            name="user_id" id="user_id" required>
-                                            @foreach ($users as $user)
-                                                @if ($user->user_type == 'Admissionteam')
-                                                    <option value="{{ $user->id }}"
-                                                        {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                        {{ $user->representative_name }}
-                                                    </option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                        <div class="form-group">
-                                            <label for="Date">Select Date </label>
-                                            <input type="date"
-                                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_date" id="follow_up_date" rows="3"
-                                                required>{{ old('follow_up_date') }}
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="Time">Select Time </label>
-                                            <input type="time"
-                                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                                name="follow_up_time" id="follow_up_time" rows="3"
-                                                required>{{ old('follow_up_time') }}
-                                        </div>
-                                        <br>
-                                        <div class="form-group">
-                                            <label class=float-left for="noteContent">Note Content</label>
-                                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                                rows="4" required>{{ old('notes') }}</textarea>
-                                        </div>
-
-                                        <div class="modal-footer">
-                                            <button class="btn btn-danger" type="submit">Save</button>
-                                        </div>
-                                    </div>
-                                </div>
-                        </form>
+                        <div class="form-group">
+                            <label for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
-            </form>
+        </form>
+        <form id="CancelledFormId" method="POST" action="{{ route('admin.sitevisit.cancel') }}" class="myForm"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="cancelledContent" style="display: none;">
+                <div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="20">
+                        <input type="hidden" name="stage" value="site_visit_cancelled">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+                            {{-- <select id="myselection">
+                                                    <option>Select Option</option>
+                                                    @foreach ($noteNotInterested as $id => $notes)
+                                                        <option value="{{ $notes->notes }}"
+                                                            {{ old('notes_id') == $notes->id ? 'selected' : '' }}>
+                                                            {{ $notes->notes }}
+                                                        </option>
+                                                    @endforeach --}}
+                            {{-- <option value="Others">Others</option> --}}
+                            {{-- </select> --}}
+                            {{-- <div id="showOthers" class="myDiv">
+                                                    <label for="otherNoteContent">Note Content</label>
+                                                    <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                                        rows="4" required>{{ old('notes') }}</textarea>
+                                                </div> --}}
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="LostFormId" method="POST" action="{{ route('admin.stage-notes.store') }}" class="myForm"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="lostContent" style="display: none;">
+                <div>
+                    <h5 class="modal-title" id="followUpModalLabel">Lost
+                    </h5>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="17">
+                        <input type="hidden" name="stage" value="lost">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form id="applicationpurchasedFormId" method="POST" action="{{ route('admin.applications.store') }}"
+            class="myForm" enctype="multipart/form-data">
+            @csrf
+            <div id="applicationpurchasedContent" style="display: none;">
+                <div>
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="13">
+                        <label for="application_no">Application Number:</label>
+                        <input class="form-control" type="text" name="application_no" value="">
+                        <label for="user_id">Select Representative:</label>
+                        <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
+                            name="user_id" id="user_id" required>
+                            @foreach ($users as $user)
+                                @if ($user->user_type == 'Admissionteam')
+                                    <option value="{{ $user->id }}"
+                                        {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->representative_name }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                        <div class="form-group">
+                            <label for="Date">Select Date </label>
+                            <input type="date"
+                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                name="follow_up_date" id="follow_up_date" rows="3"
+                                required>{{ old('follow_up_date') }}
+                        </div>
+                        <div class="form-group">
+                            <label for="Time">Select Time </label>
+                            <input type="time"
+                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                name="follow_up_time" id="follow_up_time" rows="3"
+                                required>{{ old('follow_up_time') }}
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label class=float-left for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <form id="FututeprospectFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
+            class="myForm" enctype="multipart/form-data">
+            @csrf
+            <div id="futureprospectContent" style="display: none;">
+                <div>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="18">
+                        <input type="hidden" name="stage" value="future_prospect">
+
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="AdmittedFormId" method="POST" action="{{ route('admin.admitted.store') }}" class="myForm"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="admittedContent" style="display: none;">
+                <div>
+                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                    <p> Lead ID: {{ $lead->id }}</p>
+
+                    <div class="modal-body">
+                        <input type="hidden" name="parent_stage_id" value="14">
+                        <div class="form-group">
+                            <label for="Date">Select Date </label>
+                            <input type="date"
+                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                name="follow_up_date" id="follow_up_date" rows="3"
+                                required>{{ old('follow_up_date') }}
+                        </div>
+                        <div class="form-group">
+                            <label for="Time">Select Time </label>
+                            <input type="time"
+                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                name="follow_up_time" id="follow_up_time" rows="3"
+                                required>{{ old('follow_up_time') }}
+                        </div>
+                        <div class="form-group">
+                            <label for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="AdmissionFollowupFormId" method="POST" action="{{ route('admin.followups.store') }}"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="showadmissionfollowup" class="myDiv" style="display: none;">
+
+                <div class="modal-body">
+                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                    <input type="hidden" name="parent_stage_id" value="28">
+                    {{-- <div class="form-group">
+                                        <label type="select" for="user_id">clients</label>
+                                        <select name="user_id" id="user_id"
+                                            class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
+                                            rows="3" required>{{ old('user_id') }}
+                                            >
+                                            <option value="" selected disabled>Please
+                                                Select</option>
+                                            @foreach ($agencies as $id => $agency)
+                                                @foreach ($agency->agencyUsers as $user)
+                                                    <option value="{{ $user->id }}"
+                                                        {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                                        {{ $user->representative_name }}
+                                                    </option>
+                                                @endforeach
+                                            @endforeach
+                                        </select>
+                                    </div> --}}
+                    <div class="form-group">
+                        <label for="Date">Select Date </label>
+                        <input type="date"
+                            class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                            name="follow_up_date" id="follow_up_date" rows="3"
+                            required>{{ old('follow_up_date') }}
+                    </div>
+                    <div class="form-group">
+                        <label for="Time">Select Time </label>
+                        <input type="time"
+                            class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                            name="follow_up_time" id="follow_up_time" rows="3"
+                            required>{{ old('follow_up_time') }}
+                    </div>
+                    <div class="form-group">
+                        <label for="noteContent">Note Content</label>
+
+                        <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                            rows="4" required>{{ old('notes') }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" type="submit">
+                        Save
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+        <form id="NotqualifiedFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="notqualifiedContent" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="followUpModalLabel">Not Qualified</h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="16">
+                        <input type="hidden" name="stage" value="not_qualified">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label class=float-left for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="rnrFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
+            enctype="multipart/form-data">
+            @csrf
+            <div id="rnrContent" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="followUpModalLabel">RNR</h5>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="21">
+                        <input type="hidden" name="stage" value="rnr">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <label for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" type="submit">
+                                    Save
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form id="ApplicationwithdrawnFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
+        enctype="multipart/form-data">
+        @csrf
+        <div id="applicationwithdrawnContent" style="display: none;">
+            <div class="modal-content">
+
+                <div class="modal-body">
+                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                    <input type="hidden" name="parent_stage_id" value="29">
+                    <input type="hidden" name="stage" value="admission withdrawn">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <label for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+        <form id="applicationnotpurchasedFormId" method="POST" action="{{ route('admin.applications.store') }}"
+            class="myForm" enctype="multipart/form-data">
+            @csrf
+            <div id="applicationnotpurchasedContent" style="display: none;">
+                <div>
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="parent_stage_id" value="30">
+
+                        <label for="user_id">Select Representative:</label>
+                        <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
+                            name="user_id" id="user_id" required>
+                            @foreach ($users as $user)
+                                @if ($user->user_type == 'Admissionteam')
+                                    <option value="{{ $user->id }}"
+                                        {{ old('user_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->representative_name }}
+                                    </option>
+                                @endif
+                            @endforeach
+                        </select>
+                        <div class="form-group">
+                            <label for="Date">Select Date </label>
+                            <input type="date"
+                                class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
+                                name="follow_up_date" id="follow_up_date" rows="3"
+                                required>{{ old('follow_up_date') }}
+                        </div>
+                        <div class="form-group">
+                            <label for="Time">Select Time </label>
+                            <input type="time"
+                                class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
+                                name="follow_up_time" id="follow_up_time" rows="3"
+                                required>{{ old('follow_up_time') }}
+                        </div>
+                        <br>
+                        <div class="form-group">
+                            <label class=float-left for="noteContent">Note Content</label>
+                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                rows="4" required>{{ old('notes') }}</textarea>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" type="submit">Save</button>
+                        </div>
+                    </div>
+                </div>
+        </form>
     </div>
+</div>
+</div>
+</form>
+</div>
 
 
 
@@ -1143,9 +1069,6 @@
 </ul>
 </div>
 </div>
-
-
-
 @section('scripts')
     <script>
         $(document).ready(function() {
@@ -1261,10 +1184,9 @@
         document.getElementById('rnrContent').style.display = 'none';
         document.getElementById('sitevisitconductedContent').style.display = 'none';
         document.getElementById('applicationpurchasedContent').style.display = 'none';
-        document.getElementById('showrescheduled').style.display = 'none';
         document.getElementById('admittedContent').style.display = 'none';
         document.getElementById('applicationnotpurchasedContent').style.display = 'none';
-        document.getElementById('admissionwithdrawnContent').style.display = 'none';
+        document.getElementById('applicationwithdrawnContent').style.display = 'none';
         // Check the selected option and display the corresponding modal
         if (selectedName === 'followup') {
             $("#showfollowup").show();
@@ -1293,11 +1215,11 @@
         } else if (selectedName === 'application purchased') {
             document.getElementById('applicationpurchasedContent').style.display = 'block';
         } else if (selectedName === 'admitted') {
-            $("#admittedContent").show();
+            document.getElementById('admittedContent').style.display = 'block';
         } else if (selectedName === 'application not purchased') {
             document.getElementById('applicationnotpurchasedContent').style.display = 'block';
-        } else if (selectedName === 'application withdrawn') {
-            document.getElementById('admissionwithdrawnContent').style.display = 'block';
+        }else if (selectedName === 'admission withdrawn') {
+            document.getElementById('applicationwithdrawnContent').style.display = 'block';
         }
     }
     document.addEventListener('DOMContentLoaded', function() {

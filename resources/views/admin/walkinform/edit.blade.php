@@ -43,7 +43,7 @@
                             <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
                                 @foreach($projects as $id => $entry)
                                     <option value="{{ $id }}" {{ (old('project_id') ? old('project_id') : ($lead->isEmpty() ? '' : $lead->first()->project->id)) == $id ? 'selected' : '' }}>
-                                        {{ $entry }}
+                                        {{ $entry->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -60,7 +60,7 @@
                             <select class="form-control select2 {{ $errors->has('campaign_id') ? 'is-invalid' : '' }}"
                                 name="campaign_id" id="campaign_id" required>
                                 @foreach ($campaigns as $id => $entry)
-                                    <option value="{{ $id }}" {{ old('campaign_id') == $id ? 'selected' : '' }}>
+                                    <option value="{{ $id}}" {{ old('campaign_id') == $id ? 'selected' : '' }}>
                                         {{ $entry }}</option>
                                 @endforeach
                             </select>

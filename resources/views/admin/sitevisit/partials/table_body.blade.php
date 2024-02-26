@@ -8,7 +8,9 @@
     {{-- <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
-                {{ $leads->ref_num }}
+                <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                    {{ $leads->ref_num }}
+                </a>
             @endif
         @endforeach
     </td> --}}
@@ -46,9 +48,9 @@
     <td>
         {{ $sitevisit->follow_up_time }}
     </td>
-    <td>
+    {{-- <td>
         {{ $sitevisit->users->representative_name ?? 'No User Assigned' }}
-    </td>
+    </td> --}}
     <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
