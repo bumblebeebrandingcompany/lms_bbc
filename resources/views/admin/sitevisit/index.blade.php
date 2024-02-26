@@ -208,7 +208,8 @@
                                 id="sitevisitTable">
                                 <thead>
                                     <tr>
-                                        <th>R.No</th>
+                                        <th>No</th>
+                                        <th>Ref Num</th>
                                         <th>Parent Name</th>
                                         {{-- <th>Campaign Name</th> --}}
                                         <th>Site Visit Date</th>
@@ -221,7 +222,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php
+$counter = 0; // Initialize the counter outside the loop
+@endphp
                                     @foreach ($sitevisits as $sitevisit)
+                                    @php
+                                    $counter++; // Increment the counter for the next iteration
+                                @endphp
                                         @include('admin.sitevisit.partials.table_body')
                                     @endforeach
                                 </tbody>
