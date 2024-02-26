@@ -46,70 +46,94 @@
                 </div>
                 <div class="table-responsive">
 
-            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followups" id="followUpTable">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Reference Number</th>
-                        <th>Parent Name</th>
-                        <th>Campaign Name</th>
-                        <th>Follow-Up Date</th>
-                        <th>Follow-Up Time</th>
-                        <th>Notes</th>
-                        <th>Created At</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                    $counter = 1;
-                @endphp
-          @foreach ($followUps->where('parent_stage_id', 9) as $followUp)
+                    <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followups"
+                        id="followUpTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Reference Number</th>
+                                <th>Parent Name</th>
+                                <th>Campaign Name</th>
+                                <th>Follow-Up Date</th>
+                                <th>Follow-Up Time</th>
+                                <th>Notes</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @php
+                                $counter = 1;
+                            @endphp
+                            @foreach ($followUps->where('parent_stage_id', 9) as $followUp)
+                                <tr data-created-at="{{ $followUp->follow_up_date }}">
+                                    <td>{{ $counter++ }}</td>
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                                                    {{ $leads->ref_num }}
+                                                </a>
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->name }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->campaign->campaign_name }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        {{ $followUp->follow_up_date }}
+                                    </td>
+                                    <td>
+                                        {{ $followUp->follow_up_time }}
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+                                            data-target="#notesModal{{ $followUp->id }}">
+                                            View Notes
+                                        </button>
+                                        <div class="modal fade" id="notesModal{{ $followUp->id }}" tabindex="-1"
+                                            role="dialog" aria-labelledby="notesModalLabel{{ $followUp->id }}"
+                                            aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="notesModalLabel{{ $followUp->id }}">
+                                                            Notes</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                            aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
 
-                        <tr data-created-at="{{ $followUp->follow_up_date}}">
-                            <td>{{ $counter++ }}</td>
-                            <td>
-                                @foreach ($lead as $leads)
-                                    @if ($leads->id === $followUp->lead_id)
-                                        <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
-                                            {{ $leads->ref_num }}
-                                        </a>
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @foreach ($lead as $leads)
-                                    @if ($leads->id === $followUp->lead_id)
-                                        {{ $leads->name }}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                @foreach ($lead as $leads)
-                                    @if ($leads->id === $followUp->lead_id)
-                                        {{ $leads->campaign->campaign_name }}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                {{ $followUp->follow_up_date }}
-                            </td>
-                            <td>
-                                {{ $followUp->follow_up_time }}
-                            </td>
-                            <td>
-                                @foreach ($lead as $leads)
-                                    @if ($leads->id === $followUp->lead_id)
-                                        {{ $followUp->notes }}
-                                    @endif
-                                @endforeach
-                            </td>
-                            <td>
-                                {{ $followUp->created_at->format('Y-m-d') }}
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                                        <textarea id="notesTextArea{{ $followUp->id }}" class="form-control" rows="5" readonly>{{ $followUp->notes }}</textarea>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary"
+                                                            data-dismiss="modal">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </td>
+                                    <td>
+                                        {{ $followUp->created_at->format('Y-m-d') }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
                 <div class="d-flex justify-content-end">
                     {{ $followUps->links('pagination::bootstrap-4') }}
@@ -257,24 +281,24 @@
                     dtButtons.push(deleteButton)
                 @endif
 
-            let dtOverrideGlobals = {
-                buttons: dtButtons,
-                processing: true,
-                serverSide: true,
-                retrieve: true,
-                aaSorting: [],
-                ajax: "{{ route('admin.followups.index') }}",
-                orderCellsTop: true,
-                order: [
-                    [1, 'desc']
-                ],
-                pageLength: 100,
-            };
-            let table = $('.datatable-followups').DataTable(dtOverrideGlobals);
-            $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e) {
-                $($.fn.dataTable.tables(true)).DataTable()
-                    .columns.adjust();
+                let dtOverrideGlobals = {
+                    buttons: dtButtons,
+                    processing: true,
+                    serverSide: true,
+                    retrieve: true,
+                    aaSorting: [],
+                    ajax: "{{ route('admin.followups.index') }}",
+                    orderCellsTop: true,
+                    order: [
+                        [1, 'desc']
+                    ],
+                    pageLength: 100,
+                };
+                let table = $('.datatable-followups').DataTable(dtOverrideGlobals);
+                $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e) {
+                    $($.fn.dataTable.tables(true)).DataTable()
+                        .columns.adjust();
+                });
             });
-        });
-    </script>
-@endsection
+        </script>
+    @endsection
