@@ -53,11 +53,35 @@
         {{ $sitevisit->users->representative_name ?? 'No User Assigned' }}
     </td> --}}
     <td>
-        @foreach ($lead as $leads)
-            @if ($leads->id === $sitevisit->lead_id)
-                {{ $sitevisit->notes }}
-            @endif
-        @endforeach
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
+            data-target="#notesModal{{ $sitevisit->id }}">
+            View Notes
+        </button>
+        <div class="modal fade" id="notesModal{{ $sitevisit->id }}" tabindex="-1"
+            role="dialog" aria-labelledby="notesModalLabel{{ $sitevisit->id }}"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="notesModalLabel{{ $sitevisit->id }}">
+                            Notes</h5>
+                        <button type="button" class="close" data-dismiss="modal"
+                            aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                        <textarea id="notesTextArea{{ $sitevisit->id }}" class="form-control" rows="5" readonly>{{ $sitevisit->notes }}</textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </td>
     <td>
         {{ $sitevisit->created_at->format('Y-m-d') }}

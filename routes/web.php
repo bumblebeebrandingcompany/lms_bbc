@@ -78,6 +78,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('/applications', 'ApplicationPurchasedController');
 
     Route::resource('/walkinform', 'WalkinController');
+    Route::resource('/promo', 'PromoController');
+
     Route::resource('/admission', 'AdmissionFollowUpController');
     Route::resource('/application', 'ApplicationNotPurchasedController');
      Route::resource('/admission', 'AdmissionFollowUpController');
