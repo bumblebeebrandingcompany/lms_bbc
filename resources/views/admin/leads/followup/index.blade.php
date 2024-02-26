@@ -45,8 +45,7 @@
             </form>
                 </div>
                 <div class="table-responsive">
-
-            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followups" id="followUpTable">
+            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followup" id="followUpTable">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -64,13 +63,14 @@
                     $counter = 1;
                 @endphp
           @foreach ($followUps->where('parent_stage_id', 9) as $followUp)
-
                         <tr data-created-at="{{ $followUp->follow_up_date}}">
                             <td>{{ $counter++ }}</td>
                             <td>
                                 @foreach ($lead as $leads)
                                     @if ($leads->id === $followUp->lead_id)
-                                        {{ $leads->ref_num }}
+                                        <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                                            {{ $leads->ref_num }}
+                                        </a>
                                     @endif
                                 @endforeach
                             </td>
@@ -272,6 +272,20 @@
             $('a[data-toggle="tab"]').on('shown.bs.tab click', function(e) {
                 $($.fn.dataTable.tables(true)).DataTable()
                     .columns.adjust();
+            });
+        });
+    </script>
+@endsection
+@section('scripts')
+    @parent
+    <script>
+        $(function() {
+            // Existing JavaScript code for DataTable initialization
+
+            // Additional customization for DataTable
+            let table = $('.datatable-followup').DataTable();
+            table.on('draw.dt', function() {
+                // Add any additional customization after the table is drawn
             });
         });
     </script>

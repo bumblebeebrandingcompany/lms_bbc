@@ -5,7 +5,10 @@
         <div class="col-md-9 float-right">
             <h3>Site Visit And Reschedule</h3>
         </div>
-
+        <div>
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button onclick="searchTable()">Search</button>
+        </div>
         <div class="col-md-2 float-right" id="countdown1">Respond Within: <span id="timer"></span></div>
         <div class="col-md-1"></div>
     </div>
@@ -19,10 +22,7 @@
             <a class="nav-link" id="siteVisitTab" data-toggle="tab" href="#sitevisit">Site Visit</a>
         </li>
     </ul>
-    <div>
-        <input type="text" id="searchInput" placeholder="Search...">
-        <button onclick="searchTable()">Search</button>
-    </div>
+
     <div class="tab-content">
         <!-- Site Visit Tab -->
 
@@ -34,7 +34,8 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin">
+                        <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin"
+                            id="sitevisitTable">
                             <thead>
                                 <tr>
                                     <th>ID</th>
@@ -206,7 +207,8 @@
                         </div>
                         <div class="table-responsive">
 
-                            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin">
+                            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-lead"
+                                id="sitevisitTable">
                                 <thead>
                                     <tr>
                                         <th>R.No</th>
@@ -389,23 +391,25 @@
     @parent
     <script>
         $(function() {
+            // Existing JavaScript code for DataTable initialization
 
-
+            // Additional customization for DataTable
             let table = $('.datatable-walkin').DataTable();
             table.on('draw.dt', function() {
-
+                // Add any additional customization after the table is drawn
             });
         });
     </script>
     <script>
         function searchTable() {
-
+            // Declare variables
             var input, filter, table, tr, td, i, txtValue;
             input = document.getElementById("searchInput");
             filter = input.value.toUpperCase();
             table = document.getElementById("sitevisitTable");
             tr = table.getElementsByTagName("tr");
 
+            // Loop through all table rows, and hide those who don't match the search query
             for (i = 0; i < tr.length; i++) {
                 td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
                 if (td) {
@@ -420,19 +424,4 @@
         }
     </script>
 
-@endsection
-
-@section('scripts')
-    @parent
-    <script>
-        $(function() {
-            // Existing JavaScript code for DataTable initialization
-
-            // Additional customization for DataTable
-            let table = $('.datatable-walkin').DataTable();
-            table.on('draw.dt', function() {
-                // Add any additional customization after the table is drawn
-            });
-        });
-    </script>
 @endsection

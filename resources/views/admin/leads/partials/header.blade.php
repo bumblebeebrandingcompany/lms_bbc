@@ -75,26 +75,38 @@
                             </select>
                         </div>
                         <div class="col-md-3">
+                            <label for="parent_stage_id"> Stage</label>
+                            <select class="search form-control" name="parent_stage_id" id="parent_stage_id">
+                                <option value="">{{ trans('global.all') }}</option>
+                                @foreach($parentStages as $parentStage)
+                                    <option value="{{$parentStage->id}}" @if(isset($filters['parent_stage_id']) && $filters['parent_stage_id'] == $parentStage->id) selected @endif>{{ $parentStage->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="admission_team_name">Admission Team</label>
+                            <select class="search form-control" name="admission_team_name" id="admission_team_name">
+                                <option value="">{{ trans('global.all') }}</option>
+                                @foreach($admissionteams as $admissionteam)
+                                    <option value="{{$admissionteam->representative_name}}" @if(isset($filters['admission_team_name']) && $filters['admission_team_name'] == $admissionteam->representative_name) selected @endif>{{ $admissionteam->representative_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="supervised_by">FrontOffice</label>
+                            <select class="search form-control" name="supervised_by" id="supervised_by">
+                                <option value="">{{ trans('global.all') }}</option>
+                                @foreach($frontoffice as $front_office)
+                                    <option value="{{$front_office->representative_name}}" @if(isset($filters['supervised_by']) && $filters['supervised_by'] == $front_office->representative_name) selected @endif>{{ $front_office->representative_name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3">
                             <label for="added_on">{{ trans('messages.added_on') }}</label>
                             <input class="form-control date_range" type="text" name="date" id="added_on" readonly>
                         </div>
                     @endif
-                    @if(!(auth()->user()->is_agency || auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager))
-                    <div class="col-md-3">
-                        <label for="parent_stage_id"> Stage</label>
-                        <select class="search form-control" name="parentStage" id="parent_stage_id">
-                            <option value="">{{ trans('global.all') }}</option>
-                            @foreach($parentStages as $parentStage)
-                                <option value="{{$parentStage->id}}" @if(isset($filters['parent_stage_id']) && $filters['parent_stage_id'] == $parentStage->id) selected @endif>{{ $parentStage->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="added_on">{{ trans('messages.added_on') }}</label>
-                        <input class="form-control date_range" type="text" name="date" id="added_on" readonly
-                               value="{{ isset($filters['start_date']) ? $filters['start_date'] : '' }} - {{ isset($filters['end_date']) ? $filters['end_date'] : '' }}">
-                    </div>
-                @endif
+
 
 
                     <!-- <div class="col-md-3">

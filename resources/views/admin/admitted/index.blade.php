@@ -3,7 +3,7 @@
     <h2>Admitted Table</h2>
     <div class="card">
         <div class="card-body">
-            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followups"
+            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-admitted"
                 id="followUpTable">
                 <thead>
                     <tr>
@@ -26,8 +26,15 @@
                     @endphp
                     @foreach ($admitteds as $admitted)
                         <td>{{ $counter++ }}</td>
+
                         <td>
-                            {{ $admitted->lead->ref_num ?? '' }}
+                            @foreach ($lead as $leads)
+                                @if ($leads->id === $admitted->lead_id)
+                                    <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                                        {{ $leads->ref_num }}
+                                    </a>
+                                @endif
+                            @endforeach
                         </td>
                         <td>
                             {{ $admitted->lead->name ?? '' }}
@@ -62,4 +69,18 @@
             </table>
         </div>
     </div>
+@endsection
+@section('scripts')
+    @parent
+    <script>
+        $(function() {
+            // Existing JavaScript code for DataTable initialization
+
+            // Additional customization for DataTable
+            let table = $('.datatable-admitted').DataTable();
+            table.on('draw.dt', function() {
+                // Add any additional customization after the table is drawn
+            });
+        });
+    </script>
 @endsection
