@@ -5,10 +5,7 @@
         <div class="col-md-9 float-right">
             <h3>Site Visit And Reschedule</h3>
         </div>
-        <div>
-            <input type="text" id="searchInput" placeholder="Search...">
-            <button onclick="searchTable()">Search</button>
-        </div>
+
         <div class="col-md-2 float-right" id="countdown1">Respond Within: <span id="timer"></span></div>
         <div class="col-md-1"></div>
     </div>
@@ -401,28 +398,6 @@
             });
         });
     </script>
-    <script>
-        function searchTable() {
-            // Declare variables
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("sitevisitTable");
-            tr = table.getElementsByTagName("tr");
 
-            // Loop through all table rows, and hide those who don't match the search query
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
 
 @endsection

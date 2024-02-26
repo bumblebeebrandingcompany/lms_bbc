@@ -697,7 +697,7 @@
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                         <input type="hidden" name="parent_stage_id" value="13">
                         <label for="application_no">Application Number:</label>
-                        <input class="form-control" type="text" name="application_no" value="">
+                        <input class="form-control" type="text" name="application_no" value="" required>
                         <label for="user_id">Select Representative:</label>
                         <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
                             name="user_id" id="user_id" required>
