@@ -29,7 +29,13 @@
           @foreach ($applications->where('parent_stage_id',13 ) as $applicationpurchased)
           <td>{{ $counter++ }}</td>
           <td>
-            {{ $applicationpurchased->lead->ref_num  ??  ''}}
+            @foreach ($lead as $leads)
+                @if ($leads->id === $applicationpurchased->lead_id)
+                    <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                        {{ $leads->ref_num }}
+                    </a>
+                @endif
+            @endforeach
         </td>
         <td>
             {{ $applicationpurchased->application_no  ??  ''}}
@@ -69,4 +75,5 @@
             </table>
         </div>
     </div>
+</div>
 @endsection

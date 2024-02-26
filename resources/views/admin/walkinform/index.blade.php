@@ -42,9 +42,7 @@
                     <tbody>
                         @foreach ($walkins as $walkin)
                             <tr>
-
                                 <td width="10"></td>
-
                                 {{-- @foreach ($walkin as $lead) --}}
                                 <td>
                                     @foreach ($walkin->leads as $lead)

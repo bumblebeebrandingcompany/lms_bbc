@@ -153,13 +153,6 @@ class LeadsController extends Controller
                     $query->orWhereNull('parent_stage_id');
                 }
             });
-
-
-
-
-
-
-
             $table = Datatables::of($query);
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');

@@ -41,16 +41,7 @@ class WalkinController extends Controller
             });
         }
 
-        // $user = auth()->user();
-        // if($user->is_superadmin)
-        // {
-        //     $walkin = Walkin::all();
-        // }
-        // else
-        // {
-        //     $walkin = Walkin::where('created_by', auth()->id())->get();
-        // }
-        // Retrieve other necessary data
+
         $projects = Project::pluck('name', 'id');
         $clients = Clients::all();
         $sources = Source::all();
@@ -75,8 +66,8 @@ class WalkinController extends Controller
         $sources = Source::whereNotIn('id', $excludedSourceIds)->get();
         $client = Clients::all();
         $leads = Lead::all();
-
-        return view('admin.walkinform.create', compact('projects', 'project_ids', 'client', 'sources', 'campaigns', 'campaign_ids', 'project_id', 'leads'));
+        $walkins=Walkin::all();
+        return view('admin.walkinform.create', compact('projects', 'project_ids', 'client', 'sources', 'campaigns', 'campaign_ids', 'project_id', 'leads','walkins'));
     }
     public function store(WalkinStoreRequest $request)
     {
@@ -123,6 +114,7 @@ class WalkinController extends Controller
         $lead->ref_num = $this->util->generateLeadRefNum($lead);
         $lead->save();
         $this->util->storeUniqueWebhookFields($lead);
+        $walkins=Walkin::all();
 
         // Define $existingLeads as an empty array
         $existingLeads = [];
@@ -130,7 +122,7 @@ class WalkinController extends Controller
         if ($existingLead) {
             // You can access the 'ref_no' attribute
             $ref_num = $existingLead->ref_num;
-            return view('admin.walkinform.index')->with(compact('existingLead', 'ref_num', 'existingLeads'));
+            return view('admin.walkinform.index')->with(compact('existingLead', 'ref_num', 'existingLeads','walkins'));
         } else {
             return response()->json(['error' => 'Lead not found'], 404);
         }
@@ -143,7 +135,14 @@ class WalkinController extends Controller
 
         return view('admin.walkinform.show', compact('walkin'));
     }
-
+    public function edit($id)
+    {
+        $walkinform = Walkin::findOrFail($id);
+$projects=Project::all();
+$lead=Lead::all();
+$campaigns=Campaign::all();
+        return view('admin.walkinform.edit', compact('walkinform','projects','lead','campaigns'));
+    }
 
     public function update(Request $request, Walkin $walkinform)
     {

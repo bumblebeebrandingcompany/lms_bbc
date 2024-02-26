@@ -80,7 +80,13 @@ let dtOverrideGlobals = {
     ],
     orderCellsTop: true,
     order: [[9, 'desc']],
-    pageLength: 50,
+    lengthMenu: [50, 100, 500, 1000], // Add 1000 to the lengthMenu options
+    pageLength: 1000, // Set the page length to 1000
+    drawCallback: function (settings) {
+        let api = this.api();
+        let pageInfo = api.page.info();
+        $('.dataTables_info').html('Showing ' + (pageInfo.start + 1) + ' to ' + pageInfo.end + ' of ' + pageInfo.recordsTotal + ' entries');
+    }
 };
 let table = $('.datatable-Lead').DataTable(dtOverrideGlobals);
 

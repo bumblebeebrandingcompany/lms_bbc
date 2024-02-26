@@ -70,7 +70,9 @@
                             <td>
                                 @foreach ($lead as $leads)
                                     @if ($leads->id === $followUp->lead_id)
-                                        {{ $leads->ref_num }}
+                                        <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                                            {{ $leads->ref_num }}
+                                        </a>
                                     @endif
                                 @endforeach
                             </td>
