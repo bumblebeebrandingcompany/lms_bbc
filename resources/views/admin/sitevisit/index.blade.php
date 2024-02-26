@@ -29,9 +29,9 @@
         <div class="tab-pane fade show active" id="reschedule">
             <div class="card">
 
-                <div class="col-md-1 offset-md-10">
+                {{-- <div class="col-md-1 offset-md-10">
 
-                </div>
+                </div> --}}
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin"
@@ -52,7 +52,7 @@
                             </thead>
                             <tbody>
                                 @php
-                                $counter = 1;
+                                    $counter = 1;
                                 @endphp
                                 @foreach ($sitevisits as $sitevisit)
                                     @php
@@ -207,7 +207,8 @@
                         </div>
                         <div class="table-responsive">
 
-                            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-lead"
+                            <table
+                                class="table table-bordered table-striped table-hover ajaxTable datatable datatable-lead"
                                 id="sitevisitTable">
                                 <thead>
                                     <tr>
@@ -225,13 +226,19 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <tr>
+                                        <td colspan="8">
+                                            Total Site Visits: {{ count($sitevisits) }}
+                                            <!-- Display the total count of site visits -->
+                                        </td>
+                                    </tr>
                                     @php
-$counter = 0; // Initialize the counter outside the loop
-@endphp
+                                        $counter = 0; // Initialize the counter outside the loop
+                                    @endphp
                                     @foreach ($sitevisits as $sitevisit)
-                                    @php
-                                    $counter++; // Increment the counter for the next iteration
-                                @endphp
+                                        @php
+                                            $counter++; // Increment the counter for the next iteration
+                                        @endphp
                                         @include('admin.sitevisit.partials.table_body')
                                     @endforeach
                                 </tbody>
@@ -431,5 +438,4 @@ $counter = 0; // Initialize the counter outside the loop
             }
         }
     </script>
-
 @endsection

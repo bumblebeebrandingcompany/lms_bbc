@@ -1,4 +1,3 @@
-
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
@@ -89,6 +88,7 @@
                         </div>
                     @endif
                 @elseif ($sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10, 13]))
+
                 @elseif (
                     !auth()->user()->is_client &&
                         !auth()->user()->is_frontoffice &&
@@ -244,6 +244,7 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -335,6 +336,7 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -478,7 +480,7 @@
             <input type="hidden" name="stage" value="site_not_visited">
             @if ($sitevisit->parent_stage_id == 12)
                 @if (!auth()->user()->is_superadmin && !auth()->user()->is_client && !auth()->user()->is_presales)
-                <br>
+                    <br>
                     <div class=float-center>
                         <div style="background-color: rgb(119, 84, 214); padding: 5px; display: inline-block; border-radius: 5px;"
                             title="Not Visited">
@@ -497,6 +499,7 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19, 13]))
+
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -573,27 +576,27 @@
             }, 1000); // Update every second
         });
     </script>
-<script>
-    function searchTable() {
-        // Declare variables
-        var input, filter, table, tr, td, i, txtValue;
-        input = document.getElementById("searchInput");
-        filter = input.value.toUpperCase();
-        table = document.getElementById("sitevisitTable");
-        tr = table.getElementsByTagName("tr");
+    <script>
+        function searchTable() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("sitevisitTable");
+            tr = table.getElementsByTagName("tr");
 
-        // Loop through all table rows, and hide those who don't match the search query
-        for (i = 0; i < tr.length; i++) {
-            td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
-            if (td) {
-                txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
         }
-    }
-</script>
+    </script>
 </tr>
