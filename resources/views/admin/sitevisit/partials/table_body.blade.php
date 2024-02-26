@@ -4,7 +4,8 @@
 
 
 <tr data-created-at="{{ $sitevisit->follow_up_date }}">
-    <td>{{ $counter++ }}</td>
+    <td>{{ $counter }}</td>
+
     {{-- <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
