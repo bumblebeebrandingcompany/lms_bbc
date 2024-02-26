@@ -88,6 +88,7 @@ let dtOverrideGlobals = {
         $('.dataTables_info').html('Showing ' + (pageInfo.start + 1) + ' to ' + pageInfo.end + ' of ' + pageInfo.recordsTotal + ' entries');
     }
 };
+
 let table = $('.datatable-Lead').DataTable(dtOverrideGlobals);
 
 // Function to update lead count

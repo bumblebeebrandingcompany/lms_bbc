@@ -43,7 +43,6 @@
                     <option value="200" {{ request('perPage', 10) == 200 ? 'selected' : '' }}>200</option>
                 </select>
             </form>
-
                 </div>
                 <div class="table-responsive">
 
@@ -67,10 +66,13 @@
           @foreach ($followUps->where('parent_stage_id', 28) as $followUp)
                         <tr data-created-at="{{ $followUp->follow_up_date}}">
                             <td>{{ $counter++ }}</td>
+
                             <td>
                                 @foreach ($lead as $leads)
                                     @if ($leads->id === $followUp->lead_id)
-                                        {{ $leads->ref_num }}
+                                        <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                                            {{ $leads->ref_num }}
+                                        </a>
                                     @endif
                                 @endforeach
                             </td>

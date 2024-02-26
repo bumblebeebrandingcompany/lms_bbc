@@ -45,9 +45,6 @@
             <th>
                 Admission Team Name
             </th>
-
-
-
             <!-- <th>
                 @lang('messages.status')
             </th>

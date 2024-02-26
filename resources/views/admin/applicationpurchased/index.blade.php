@@ -5,12 +5,11 @@
     <h2>Application Purchased</h2>
     <div class="card">
         <div class="card-body">
-<table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-followups" id="followUpTable">
+<table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-applicationpurchased" id="followUpTable">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Reference Number</th>
-
                         <th>Application No</th>
                         <th>Parent Name</th>
                         <th>Child name</th>
@@ -56,7 +55,6 @@
                 No User Assigned
             @endif
         </td>
-
                             <td>
                                 {{ $applicationpurchased->follow_up_date }}
                             </td>
@@ -76,4 +74,18 @@
         </div>
     </div>
 </div>
+@endsection
+@section('scripts')
+    @parent
+    <script>
+        $(function() {
+            // Existing JavaScript code for DataTable initialization
+
+            // Additional customization for DataTable
+            let table = $('.datatable-applicationpurchased').DataTable();
+            table.on('draw.dt', function() {
+                // Add any additional customization after the table is drawn
+            });
+        });
+    </script>
 @endsection

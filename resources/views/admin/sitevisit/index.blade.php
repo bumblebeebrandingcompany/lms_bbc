@@ -5,7 +5,10 @@
         <div class="col-md-9 float-right">
             <h3>Site Visit And Reschedule</h3>
         </div>
-
+        <div>
+            <input type="text" id="searchInput" placeholder="Search...">
+            <button onclick="searchTable()">Search</button>
+        </div>
         <div class="col-md-2 float-right" id="countdown1">Respond Within: <span id="timer"></span></div>
         <div class="col-md-1"></div>
     </div>
@@ -32,14 +35,12 @@
                 <div class="card-body">
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin"
-                            id="rescheduleTable">
-
-                            {{-- <table class="table table-bordered table-striped" id="rescheduleTable"> --}}
+                            id="sitevisitTable">
                             <thead>
                                 <tr>
+                                    <th>ID</th>
                                     <th>R.No</th>
                                     <th>Parent Name</th>
-                                    {{-- <th>Campaign Name</th> --}}
                                     <th>Site Visit Date</th>
                                     <th>Site Visit Time</th>
                                     {{-- <th>Supervise By</th> --}}
@@ -51,8 +52,7 @@
                             </thead>
                             <tbody>
                                 @php
-                                    $todayData = [];
-                                    $tomorrowData = [];
+                                $counter = 1;
                                 @endphp
                                 @foreach ($sitevisits as $sitevisit)
                                     @php
@@ -63,7 +63,6 @@
                                         $currentTime = \Carbon\Carbon::now();
                                         $timeRemaining = $followUpTime->diffInMinutes($currentTime);
                                     @endphp
-
                                     @if ($visitDate->eq($today))
                                         @php
                                             $todayData[] = $sitevisit;
@@ -82,7 +81,6 @@
                                             <h4 class="custom-today-heading">Today</h4>
                                         </td>
                                     </tr>
-
                                     @foreach ($todayData as $sitevisit)
                                         @include('admin.sitevisit.partials.table_body')
                                     @endforeach
@@ -101,7 +99,6 @@
                                     @endforeach
                                 @endif
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -159,11 +156,11 @@
                                     </option>
                                     <option value="200" {{ request('perPage', 10) == 200 ? 'selected' : '' }}>200
                                     </option>
+                                    {{-- <option value="1000"{{request('perpage',10) == 1000 ? 'selected' : '' }}>1000</option> --}}
                                 </select>
                             </form>
                         </div>
                         <div class="col-md-1">
-
                             <table class="table table-bordered table-striped" id="siteVisiticon">
 
                                 <tr>
@@ -211,7 +208,7 @@
                         <div class="table-responsive">
 
                             <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-lead"
-                                id="siteVisitTable">
+                                id="sitevisitTable">
                                 <thead>
                                     <tr>
                                         <th>R.No</th>
@@ -404,4 +401,28 @@
             });
         });
     </script>
+    <script>
+        function searchTable() {
+            // Declare variables
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("sitevisitTable");
+            tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
 @endsection

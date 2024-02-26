@@ -55,7 +55,6 @@ class SiteVisitController extends Controller
         // $sitevisits = SiteVisit::paginate($itemsPerPage);
         return view('admin.sitevisit.index', compact('campaigns', 'agencies', 'lead', 'sitevisits', 'ids', 'client', 'parentStages', 'tags'));
     }
-
     public function store(SiteVisitRequest $request)
     {
         $input = $request->validated(); // Use the validated input from the request
@@ -63,20 +62,17 @@ class SiteVisitController extends Controller
         // Find the lead and user based on their IDs
         $lead = Lead::findOrFail($input['lead_id']);
         $parentStageId = $request->input('parent_stage_id');
-
         $sitevisit = new SiteVisit();
         $sitevisit->lead_id = $lead->id;
         $sitevisit->follow_up_date = $input['follow_up_date']; // Assign the date
         $sitevisit->follow_up_time = $input['follow_up_time']; // Assign the time
         $sitevisit->notes = $input['notes'];
         $sitevisit->user_id = auth()->user()->id;
+        $sitevisit->created_by=auth()->user()->id;
         $sitevisit->parent_stage_id = $parentStageId;
         $sitevisit->save();
-
         $sitevisit->lead->update(['parent_stage_id' => $sitevisit->parent_stage_id]);
-
         $this->logTimeline($lead, $sitevisit, 'Site Visit created', 'sitevisit_created');
-
         return redirect()->back()->with('success', 'Form submitted successfully!');
     }
 
@@ -127,6 +123,7 @@ class SiteVisitController extends Controller
         $newSiteVisit->follow_up_time = $request->follow_up_time;
         $newSiteVisit->lead_id = $request->lead_id;
         $newSiteVisit->user_id = $request->user_id;
+
         $newSiteVisit->notes = $request->notes;
         $newSiteVisit->parent_stage_id = $parentStageId; // Set parent_stage_id directly
         $newSiteVisit->save();
@@ -301,15 +298,13 @@ class SiteVisitController extends Controller
     {
         $sitevisit = SiteVisit::findOrFail($sitevisitId);
         $lead = Lead::find($sitevisit->lead_id);
-
         if ($lead) {
             $parentStageId = $request->input('parent_stage_id');
-            $sitevisit->update([
-                'parent_stage_id' => $parentStageId,
-                'user_id' => auth()->user()->id
-            ]);
+            $sitevisit->update(['parent_stage_id' => $parentStageId,
+            'created_by' => $request->input('created_by'),]);
+            $lead->update(['parent_stage_id' => $parentStageId,
 
-            $lead->update(['parent_stage_id' => $parentStageId]);
+        ]);
 
             $note = new StageNotes();
             $note->lead_id = $sitevisit->lead_id;

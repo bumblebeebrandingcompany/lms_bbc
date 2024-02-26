@@ -314,6 +314,7 @@ class LeadsController extends Controller
             ->get();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
+            $parentStages=ParentStage::all();
         $admitted = Admitted::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
@@ -360,9 +361,40 @@ class LeadsController extends Controller
             $parentStages = ParentStage::all(); // Fetch all parent stages
         $sales = User::where('user_type', 'Presales')->get(); // Fetch all parent stages
         $frontoffice = User::where('user_type', 'Frontoffice')->get(); // Fetch all parent stages
-        $admissionteams = User::where('user_type', 'Admissionteam')->get(); // Fetch all parent stages
+        $admissionteams = User::where('user_type', 'Admissionteam')->get();
+        $stageId = $request->input('parent_stage_id');
+        $admissionName = $request->input('admission_team_name');
+        $front_office = $request->input('supervised_by');// Fetch all parent stages
+        $query->where(function ($query) use ($lead_stage, $user, $stageId, $admissionName,$front_office) {
+            $query->whereHas('parentStage', function ($q) use ($lead_stage, $stageId) {
+                $q->whereIn('name', $lead_stage);
+                if (!empty($stageId)) {
+                    $q->where('id', $stageId);
+                }
+            });
+
+            if ($admissionName) {
+                $query->whereHas('application.users', function ($q) use ($admissionName) {
+                    $q->where('representative_name', 'like', '%' . $admissionName . '%');
+                });
+            }
+
+            if ($front_office) {
+                $query->whereHas('application.user', function ($q) use ($front_office) {
+                    $q->where('representative_name', 'like', '%' . $front_office . '%');
+                });
+            }
+
+
+
+            if ($user->is_admissionteam) {
+                $query->where('user_id', $user->id);
+            } elseif ($user->is_superadmin || $user->is_frontoffice) {
+                $query->orWhereNull('parent_stage_id');
+            }
+        });
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'admitted','parentStages','sales','frontoffice','admissionteams'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads','admitted', 'parentStages', 'sales', 'frontoffice', 'admissionteams'));
         }
     }
     public function create()

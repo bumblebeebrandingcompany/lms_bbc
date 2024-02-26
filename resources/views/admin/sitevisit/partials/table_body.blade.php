@@ -1,7 +1,19 @@
+
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+
 <tr data-created-at="{{ $sitevisit->follow_up_date }}">
+    <td>{{ $counter++ }}</td>
+    {{-- <td>
+        @foreach ($lead as $leads)
+            @if ($leads->id === $sitevisit->lead_id)
+                <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
+                    {{ $leads->ref_num }}
+                </a>
+            @endif
+        @endforeach
+    </td> --}}
     <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
@@ -11,6 +23,7 @@
             @endif
         @endforeach
     </td>
+
     <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
@@ -35,9 +48,6 @@
     <td>
         {{ $sitevisit->follow_up_time }}
     </td>
-    {{-- <td>
-        {{ $sitevisit->users->representative_name ?? '' }}
-    </td> --}}
     {{-- <td>
         {{ $sitevisit->users->representative_name ?? 'No User Assigned' }}
     </td> --}}
@@ -78,7 +88,6 @@
                         </div>
                     @endif
                 @elseif ($sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10, 13]))
-
                 @elseif (
                     !auth()->user()->is_client &&
                         !auth()->user()->is_frontoffice &&
@@ -234,7 +243,6 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
-
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -564,5 +572,27 @@
             }, 1000); // Update every second
         });
     </script>
+<script>
+    function searchTable() {
+        // Declare variables
+        var input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.getElementById("sitevisitTable");
+        tr = table.getElementsByTagName("tr");
 
+        // Loop through all table rows, and hide those who don't match the search query
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[0]; // Change index based on the column you want to search
+            if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }
+        }
+    }
+</script>
 </tr>
