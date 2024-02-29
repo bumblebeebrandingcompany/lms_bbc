@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('walkinform', function (Blueprint $table) {
-            $table->bigInteger('promo_id');
+            $table->bigInteger('sub_source_id');
         });
     }
 

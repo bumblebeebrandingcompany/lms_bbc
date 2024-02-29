@@ -18,7 +18,7 @@ return new class extends Migration
                 ->after('name')
                 ->comment('to be used when cp is adding lead')
                 ->default(0);
-                
+
             $table->text('source_field1_description')
                 ->after('source_field1')
                 ->comment('description for source_field1')
@@ -41,19 +41,19 @@ return new class extends Migration
         });
 
         $projects = DB::table('projects')->get();
-        
+
         if(count($projects) > 0) {
             foreach ($projects as $project) {
                 DB::table('sources')->insert([
                     'name' => 'Channel Partner',
                     'is_cp_source' => 1,
-                    'source_name' => 'Channel Partner',
+                    'name' => 'Channel Partner',
                     'webhook_secret' => (string)Str::uuid(),
                     'project_id' => $project->id,
                     'created_at' => Carbon::today()->toDateTimeString(),
                     'updated_at' => Carbon::today()->toDateTimeString()
                 ]);
-            }   
+            }
         }
     }
 

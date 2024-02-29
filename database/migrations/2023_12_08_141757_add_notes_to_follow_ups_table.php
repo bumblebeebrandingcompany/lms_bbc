@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::table('follow_ups', function (Blueprint $table) {
             $table->text('notes');
-            $table->unsignedBigInteger('parent_stage_id')->nullable();
-            $table->foreign('parent_stage_id', 'stage_fk_8745955')->references('id')->on('parent_stages');
+            $table->unsignedBigInteger('stage_id')->nullable();
+            $table->foreign('stage_id', 'stage_fk_8745955')->references('id')->on('parent_stages');
         });
     }
     /**

@@ -50,7 +50,7 @@ $admitteds=Admitted::all();
         // $application = ApplicationPurchased::find($request->application_id);
         // Check if the lead is not null before proceeding
         if ($lead) {
-            $parentStageId = $request->input('parent_stage_id');
+            $parentStageId = $request->input('stage_id');
             $admitted = new Admitted();
             $admitted->lead_id = $lead->id;
             $admitted->application_id =$lead->application->id;
@@ -58,13 +58,13 @@ $admitteds=Admitted::all();
             $admitted->follow_up_date = $request->input('follow_up_date');
             $admitted->notes = $request->input('notes');
             $admitted->follow_up_time = $request->input('follow_up_time');
-            $admitted->parent_stage_id = $parentStageId;
+            $admitted->stage_id = $parentStageId;
 
             $admitted->save();
             // Check if $admitted->lead is not null before updating
-            $lead->parent_stage_id = $parentStageId;
+            $lead->stage_id = $parentStageId;
             if ($admitted->lead) {
-                $admitted->lead->update(['parent_stage_id' => $admitted->parent_stage_id]);
+                $admitted->lead->update(['stage_id' => $admitted->stage_id]);
             }
             return redirect()->back()->with('success', 'Form submitted successfully!');
         } else {

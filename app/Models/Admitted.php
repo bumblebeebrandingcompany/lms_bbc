@@ -12,7 +12,7 @@ class Admitted extends Model
 
     protected $appends = ['is_superadmin', 'is_agency', 'is_channel_partner', 'is_channel_partner_manager','is_presales','is_frontoffice'];
 
-    public $table = 'admission';
+    public $table = 'admissions';
 
     protected $dates = [
         'created_at',
@@ -25,7 +25,7 @@ class Admitted extends Model
 
 
     protected $fillable = [
-        'parent_stage_id','lead_id','user_id','admission_no','follow_up_time',
+        'stage_id','lead_id','user_id','admission_no','follow_up_time',
         'notes'
     ];
     public function lead()

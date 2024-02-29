@@ -52,7 +52,7 @@
                                 </tr>
                                 <tr>
                                     <th>Campaign</th>
-                                    <td class="word-break">{{ $walkin->campaign->campaign_name ?? '' }}</td>
+                                    <td class="word-break">{{ $walkin->campaign->name ?? '' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Source</th>

@@ -3,15 +3,15 @@
     <div class="row mb-2">
         <div class="col-sm-12">
             <h2>
-                {{ trans('cruds.promo.title_singular') }} {{ trans('global.list') }}
+                SubSource List
             </h2>
         </div>
     </div>
     <div class="card card-primary card-outline">
         @if (auth()->user()->is_superadmin)
             <div class="card-header">
-                <a class="btn btn-success float-right" href="{{ route('admin.promo.create') }}">
-                    Add Promo
+                <a class="btn btn-success float-right" href="{{ route('admin.subsource.create') }}">
+                    Add SubSource
                 </a>
         @endif
     </div>
@@ -30,7 +30,7 @@
                     <th>
                         Source </th>
                     <th>
-                        Promo Name </th>
+                        SubSource Name </th>
                     <th>
                         &nbsp;
                     </th>
@@ -53,7 +53,7 @@
                             <select class="search">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach ($campaigns as $key => $item)
-                                    <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         @endif
@@ -63,7 +63,7 @@
                             <select class="search">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach ($sources as $key => $item)
-                                    <option value="{{ $item->source_name }}">{{ $item->source_name }}</option>
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         @endif
@@ -81,7 +81,6 @@
 @endsection
 @section('scripts')
     @parent
-
     <script>
         $(function() {
             let dtButtons = $.extend(true, [], $.fn.dataTable.defaults.buttons)
@@ -131,7 +130,7 @@
                 serverSide: true,
                 retrieve: true,
                 aaSorting: [],
-                ajax: "{{ route('admin.promo.index') }}",
+                ajax: "{{ route('admin.subsource.index') }}",
                 columns: [{
                         data: 'placeholder',
                         name: 'placeholder'
@@ -141,12 +140,12 @@
                         name: 'project.name'
                     },
                     {
-                        data: 'campaign_campaign_name',
-                        name: 'campaign.campaign_name'
+                        data: 'campaign_name',
+                        name: 'campaign.name'
                     },
                     {
-                        data: 'source_source_name',
-                        name: 'source.source_name'
+                        data: 'source_name',
+                        name: 'source.name'
                     },
                     {
                         data: 'name',

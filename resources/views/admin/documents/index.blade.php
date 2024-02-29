@@ -111,7 +111,7 @@
             columns: [
                 { data: 'placeholder', name: 'placeholder' },
                 { data: 'title', name: 'title' },
-                { data: 'project_name', name: 'projects.name' },
+                { data: 'name', name: 'projects.name' },
                 { data: 'added_by', name: 'users.name' },
                 { data: 'created_at', name: 'documents.created_at' },
                 { data: 'actions', name: '{{ trans('global.actions') }}' }

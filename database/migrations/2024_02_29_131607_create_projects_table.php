@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -11,25 +10,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('walkinform', function (Blueprint $table) {
+        Schema::create('projects', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email');
-            $table->string('phone');
-            $table->bigInteger('enquiry_id');
-            $table->bigInteger('project_id');
-            $table->string('ref_num')
-
-                ->nullable();
+            $table->bigInteger('client_id');
+            $table->bigInteger('created_by');
+                  $table->softDeletes();
             $table->timestamps();
         });
     }
-
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('walkinform');
+        Schema::dropIfExists('projects');
     }
 };

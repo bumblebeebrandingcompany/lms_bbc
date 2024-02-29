@@ -12,7 +12,7 @@ class ApplicationPurchased extends Model
 
     protected $appends = ['is_superadmin', 'is_agency', 'is_channel_partner', 'is_channel_partner_manager','is_presales','is_frontoffice'];
 
-    public $table = 'application_purchased';
+    public $table = 'applications';
 
     protected $dates = [
         'created_at',
@@ -21,7 +21,7 @@ class ApplicationPurchased extends Model
         'follow_up_date',
 
     ];
-    protected $fillable = ['lead_id', 'who_assigned', 'for_whom', 'application_no', 'follow_up_date', 'notes', 'follow_up_time', 'parent_stage_id'];
+    protected $fillable = ['lead_id', 'who_assigned', 'for_whom', 'application_no', 'follow_up_date', 'notes', 'follow_up_time', 'stage_id'];
 
     public function lead()
     {

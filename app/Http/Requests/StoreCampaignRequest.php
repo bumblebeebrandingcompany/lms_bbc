@@ -17,18 +17,18 @@ class StoreCampaignRequest extends FormRequest
     public function rules()
     {
         return [
-            'campaign_name' => [
+            'name' => [
                 'string',
                 'required',
             ],
-            'start_date' => [
-                'date_format:' . config('panel.date_format'),
-                'nullable',
-            ],
-            'end_date' => [
-                'date_format:' . config('panel.date_format'),
-                'nullable',
-            ],
+            // 'start_date' => [
+            //     'date_format:' . config('panel.date_format'),
+            //     'nullable',
+            // ],
+            // 'end_date' => [
+            //     'date_format:' . config('panel.date_format'),
+            //     'nullable',
+            // ],
             'project_id' => [
                 'required',
                 'integer',

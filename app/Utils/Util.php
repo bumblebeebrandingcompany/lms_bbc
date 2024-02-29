@@ -25,7 +25,7 @@ class Util
                 if ($user->is_channel_partner) {
                     $q->whereIn('id', $cp_project_ids);
                 } else {
-                    $q->where('created_by_id', $user->id)
+                    $q->where('created_by', $user->id)
                         ->orWhere('client_id', $user->client_id);
                 }
             });
@@ -212,7 +212,7 @@ class Util
         $parentStageId = 8;
 
         $lead->ref_num = $this->generateLeadRefNum($lead);
-        $lead->parent_stage_id = 8;
+        $lead->stage_id = 8;
         $lead->save();
 
         $this->storeUniqueWebhookFields($lead);
@@ -462,18 +462,18 @@ class Util
             return $lead->created_at ?? '';
         } else if (
             !empty($field) &&
-            in_array($field, ['predefined_source_name'])
+            in_array($field, ['predefined_name'])
         ) {
             if (!empty($lead->createdBy) && $lead->createdBy->user_type == 'ChannelPartner') {
                 return 'Channel Partner';
             } else {
-                return optional($lead->source)->source_name ?? '';
+                return optional($lead->source)->name ?? '';
             }
         } else if (
             !empty($field) &&
-            in_array($field, ['predefined_campaign_name'])
+            in_array($field, ['predefined_name'])
         ) {
-            return optional($lead->campaign)->campaign_name ?? '';
+            return optional($lead->campaign)->name ?? '';
         } else if (
             !empty($field) &&
             in_array($field, ['predefined_agency_name']) &&
@@ -548,7 +548,7 @@ class Util
         if ($for_cp) {
             $sources_arr = [];
             foreach ($sources as $source) {
-                $sources_arr[$source->id] = $source->project->name . ' | ' . $source->campaign->campaign_name . ' | ' . $source->name;
+                $sources_arr[$source->id] = $source->project->name . ' | ' . $source->campaign->name . ' | ' . $source->name;
             }
             return $sources_arr;
         }
@@ -831,44 +831,44 @@ class Util
                     $q->where('created_by', $user->id);
                 } else {
                     $q->where(function ($query) {
-                        $query->whereRaw("JSON_LENGTH(promo_id) > 1")
-                            ->orWhereNull('promo_id');
+                        $query->whereRaw("JSON_LENGTH(sub_source_id) > 1")
+                            ->orWhereNull('sub_source_id');
                     })
                         ->orWhere(function ($query) {
-                            $query->whereJsonDoesntContain('promo_id', []);
+                            $query->whereJsonDoesntContain('sub_source_id', []);
                         });
                 }
             });
         }
 
         if (!empty($request->input('project_id'))) {
-            $query->whereHas('promo', function ($promoQuery) use ($request) {
-                $promoQuery->where('project_id', $request->input('project_id'));
+            $query->whereHas('subsource', function ($subSourceQuery) use ($request) {
+                $subSourceQuery->where('project_id', $request->input('project_id'));
             });
         }
 
         if (!empty($request->input('campaign_id'))) {
-            $query->whereHas('promo', function ($promoQuery) use ($request) {
-                $promoQuery->where('campaign_id', $request->input('campaign_id'));
+            $query->whereHas('subsource', function ($subSourceQuery) use ($request) {
+                $subSourceQuery->where('campaign_id', $request->input('campaign_id'));
             });
         }
 
         if (!empty($request->input('source_id'))) {
-            $query->whereHas('promo', function ($promoQuery) use ($request) {
-                $promoQuery->where('source_id', $request->input('source_id'));
+            $query->whereHas('subsource', function ($subSourceQuery) use ($request) {
+                $subSourceQuery->where('source_id', $request->input('source_id'));
             });
         }
         $query->where(function ($q) {
-            $q->where('promo_id', '<>', 0)
-                ->orWhereNull('promo_id');
+            $q->where('sub_source_id', '<>', 0)
+                ->orWhereNull('sub_source_id');
         });
 
 
 
-        if (!empty($request->input('promo_id'))) {
-            $promoIds = $request->input('promo_id');
-            $query->whereRaw("JSON_CONTAINS(leads.promo_id, ?)", [json_encode($promoIds)])
-                ->orWhereRaw('JSON_CONTAINS(leads.promo_id, ?)', [$promoIds]);
+        if (!empty($request->input('sub_source_id'))) {
+            $promoIds = $request->input('sub_source_id');
+            $query->whereRaw("JSON_CONTAINS(leads.sub_source_id, ?)", [json_encode($promoIds)])
+                ->orWhereRaw('JSON_CONTAINS(leads.sub_source_id, ?)', [$promoIds]);
 
         }
 

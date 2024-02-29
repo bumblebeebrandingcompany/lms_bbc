@@ -73,10 +73,10 @@ class CampaignController extends Controller
                     'row'
                 ));
             });
-            $table->editColumn('campaign_name', function ($row) {
-                return $row->campaign_name ? $row->campaign_name : '';
+            $table->editColumn('name', function ($row) {
+                return $row->name ? $row->name : '';
             });
-            $table->addColumn('project_name', function ($row) {
+            $table->addColumn('name', function ($row) {
                 return $row->project ? $row->project->name : '';
             });
 
@@ -185,7 +185,7 @@ class CampaignController extends Controller
 
             $campaigns = Campaign::whereIn('id', $campaign_ids)
                             ->where('project_id', $request->input('project_id'))
-                            ->pluck('campaign_name', 'id')
+                            ->pluck('name', 'id')
                             ->toArray();
 
             $campaigns_arr = [['id' => '', 'text' => __('messages.please_select')]];

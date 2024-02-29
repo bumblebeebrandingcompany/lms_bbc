@@ -99,7 +99,7 @@
                                     </div> -->
                                         <div class="col-md-12">
                                             <strong>{{ trans('cruds.lead.fields.campaign') }}</strong>:
-                                            {{ $lead->campaign->campaign_name ?? '' }}
+                                            {{ $lead->campaign->name ?? '' }}
                                         </div>
                                         <div class="col-md-12">
                                             <strong>{{ trans('messages.source') }}</strong>:

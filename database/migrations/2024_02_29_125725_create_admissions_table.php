@@ -11,9 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('promo', function (Blueprint $table) {
+        Schema::create('admissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->date('admission_date');
+            $table->date('admission_time');
+            $table->string('notes');
+            $table->bigInteger('stage_id');
+            $table->bigInteger('application_id');
             $table->timestamps();
         });
     }
@@ -23,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('promo');
+        Schema::dropIfExists('admissions');
     }
 };

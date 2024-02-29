@@ -10,7 +10,7 @@ class SiteVisit extends Model
 {
 
     use HasFactory;
-    public $table = 'site_visits';
+    public $table = 'sitevisits';
 
     protected $dates = [
         'created_at',
@@ -19,15 +19,15 @@ class SiteVisit extends Model
 
     ];
     protected $casts = [
-        'follow_up_date',
-        'follow_up_time',
+        'visit_date',
+        'visit_time',
         'notes',
         'lead_id',
         'user_id',
         'application_no',
     ];
     protected $fillable = [
-        'parent_stage_id',
+        'stage_id',
         'user_id',
         'notes',
         'application_no',
@@ -58,7 +58,7 @@ public function source()
 }
 public function parentStage()
 {
-    return $this->belongsTo(ParentStage::class, 'parent_stage_id');
+    return $this->belongsTo(ParentStage::class, 'stage_id');
 }
 
 public function timeline()

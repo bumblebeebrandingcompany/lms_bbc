@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('promo', function (Blueprint $table) {
+        Schema::create('sub_source', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
             $table->bigInteger('project_id'); // Add the new lead_id column
-
-            $table->bigInteger('camapign_id'); // Add the new lead_id column
-            $table->bigInteger('source_id'); // Add the new lead_id column
-
+            $table->bigInteger('campaign_id'); // Add the new lead_id column
+            $table->bigInteger('source_id');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('promo', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('subsource');
     }
 };

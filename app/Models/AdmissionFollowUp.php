@@ -28,7 +28,7 @@ class AdmissionFollowup extends Model
     }
 
     protected $fillable = [
-        'parent_stage_id'
+        'stage_id'
     ];
     public function logTimeline($lead,$description, $activityType = null,$followup)
     {

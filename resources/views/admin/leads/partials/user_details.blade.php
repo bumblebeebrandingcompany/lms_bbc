@@ -178,7 +178,7 @@
                 <li class="list-group-item">
                     <b>{{ trans('cruds.lead.fields.campaign') }}</b>
                     <a class="float-right">
-                        {{ $lead->campaign->campaign_name ?? '' }}
+                        {{ $lead->campaign->name ?? '' }}
                     </a>
                 </li>
                 <li class="list-group-item">
@@ -363,7 +363,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <input type="hidden" name="parent_stage_id" id="selected_stage_id"
+                                        <input type="hidden" name="stage_id" id="selected_stage_id"
                                             value="{{ $lead->parentstage->id ?? '' }}">
                                         <div class="form-group">
                                             <label for="child_stage_id">Select Stage:</label>
@@ -386,7 +386,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="9">
+                                        <input type="hidden" name="stage_id" value="9">
                                         {{-- <div class="form-group">
                                             <label type="select" for="user_id">clients</label>
                                             <select name="user_id" id="user_id"
@@ -442,7 +442,7 @@
                                     </div>
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="10">
+                                        <input type="hidden" name="stage_id" value="10">
 
                                         <div class="form-group">
                                             {{-- <label type="select" for="user_id">clients</label>
@@ -495,7 +495,7 @@
 
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                        <input type="hidden" name="parent_stage_id" value="15">
+                                        <input type="hidden" name="stage_id" value="15">
                                         <input type="hidden" name="stage" value="spam">
 
                                         <div class="form-group">
@@ -534,7 +534,7 @@
                                     <div>
                                         <div class="modal-body">
                                             <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                                            <input type="hidden" name="parent_stage_id" value="12">
+                                            <input type="hidden" name="stage_id" value="12">
                                             <input type="hidden" name="stage" value="not_visited">
 
                                             <div class="form-group">
@@ -559,7 +559,7 @@
                 <!-- Your follow-up content goes here -->
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="parent_stage_id"
+                    <input type="hidden" name="stage_id"
                         value="19">
 
                     <div class="form-group">
@@ -602,7 +602,7 @@
 
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="11">
+                        <input type="hidden" name="stage_id" value="11">
                         <input type="hidden" name="stage" value="site_visit_conducted">
 
                         <div class="form-group">
@@ -625,7 +625,7 @@
 
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="20">
+                        <input type="hidden" name="stage_id" value="20">
                         <input type="hidden" name="stage" value="site_visit_cancelled">
 
                         <div class="form-group">
@@ -668,7 +668,7 @@
 
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="17">
+                        <input type="hidden" name="stage_id" value="17">
                         <input type="hidden" name="stage" value="lost">
 
                         <div class="form-group">
@@ -695,7 +695,7 @@
                 <div>
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="13">
+                        <input type="hidden" name="stage_id" value="13">
                         <label for="application_no">Application Number:</label>
                         <input class="form-control" type="text" name="application_no" value="" required>
                         <label for="user_id">Select Representative:</label>
@@ -747,7 +747,7 @@
 
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="18">
+                        <input type="hidden" name="stage_id" value="18">
                         <input type="hidden" name="stage" value="future_prospect">
 
                         <div class="form-group">
@@ -773,7 +773,7 @@
                     <p> Lead ID: {{ $lead->id }}</p>
 
                     <div class="modal-body">
-                        <input type="hidden" name="parent_stage_id" value="14">
+                        <input type="hidden" name="stage_id" value="14">
                         <div class="form-group">
                             <label for="Date">Select Date </label>
                             <input type="date"
@@ -807,7 +807,7 @@
 
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="parent_stage_id" value="28">
+                    <input type="hidden" name="stage_id" value="28">
                     {{-- <div class="form-group">
                                         <label type="select" for="user_id">clients</label>
                                         <select name="user_id" id="user_id"
@@ -866,7 +866,7 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="16">
+                        <input type="hidden" name="stage_id" value="16">
                         <input type="hidden" name="stage" value="not_qualified">
                         <div class="form-group">
                             <div class="form-group">
@@ -894,7 +894,7 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="21">
+                        <input type="hidden" name="stage_id" value="21">
                         <input type="hidden" name="stage" value="rnr">
                         <div class="form-group">
                             <div class="form-group">
@@ -921,7 +921,7 @@
 
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="parent_stage_id" value="29">
+                    <input type="hidden" name="stage_id" value="29">
                     <input type="hidden" name="stage" value="admission withdrawn">
                     <div class="form-group">
                         <div class="form-group">
@@ -946,7 +946,7 @@
                 <div>
                     <div class="modal-body">
                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                        <input type="hidden" name="parent_stage_id" value="30">
+                        <input type="hidden" name="stage_id" value="30">
 
                         <label for="user_id">Select Representative:</label>
                         <select class="form-control select2 {{ $errors->has('client') ? 'is-invalid' : '' }}"
@@ -1223,7 +1223,7 @@
         }
     }
     document.addEventListener('DOMContentLoaded', function() {
-        checkParentStageId(document.getElementById('parent_stage_id'));
+        checkParentStageId(document.getElementById('stage_id'));
     });
 
     $(document).ready(function() {

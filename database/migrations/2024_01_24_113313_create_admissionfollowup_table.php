@@ -18,7 +18,7 @@ return new class extends Migration
             $table->date('follow_up_date');
             $table->time('follow_up_time');
             $table->string('notes');
-            $table->integer('parent_stage_id');
+            $table->integer('stage_id');
             $table->timestamps();
             $table->softDeletes();
         });

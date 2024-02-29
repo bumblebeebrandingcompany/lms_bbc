@@ -26,7 +26,7 @@ class StageNotes extends Model
         'stage',
         'notes',
         'lead_id',
-        'parent_stage_id',
+        'stage_id',
         'created_at',
         'updated_at',
     ];

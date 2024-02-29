@@ -12,7 +12,7 @@ class Followup extends Model
 
     protected $appends = ['is_superadmin', 'is_agency', 'is_channel_partner', 'is_channel_partner_manager','is_presales','is_frontoffice'];
 
-    public $table = 'follow_ups';
+    public $table = 'followups';
 
     protected $dates = [
         'created_at',
@@ -28,7 +28,7 @@ class Followup extends Model
     // }
 
     protected $fillable = [
-        'parent_stage_id'
+        'stage_id'
     ];
     public function logTimeline($lead,$description, $activityType = null,$followup)
     {

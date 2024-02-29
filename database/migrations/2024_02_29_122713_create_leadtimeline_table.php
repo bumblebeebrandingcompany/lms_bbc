@@ -11,8 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('notes', function (Blueprint $table) {
+        Schema::create('leadtimeline', function (Blueprint $table) {
             $table->id();
+            $table->string('activity_type');
+            $table->json('payload');
+            $table->string('discription');
+            $table->string('lead_id');
             $table->timestamps();
         });
     }
@@ -22,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('notes');
+        Schema::dropIfExists('leadtimeline');
     }
 };

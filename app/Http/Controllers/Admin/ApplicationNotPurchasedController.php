@@ -50,7 +50,7 @@ class ApplicationNotPurchasedController extends Controller
         $lead = Lead::find($request->lead_id);
 
         if ($lead) {
-            $parentStageId = $request->input('parent_stage_id');
+            $parentStageId = $request->input('stage_id');
             $applicationpurchased = new ApplicationPurchased();
             $applicationpurchased->lead_id = $lead->id;
             $applicationpurchased->who_assigned = auth()->user()->id; // Store current user_id
@@ -59,18 +59,18 @@ class ApplicationNotPurchasedController extends Controller
             $applicationpurchased->follow_up_date = $request->input('follow_up_date');
             $applicationpurchased->notes = $request->input('notes');
             $applicationpurchased->follow_up_time = $request->input('follow_up_time');
-            $applicationpurchased->parent_stage_id = $parentStageId;
+            $applicationpurchased->stage_id = $parentStageId;
             $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
             $applicationpurchased->save();
 
             // Check if $admitted->lead is not null before updating
             if ($applicationpurchased->lead) {
-                $applicationpurchased->lead->update(['parent_stage_id' => $applicationpurchased->parent_stage_id]);
+                $applicationpurchased->lead->update(['stage_id' => $applicationpurchased->stage_id]);
 
                 // Update the latest site visit as purchased
                 $latestSiteVisit = $applicationpurchased->lead->siteVisits()->latest()->first();
                 if ($latestSiteVisit) {
-                    $latestSiteVisit->update(['parent_stage_id' => $applicationpurchased->parent_stage_id]);
+                    $latestSiteVisit->update(['stage_id' => $applicationpurchased->stage_id]);
                 }
             }
 

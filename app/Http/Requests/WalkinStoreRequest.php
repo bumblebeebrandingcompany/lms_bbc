@@ -16,60 +16,26 @@ class WalkinStoreRequest extends FormRequest
     }
 
     public function rules()
-{
-    $rules = [
-        'name' => 'required|string|max:255',
-        'promo_id' => 'required|integer',
-        'parent_stage_id' => 'nullable|integer',
-    ];
-
-    if (!auth()->user()->is_superadmin) {
-        // If the user is not a superadmin, apply email and phone validation rules
-        $rules['email'] = [
-            'required',
-            'email',
-            Rule::unique('leads')->where(function ($query) {
-                $promo = $this->promo; // Access promo relationship
-                if ($promo) {
-                    return $query->whereNotNull('email')->where('promo_id', $promo->project_id);
-                }
-                return $query; // No additional conditions if promo is null
-            }),
-        ];
-        $rules['phone'] = [
-            'required',
-            Rule::unique('leads')->where(function ($query) {
-                $promo = $this->promo; // Access promo relationship
-                if ($promo) {
-                    return $query->whereNotNull('phone')->where('promo_id', $promo->project_id);
-                }
-                return $query; // No additional conditions if promo is null
-            }),
+    {
+        $sub_source_id = $this->input('sub_source_id');
+        return [
+            'name' => 'required',
+            'email' => [
+                auth()->user()->is_superadmin ? '' : 'required',
+                auth()->user()->is_superadmin ? '' : 'email',
+                Rule::unique('leads')->where(function ($query) use ($sub_source_id) {
+                    return $query->whereNotNull('email')->where('sub_source_id', $sub_source_id);
+                }),
+            ],
+            'phone' => [
+                auth()->user()->is_superadmin ? '' : 'required',
+                Rule::unique('leads')->where(function ($query) use ($sub_source_id) {
+                    return $query->whereNotNull('phone')->where('sub_source_id', $sub_source_id);
+                }),
+            ],
+            'sub_source_id' => 'required|integer',
+            'stage_id' => 'nullable|integer', // Add this line for stage_id
         ];
     }
 
-    return $rules;
-}
-
-
-
-    // public function withValidator($validator)
-    // {
-    //     $validator->after(function ($validator) {
-    //         $project_id = $this->input('project_id');
-    //         $email = $this->input('email');
-    //         $phone = $this->input('phone');
-
-    //         $existingLead = Lead::where('project_id', $project_id)
-    //             ->where(function ($query) use ($email, $phone) {
-    //                 $query->where('email', $email)->orWhere('phone', $phone);
-    //             })
-    //             ->first();
-
-    //         if ($existingLead) {
-    //             $validator->errors()->add('lead_exists', 'Lead already exists.');
-    //             // You may add more details of the existing lead to the message here
-    //         }
-    //     });
-    // }
 }

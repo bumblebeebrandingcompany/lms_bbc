@@ -86,7 +86,7 @@
                     {{ trans('cruds.lead.fields.campaign') }}
                 </th>
                 <td>
-                    {{ $lead->campaign->campaign_name ?? '' }}
+                    {{ $lead->campaign->name ?? '' }}
                 </td>
             </tr>
             <tr>
@@ -100,8 +100,8 @@
             @php
                 $lead_info = $lead->lead_info;
                 if (
-                    !empty($lead->source) && 
-                    !empty($lead->source->name_key) && 
+                    !empty($lead->source) &&
+                    !empty($lead->source->name_key) &&
                     isset($lead_info[$lead->source->name_key]) &&
                     !empty($lead_info[$lead->source->name_key])
                 ) {
@@ -109,8 +109,8 @@
                 }
 
                 if (
-                    !empty($lead->source) && 
-                    !empty($lead->source->email_key) && 
+                    !empty($lead->source) &&
+                    !empty($lead->source->email_key) &&
                     isset($lead_info[$lead->source->email_key]) &&
                     !empty($lead_info[$lead->source->email_key])
                 ) {
@@ -118,7 +118,7 @@
                 }
 
                 if (
-                    !empty($lead->source) && 
+                    !empty($lead->source) &&
                     !empty($lead->source->phone_key) &&
                     isset($lead_info[$lead->source->phone_key]) &&
                     !empty($lead_info[$lead->source->phone_key])
@@ -127,8 +127,8 @@
                 }
 
                 if (
-                    !empty($lead->source) && 
-                    !empty($lead->source->additional_email_key) && 
+                    !empty($lead->source) &&
+                    !empty($lead->source->additional_email_key) &&
                     isset($lead_info[$lead->source->additional_email_key]) &&
                     !empty($lead_info[$lead->source->additional_email_key])
                 ) {
@@ -136,7 +136,7 @@
                 }
 
                 if (
-                    !empty($lead->source) && 
+                    !empty($lead->source) &&
                     !empty($lead->source->secondary_phone_key) &&
                     isset($lead_info[$lead->source->secondary_phone_key]) &&
                     !empty($lead_info[$lead->source->secondary_phone_key])
@@ -153,7 +153,7 @@
                         {{$value}}
                     </td>
                 </tr>
-            @endforeach            
+            @endforeach
             <tr>
                 <th>
                     @lang('messages.sell_do_created_date')

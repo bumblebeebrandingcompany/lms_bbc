@@ -11,19 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('site_visits', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('notes', function (Blueprint $table) {
+            $table->id();
+            $table->bigInteger('note_list_id');
+            $table->string('note_content');
+            $table->bigInteger('stage_id');
             $table->bigInteger('lead_id');
-            $table->bigInteger('user_id');
-            $table->date('follow_up_date');
-            $table->time('follow_up_time');
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('site_visits');
+        Schema::dropIfExists('notes');
     }
 };

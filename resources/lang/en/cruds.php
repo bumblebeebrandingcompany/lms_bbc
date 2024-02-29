@@ -39,9 +39,9 @@ return [
             'deleted_at_helper'  => ' ',
         ],
     ],
-    'promo' => [
+    'subsource' => [
         'title'          => 'Promos',
-        'title_singular' => 'Promo',
+        'title_singular' => 'SubSource',
         'fields'         => [
             'id'                 => 'ID',
             'id_helper'          => ' ',
@@ -139,8 +139,8 @@ return [
         'fields'         => [
             'id'                   => 'ID',
             'id_helper'            => ' ',
-            'campaign_name'        => 'Campaign Name',
-            'campaign_name_helper' => ' ',
+            'name'        => 'Campaign Name',
+            'name_helper' => ' ',
             'start_date'           => 'Start Date',
             'start_date_helper'    => ' ',
             'source'               => 'Source',

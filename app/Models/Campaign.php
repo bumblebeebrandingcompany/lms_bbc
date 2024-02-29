@@ -16,8 +16,8 @@ class Campaign extends Model
     public $table = 'campaigns';
 
     protected $dates = [
-        'start_date',
-        'end_date',
+        // 'start_date',
+        // 'end_date',
         'created_at',
         'updated_at',
         'deleted_at',
@@ -27,16 +27,16 @@ class Campaign extends Model
         'webhook_secret',
         'outgoing_webhook',
         'outgoing_apis',
-        'campaign_name',
-        'start_date',
-        'end_date',
+        'name',
+        // 'start_date',
+        // 'end_date',
         'project_id',
         'agency_id',
         'created_at',
         'updated_at',
         'deleted_at',
     ];
-    
+
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('Y-m-d H:i:s');
@@ -51,7 +51,7 @@ class Campaign extends Model
     {
         return $this->hasMany(Source::class, 'campaign_id', 'id');
     }
-    
+
     public function getStartDateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('panel.date_format')) : null;

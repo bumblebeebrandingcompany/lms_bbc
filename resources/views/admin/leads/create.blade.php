@@ -13,8 +13,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="name" class="required">
-                        @lang('messages.name')
-                    </label>
+Name                    </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}"
                         class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
                 </div>
@@ -46,25 +45,24 @@
                     <input type="text" name="secondary_phone" id="secondary_phone_key"
                         value="{{ old('secondary_phone') }}" class="form-control input_number">
                 </div>
-                <input type="hidden" name="parent_stage_id" id="parent_stage_id" value="8">
+                <input type="hidden" name="stage_id" id="stage_id" value="8">
+
                 <div class="form-group">
-                    <label class="required" for="promo_id">{{ trans('cruds.lead.fields.project') }}</label>
+                    <label class="required" for="sub_source_id">{{ trans('cruds.lead.fields.project') }}</label>
                     <br>
                     <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
-                        name="promo_id" id="promo_id" required>
+                        name="sub_source_id" id="sub_source_id" required>
                         @foreach ($promos as $id => $entry)
                             <option value="{{ $entry->id }}"
-                                {{ old('promo_id') == $id || $promo_id == $id ? 'selected' : '' }}>
+                                {{ old('sub_source_id') == $id || $sub_source_id == $id ? 'selected' : '' }}>
                                 {{ $entry->name }}</option>
                         @endforeach
                     </select>
-                    <br>
-                    @if ($errors->has('project'))
-                        <span class="text-danger">{{ $errors->first('project') }}</span>
+                    @if($errors->has('sub_source_id'))
+                        <span class="text-danger">{{ $errors->first('sub_source_id') }}</span>
                     @endif
-                    <span class="help-block">{{ trans('cruds.lead.fields.project_helper') }}</span>
+                    <span class="help-block">Select the subsource associated with the walk-in</span>
                 </div>
-
                 <div class="form-group">
                     <label for="comments">{{ trans('messages.customer_comments') }}</label>
                     <textarea name="comments" class="form-control" id="comments" rows="2">{!! old('comments') !!}</textarea>

@@ -98,7 +98,7 @@ class User extends Authenticatable
 
     public function createdByProjects()
     {
-        return $this->hasMany(Project::class, 'created_by_id', 'id');
+        return $this->hasMany(Project::class, 'created_by', 'id');
     }
 
     public function clientProjects()

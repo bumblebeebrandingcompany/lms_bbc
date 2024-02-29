@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('sources', function (Blueprint $table) {
             $table->string('source_field1')
-                ->after('source_name')
+                ->after('name')
                 ->comment('to be used for predefined_source_field1 in outgoing webhook')
                 ->nullable();
 
@@ -37,7 +37,7 @@ return new class extends Migration
                 ->after('email_key')
                 ->comment('additional email key to get data from incoming webhook')
                 ->nullable();
-            
+
             $table->string('secondary_phone_key')
                 ->after('phone_key')
                 ->comment('secondary phone key to get data from incoming webhook')

@@ -345,8 +345,8 @@ class HomeController
                 }
             })
                 ->where(function ($q) use($project_ids, $campaign_ids) {
-                    $q->whereIn('project_id', $project_ids)
-                        ->orWhereIn('campaign_id', $campaign_ids);
+                    $q->whereIn('subsource.project_id', $project_ids)
+                        ->orWhereIn('subsource.campaign_id', $campaign_ids);
                 })
                 ->{$settings8['aggregate_function'] ?? 'count'}($settings8['aggregate_field'] ?? '*');
         }
@@ -364,7 +364,7 @@ class HomeController
             'column_class'          => 'col-md-6',
             'entries_number'        => '10',
             'fields'                => [
-                'campaign_name' => '',
+                'name' => '',
                 'start_date'    => '',
                 'source'        => '',
                 'created_at'    => '',
@@ -401,7 +401,7 @@ class HomeController
             'entries_number'        => '10',
             'fields'                => [
                 'project'      => 'name',
-                'campaign'     => 'campaign_name',
+                'campaign'     => 'name',
                 'email' => '',
                 'phone' => '',
                 'created_at'   => '',

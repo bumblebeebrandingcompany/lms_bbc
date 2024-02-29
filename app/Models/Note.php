@@ -13,7 +13,7 @@ class Note extends Model
         'note_text'
     ];
 
-    protected $fillable = ['lead_id','parent_stage_id']; // Specify the fillable attributes
+    protected $fillable = ['lead_id','stage_id']; // Specify the fillable attributes
 
 
     public function rules()

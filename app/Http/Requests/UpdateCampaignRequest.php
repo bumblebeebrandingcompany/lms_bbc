@@ -17,7 +17,7 @@ class UpdateCampaignRequest extends FormRequest
     public function rules()
     {
         return [
-            'campaign_name' => [
+            'name' => [
                 'string',
                 'required',
             ],

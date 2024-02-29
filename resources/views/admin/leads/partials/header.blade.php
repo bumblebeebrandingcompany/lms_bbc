@@ -57,7 +57,7 @@
                             <select class="search form-control" id="campaign_id">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach($campaigns as $key => $item)
-                                    <option value="{{ $item->id }}" @if(isset($filters['campaign_id']) && $filters['campaign_id'] == $item->id) selected @endif>{{ $item->campaign_name }}</option>
+                                    <option value="{{ $item->id }}" @if(isset($filters['campaign_id']) && $filters['campaign_id'] == $item->id) selected @endif>{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -75,22 +75,22 @@
                             </select>
                         </div>
                         <div class="col-md-3 promo_div">
-                            <label for="promo_id">
-                                Promo
+                            <label for="sub_source_id">
+                                SubSource
                             </label>
-                            <select class="search form-control" name="promo_id" id="promo_id">
+                            <select class="search form-control" name="sub_source_id" id="sub_source_id">
                                 <option value>{{ trans('global.all') }}</option>
-                                @foreach($promos as $promo)
-                                    <option value="{{$promo->id}}" @if(isset($filters['promo']) && $filters['promo'] == $item->id) selected @endif>{{ $promo->name }}</option>
+                                @foreach($promos as $subsource)
+                                    <option value="{{$subsource->id}}" @if(isset($filters['subsource']) && $filters['subsource'] == $item->id) selected @endif>{{ $subsource->name }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="parent_stage_id"> Stage</label>
-                            <select class="search form-control" name="parent_stage_id" id="parent_stage_id">
+                            <label for="stage_id"> Stage</label>
+                            <select class="search form-control" name="stage_id" id="stage_id">
                                 <option value="">{{ trans('global.all') }}</option>
                                 @foreach($parentStages as $parentStage)
-                                    <option value="{{$parentStage->id}}" @if(isset($filters['parent_stage_id']) && $filters['parent_stage_id'] == $parentStage->id) selected @endif>{{ $parentStage->name }}</option>
+                                    <option value="{{$parentStage->id}}" @if(isset($filters['stage_id']) && $filters['stage_id'] == $parentStage->id) selected @endif>{{ $parentStage->name }}</option>
                                 @endforeach
                             </select>
                         </div>

@@ -19,7 +19,7 @@ class SystemCalendarController extends Controller
         [
             'model'      => '\App\Models\Campaign',
             'date_field' => 'end_date',
-            'field'      => 'campaign_name',
+            'field'      => 'name',
             'prefix'     => 'Campaign Ends -',
             'suffix'     => '',
             'route'      => 'admin.campaigns.show',
@@ -27,7 +27,7 @@ class SystemCalendarController extends Controller
         [
             'model'      => '\App\Models\Campaign',
             'date_field' => 'start_date',
-            'field'      => 'campaign_name',
+            'field'      => 'name',
             'prefix'     => 'Campaign Starts -',
             'suffix'     => '',
             'route'      => 'admin.campaigns.show',

@@ -38,7 +38,7 @@
                             {{ trans('cruds.source.fields.campaign') }}
                         </th>
                         <td>
-                            {{ $source->campaign->campaign_name ?? '' }}
+                            {{ $source->campaign->name ?? '' }}
                         </td>
                     </tr>
                     <tr>
@@ -51,14 +51,14 @@
                     </tr>
                     <tr>
                         <th>
-                            {{ trans('messages.source_name') }}
+                            {{ trans('messages.name') }}
                             <i class="fas fa-info-circle" data-html="true"
                                 data-toggle="tooltip"
-                                title="{{trans('messages.source_name_help_text')}}">
+                                title="{{trans('messages.name_help_text')}}">
                             </i>
                         </th>
                         <td>
-                            {{ $source->source_name ?? '' }}
+                            {{ $source->name ?? '' }}
                         </td>
                     </tr>
                     <tr>

@@ -16,7 +16,7 @@
 
                             </th>
                             <th>
-                                {{ trans('cruds.campaign.fields.campaign_name') }}
+                                {{ trans('cruds.campaign.fields.name') }}
                             </th>
                             <th>
                                 {{ trans('cruds.campaign.fields.start_date') }}
@@ -45,7 +45,7 @@
 
                                 </td>
                                 <td>
-                                    {{ $campaign->campaign_name ?? '' }}
+                                    {{ $campaign->name ?? '' }}
                                 </td>
                                 <td>
                                     {{ $campaign->start_date ?? '' }}

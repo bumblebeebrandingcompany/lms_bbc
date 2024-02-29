@@ -64,7 +64,6 @@
         -webkit-transition: .4s;
         transition: .4s;
     }
-
     .slider:before {
         position: absolute;
         content: "";
@@ -91,7 +90,6 @@
         transform: translateX(26px);
     }
 
-    /* Rounded sliders */
     .slider.round {
         border-radius: 34px;
     }
@@ -102,7 +100,6 @@
 
     .spacer {
         height: 10px;
-        /* Adjust the height to add more or less space */
     }
 
     .saved-note {
@@ -177,6 +174,15 @@
         color: white;
     }
 
+/* Add tick mark for the selected rows */
+/* Add tick mark for the selected rows */
+.dataTables tbody tr.selected td:first-child::before {
+    content: '\2713'; /* Unicode character for checkmark */
+    font-size: 1.2em;
+    color: green; /* Change the color as desired */
+    text-align: center;
+    display: block;
+}
 
    </style>
 

@@ -10,7 +10,7 @@ use App\Models\ApplicationPurchased;
 use App\Models\Campaign;
 use App\Models\Lead;
 use App\Models\LeadTimeline;
-use App\Models\Promo;
+use App\Models\SubSource;
 use App\Models\SiteVisit;
 use App\Models\Followup;
 use App\Models\CallRecord;
@@ -24,6 +24,7 @@ use App\Models\Admitted;
 use App\Models\NoteNotInterested;
 use App\Models\User;
 
+use Gate;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -119,7 +120,7 @@ class LeadsController extends Controller
 
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application withdrawn'];
             }
-            $stageId = $request->input('parent_stage_id');
+            $stageId = $request->input('stage_id');
             $admissionName = $request->input('admission_team_name');
             $frontoffice = $request->input('supervised_by');
 
@@ -149,7 +150,7 @@ class LeadsController extends Controller
                 if ($user->is_admissionteam) {
                     $query->where('user_id', $user->id);
                 } elseif ($user->is_superadmin || $user->is_frontoffice) {
-                    $query->orWhereNull('parent_stage_id');
+                    $query->orWhereNull('stage_id');
                 }
             });
             $table = Datatables::of($query);
@@ -236,18 +237,18 @@ class LeadsController extends Controller
             });
 
             $table->addColumn('project_name', function ($row) {
-                if (isset ($row->promo_id) && $row->promo_id !== null) {
-                    $promoArray = json_decode($row->promo_id, true);
+                if (isset ($row->sub_source_id) && $row->sub_source_id !== null) {
+                    $promoArray = json_decode($row->sub_source_id, true);
                     if ($promoArray !== null && is_array($promoArray)) {
                         if (!empty ($promoArray)) {
-                            $promo = Promo::find($promoArray[0]);
-                            return $promo->project->name ?? '';
+                            $subsource = SubSource::find($promoArray[0]);
+                            return $subsource->project->name ?? '';
                         } else {
                             return 'Yet to be Updated';
                         }
                     } else {
-                        $promo = Promo::find($promoArray);
-                        return $promo->project->name ?? '';
+                        $subsource = SubSource::find($promoArray);
+                        return $subsource->project->name ?? '';
                     }
                 } else {
                     return 'Yet to be Updated';
@@ -284,18 +285,18 @@ class LeadsController extends Controller
             });
 
             $table->addColumn('campaign_campaign_name', function ($row) {
-                if (isset ($row->promo_id) && $row->promo_id !== null) {
-                    $promoArray = json_decode($row->promo_id, true);
+                if (isset ($row->sub_source_id) && $row->sub_source_id !== null) {
+                    $promoArray = json_decode($row->sub_source_id, true);
                     if ($promoArray !== null && is_array($promoArray)) {
                         if (!empty ($promoArray)) {
-                            $promo = Promo::find($promoArray[0]);
-                            return $promo->campaign->campaign_name ?? '';
+                            $subsource = SubSource::find($promoArray[0]);
+                            return $subsource->campaign->campaign_name ?? '';
                         } else {
                             return 'Yet to be Updated';
                         }
                     } else {
-                        $promo = Promo::find($promoArray);
-                        return $promo->campaign->campaign_name ?? '';
+                        $subsource = SubSource::find($promoArray);
+                        return $subsource->campaign->campaign_name ?? '';
                     }
                 } else {
                     return 'Yet to be Updated';
@@ -303,43 +304,8 @@ class LeadsController extends Controller
             });
 
             $table->addColumn('source_name', function ($row) {
-                if (isset ($row->promo_id) && $row->promo_id !== null) {
-                    $promoArray = json_decode($row->promo_id, true);
-                    if ($promoArray !== null && is_array($promoArray)) {
-                        if (!empty ($promoArray)) {
-                            $promo = Promo::find($promoArray[0]);
-                            return $promo->source->source_name ?? '';
-                        } else {
-                            return 'Yet to be Updated';
-                        }
-                    } else {
-                        $promo = Promo::find($promoArray);
-                        return $promo->source->source_name ?? '';
-                    }
-                } else {
-                    return 'Yet to be Updated';
-                }
+                return $row->source ? $row->source->name : '';
             });
-            $table->addColumn('sub_source_name', function ($row) {
-                if (isset ($row->promo_id) && $row->promo_id !== null) {
-                    $promoArray = json_decode($row->promo_id, true);
-                    if ($promoArray !== null && is_array($promoArray)) {
-                        if (!empty ($promoArray)) {
-                            $promo = Promo::find($promoArray[0]);
-                            return $promo->name ?? '';
-                        } else {
-                            return 'Yet to be Updated';
-                        }
-                    } else {
-                        $promo = Promo::find($promoArray);
-                        return $promo->name ?? '';
-                    }
-                } else {
-                    return 'Yet to be Updated';
-                }
-            });
-
-
 
             $table->addColumn('added_by', function ($row) {
                 return $row->createdBy ? $row->createdBy->name : '';
@@ -369,11 +335,11 @@ class LeadsController extends Controller
                 }
             });
 
-            $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id', 'promos']);
+            $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
 
             return $table->make(true);
         }
-        $promos = Promo::all();
+        $promos = SubSource::all();
         $projects = Project::whereIn('id', $project_ids)
             ->get();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
@@ -418,17 +384,17 @@ class LeadsController extends Controller
                     // If the user is part of the admission team, filter by user_id
                     $query->where('user_id', $user->id);
                 } elseif ($user->is_superadmin || $user->is_frontoffice) {
-                    // If the user is super admin or front office, include leads with empty parent_stage_id
-                    $query->orWhereNull('parent_stage_id');
+                    // If the user is super admin or front office, include leads with empty stage_id
+                    $query->orWhereNull('stage_id');
                 }
             });
-            $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
+            $stage_wise_leads = $query->get()->groupBy('stage_id');
             $lead_stages = Lead::getStages();
             $parentStages = ParentStage::all(); // Fetch all parent stages
             $sales = User::where('user_type', 'Presales')->get(); // Fetch all parent stages
             $frontoffice = User::where('user_type', 'Frontoffice')->get(); // Fetch all parent stages
             $admissionteams = User::where('user_type', 'Admissionteam')->get();
-            $stageId = $request->input('parent_stage_id');
+            $stageId = $request->input('stage_id');
             $admissionName = $request->input('admission_team_name');
             $front_office = $request->input('supervised_by');// Fetch all parent stages
             $query->where(function ($query) use ($lead_stage, $user, $stageId, $admissionName, $front_office) {
@@ -453,12 +419,12 @@ class LeadsController extends Controller
 
 
 
-                if ($user->is_admissionteam) {
-                    $query->where('user_id', $user->id);
-                } elseif ($user->is_superadmin || $user->is_frontoffice) {
-                    $query->orWhereNull('parent_stage_id');
-                }
-            });
+            if ($user->is_admissionteam) {
+                $query->where('user_id', $user->id);
+            } elseif ($user->is_superadmin || $user->is_frontoffice) {
+                $query->orWhereNull('parent_stage_id');
+            }
+        });
             $filters = $request->except(['view']);
             return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'admitted', 'parentStages', 'sales', 'frontoffice', 'admissionteams', 'promos'));
         }
@@ -471,34 +437,31 @@ class LeadsController extends Controller
 
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user());
-        $promos = Promo::all();
+        $promos = SubSource::all();
         $projects = Project::whereIn('id', $project_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-            ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $promo_id = request()->get('promo_id', null);
-
-        return view('admin.leads.create', compact('campaigns', 'projects', 'promo_id', 'promos'));
+        $sub_source_id = request()->get('sub_source_id', null);
+        $promos=SubSource::all();
+        return view('admin.leads.create', compact('campaigns', 'projects', 'sub_source_id','promos', 'promos'));
     }
     // Add country code to phone number if missing
-
-
-
-
-
     public function store(StoreLeadRequest $request)
     {
         $input = $request->except(['_method', '_token']);
         $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
         $input['created_by'] = auth()->user()->id;
-        $input['parent_stage_id'] = $request->input('parent_stage_id');
-        $promoIdArray = $request->input('promo_id');
+        $input['stage_id'] = $request->input('stage_id');
+        $promoIdArray = $request->input('sub_source_id');
 
-        // Convert promo_id array to JSON
+        // Convert sub_source_id array to JSON
         $promoIdJson = json_encode($promoIdArray);
         $input['user_id'] = $request->input('user_id');
+        $input['sub_source_id'] = $request->input('sub_source_id');
+
 
         // Check if a lead with the same mobile number or email already exists
         $existingLead = Lead::where(function ($query) use ($input) {
@@ -507,31 +470,31 @@ class LeadsController extends Controller
         })->first();
 
         if ($existingLead) {
-            // If lead already exists, merge the new promo_id with existing promo_id
-            $existingPromoIds = json_decode($existingLead->promo_id, true);
+            // If lead already exists, merge the new sub_source_id with existing sub_source_id
+            $existingPromoIds = json_decode($existingLead->sub_source_id, true);
 
             // Ensure existingPromoIds is an array
             if (!is_array($existingPromoIds)) {
-                $existingPromoIds = [$existingLead->promo_id];
+                $existingPromoIds = [$existingLead->sub_source_id];
             }
 
-            // Ensure new promo_id is an array
+            // Ensure new sub_source_id is an array
             $newPromoIds = is_array($promoIdArray) ? $promoIdArray : [$promoIdArray];
 
             // Merge the two arrays and remove duplicates
             $mergedPromoIds = array_values(array_unique(array_merge($existingPromoIds, $newPromoIds)));
 
-            // Convert merged promo_id array back to JSON
-            $existingLead->promo_id = json_encode($mergedPromoIds);
+            // Convert merged sub_source_id array back to JSON
+            $existingLead->sub_source_id = json_encode($mergedPromoIds);
             $existingLead->save();
-            $this->logTimeline($existingLead, 'lead_promo_updated', 'Promo IDs updated for the lead.');
+            $this->logTimeline($existingLead, 'lead_promo_updated', 'SubSource IDs updated for the lead.');
 
-            return redirect()->route('admin.leads.index')->with('success', 'Promo IDs updated for the existing lead.');
+            return redirect()->route('admin.leads.index')->with('success', 'SubSource IDs updated for the existing lead.');
         }
 
         // If no existing lead is found, proceed with creating a new lead
         $lead = Lead::create($input);
-        $lead->promo_id = $promoIdJson;
+        $lead->sub_source_id = $promoIdJson;
         $lead->ref_num = $this->util->generateLeadRefNum($lead);
         $lead->save();
         $this->logTimeline($lead, 'lead_created', 'Lead Created Successfully');
@@ -583,7 +546,7 @@ class LeadsController extends Controller
         $projects = Project::whereIn('id', $project_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-            ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $lead->load('project', 'campaign');
 
         return view('admin.leads.edit', compact('campaigns', 'lead', 'projects'));
@@ -606,14 +569,14 @@ class LeadsController extends Controller
         $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
 
         // Ensure that 'stage_id' is present in the $input array
-        $input['parent_stage_id'] = $request->input('parent_stage_id');
+        $input['stage_id'] = $request->input('stage_id');
 
-        // Log the update of 'parent_stage_id'
-        $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['parent_stage_id']}");
+        // Log the update of 'stage_id'
+        $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['stage_id']}");
 
         // Log the general update
 
-        // Update the 'parent_stage_id' directly without any authorization checks
+        // Update the 'stage_id' directly without any authorization checks
         $lead->update($input);
 
         // Assuming you have a method like storeUniqueWebhookFields
@@ -687,7 +650,7 @@ class LeadsController extends Controller
         //       })
         //       ->get();
 //     $followUps = $followUps->filter(function ($followUp) {
-//     return $followUp->parent_stage_id == 28 || $followUp->parent_stage_id == 9;
+//     return $followUp->stage_id == 28 || $followUp->stage_id == 9;
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
@@ -831,4 +794,14 @@ class LeadsController extends Controller
 
             ->sortByDesc('created_at');
     }
+    public function getLeads(Request $request)
+{
+    $phone = $request->input('phone');
+    $email = $request->input('email');
+
+    // Query the database to find leads based on phone or email
+    $leads = Lead::where('phone', $phone)->orWhere('email', $email)->get();
+
+    return response()->json($leads);
+}
 }

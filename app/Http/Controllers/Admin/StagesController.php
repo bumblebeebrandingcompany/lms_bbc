@@ -23,12 +23,12 @@ class StagesController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'parent_stage_id' => 'required|exists:parent_stages,id',
+            'stage_id' => 'required|exists:parent_stages,id',
             'selected_child_stages' => 'required|array',
         ]);
 
         $stage = new Stage([
-            'parent_stage_id' => $request->parent_stage_id,
+            'stage_id' => $request->stage_id,
             'selected_child_stages' => json_encode($request->selected_child_stages),
         ]);
 
@@ -41,13 +41,13 @@ class StagesController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'parent_stage_id' => 'required|exists:parent_stages,id',
+            'stage_id' => 'required|exists:parent_stages,id',
             'selected_child_stages' => 'required|array',
         ]);
 
         $stage = Stage::findOrFail($id);
         $stage->update([
-            'parent_stage_id' => $request->parent_stage_id,
+            'stage_id' => $request->stage_id,
             'selected_child_stages' => json_encode($request->selected_child_stages),
         ]);
 

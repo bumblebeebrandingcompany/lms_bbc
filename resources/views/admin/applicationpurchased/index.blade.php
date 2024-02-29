@@ -25,7 +25,7 @@
                     @php
                     $counter = 1;
                 @endphp
-          @foreach ($applications->where('parent_stage_id',13 ) as $applicationpurchased)
+          @foreach ($applications->where('stage_id',13 ) as $applicationpurchased)
           <td>{{ $counter++ }}</td>
           <td>
             @foreach ($lead as $leads)
