@@ -28,15 +28,13 @@ class Walkin extends Model
         'phone',
         'secondary_phone',
         'additional_email',
-        'source_id',
-        'project_id',
-        'campaign_id',
+'promo_id'
     ];
 
 
     public function leads()
     {
-        return $this->hasMany(Lead::class);
+        return $this->hasMany(Lead::class,'walkin_id');
     }
 
     public function sources()
@@ -51,5 +49,10 @@ class Walkin extends Model
     public function project()
     {
         return $this->belongsTo(Project::class, 'project_id');
+    }
+
+    public function promo()
+    {
+        return $this->belongsTo(Promo::class, 'promo_id');
     }
 }

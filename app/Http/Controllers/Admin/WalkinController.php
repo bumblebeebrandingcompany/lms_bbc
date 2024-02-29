@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\Walkin;
 use App\Utils\Util;
 use App\Models\Project;
+use App\Models\Promo;
 use App\Models\Lead;
 use App\Models\Source;
 use App\Http\Requests\WalkinStoreRequest;
@@ -57,8 +58,7 @@ class WalkinController extends Controller
         }
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user());
-        $projects = Project::whereIn('id', $project_ids)
-            ->pluck('name', 'id');
+        $promos = Promo::all();
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $project_id = request()->get('project_id', null);
@@ -66,66 +66,73 @@ class WalkinController extends Controller
         $sources = Source::whereNotIn('id', $excludedSourceIds)->get();
         $client = Clients::all();
         $leads = Lead::all();
-        $walkins=Walkin::all();
-        return view('admin.walkinform.create', compact('projects', 'project_ids', 'client', 'sources', 'campaigns', 'campaign_ids', 'project_id', 'leads','walkins'));
+        $walkins = Walkin::all();
+        return view('admin.walkinform.create', compact('promos', 'project_ids', 'client', 'sources', 'campaigns', 'campaign_ids', 'project_id', 'leads', 'walkins'));
     }
     public function store(WalkinStoreRequest $request)
     {
+        $input = $request->all();
+        \Log::info('Request Data: ' . json_encode($request->all()));
+$promo=Promo::all();
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
+            'promo_id' => 'required',
         ]);
 
         $walkin = Walkin::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
-            'source_id' => $request->input('source_id'),
-            'project_id' => $request->input('project_id'),
-            'campaign_id' => $request->input('campaign_id'),
+            // 'source_id' => $request->input('source_id'),
+            // 'project_id' => $request->input('project_id'),
+            // 'campaign_id' => $request->input('campaign_id'),
+            'promo_id' => $request->input('promo_id'),
             'additional_email' => $request->input('additional_email'),
             'secondary_phone' => $request->input('secondary_phone'),
         ]);
+        $promo_details = $request->except('_token');
 
         $lead = Lead::create([
             'walkin_id' => $walkin->id,
             'name' => $walkin->name,
             'email' => $walkin->email,
             'phone' => $walkin->phone,
-            'source_id' => $walkin->source_id,
-            'project_id' => $walkin->project_id,
-            'campaign_id' => $walkin->campaign_id,
+            // 'source_id' => $walkin->source_id,
+            // 'project_id' => $walkin->project_id,
+            // 'campaign_id' => $walkin->campaign_id,
             'parent_stage_id' => 11,
             'created_by' => auth()->user()->id,
             'additional_email' => $request->additional_email,
             'secondary_phone' => $request->secondary_phone,
+            'promo_id' => $request->promo_id,
         ]);
 
         $input = $request->except(['_method', '_token']);
-        $existingLeads = Lead::where('phone', $input['phone'])->get();
+        // $existingLeads = Lead::where('phone', $input['phone'])->get();
 
-        foreach ($existingLeads as $existingLead) {
-            // Update each existing lead with the new data
-            $existingLead->fill($input);
-            $existingLead->save();
-        }
+        // foreach ($existingLeads as $existingLead) {
+        //     // Update each existing lead with the new data
+        //     $existingLead->fill($input);
+        //     $existingLead->save();
+        // }
 
         $lead->ref_num = $this->util->generateLeadRefNum($lead);
         $lead->save();
-        $this->util->storeUniqueWebhookFields($lead);
+        // $this->util->storeUniqueWebhookFields($lead);
         $walkins=Walkin::all();
 
-        // Define $existingLeads as an empty array
-        $existingLeads = [];
+        // // Define $existingLeads as an empty array
+        // $existingLeads = [];
 
-        if ($existingLead) {
-            // You can access the 'ref_no' attribute
-            $ref_num = $existingLead->ref_num;
-            return view('admin.walkinform.index')->with(compact('existingLead', 'ref_num', 'existingLeads','walkins'));
-        } else {
-            return response()->json(['error' => 'Lead not found'], 404);
-        }
+        // if ($existingLead) {
+        //     // You can access the 'ref_no' attribute
+        //     $ref_num = $existingLead->ref_num;
+            return view('admin.walkinform.index')->with(compact( 'walkins','promo'));
+        // } else {
+        //     return response()->json(['error' => 'Lead not found'], 404);
+        // }
     }
 
 
@@ -138,10 +145,10 @@ class WalkinController extends Controller
     public function edit($id)
     {
         $walkinform = Walkin::findOrFail($id);
-$projects=Project::all();
-$lead=Lead::all();
-$campaigns=Campaign::all();
-        return view('admin.walkinform.edit', compact('walkinform','projects','lead','campaigns'));
+        $projects = Project::all();
+        $lead = Lead::all();
+        $campaigns = Campaign::all();
+        return view('admin.walkinform.edit', compact('walkinform', 'projects', 'lead', 'campaigns'));
     }
 
     public function update(Request $request, Walkin $walkinform)

@@ -16,28 +16,42 @@ class WalkinStoreRequest extends FormRequest
     }
 
     public function rules()
-    {
-        $project_id = $this->input('project_id');
+{
+    $rules = [
+        'name' => 'required|string|max:255',
+        'promo_id' => 'required|integer',
+        'parent_stage_id' => 'nullable|integer',
+    ];
 
-        return [
-            'name' => 'required',
-            'email' => [
-                auth()->user()->is_superadmin ? '' : 'required',
-                auth()->user()->is_superadmin ? '' : 'email',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('email')->where('project_id', $project_id);
-                }),
-            ],
-            'phone' => [
-                auth()->user()->is_superadmin ? '' : 'required',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('phone')->where('project_id', $project_id);
-                }),
-            ],
-            'project_id' => 'required|integer',
-            'parent_stage_id' => 'nullable|integer', // Add this line for parent_stage_id
+    if (!auth()->user()->is_superadmin) {
+        // If the user is not a superadmin, apply email and phone validation rules
+        $rules['email'] = [
+            'required',
+            'email',
+            Rule::unique('leads')->where(function ($query) {
+                $promo = $this->promo; // Access promo relationship
+                if ($promo) {
+                    return $query->whereNotNull('email')->where('promo_id', $promo->project_id);
+                }
+                return $query; // No additional conditions if promo is null
+            }),
+        ];
+        $rules['phone'] = [
+            'required',
+            Rule::unique('leads')->where(function ($query) {
+                $promo = $this->promo; // Access promo relationship
+                if ($promo) {
+                    return $query->whereNotNull('phone')->where('promo_id', $promo->project_id);
+                }
+                return $query; // No additional conditions if promo is null
+            }),
         ];
     }
+
+    return $rules;
+}
+
+
 
     // public function withValidator($validator)
     // {

@@ -296,6 +296,17 @@
                     </li>
                 @endif
                 @if (auth()->user()->is_superadmin || auth()->user()->is_client)
+                <li class="nav-item">
+                    <a href="{{ route('admin.promo.index') }}"
+                        class="nav-link {{ request()->is('admin/promo') || request()->is('admin/promo/*') ? 'active' : '' }}">
+                        <i class="fa-fw nav-icon fas fa-external-link-alt"></i>
+                        <p>
+                           Promo
+                        </p>
+                    </a>
+                </li>
+            @endif
+                @if (auth()->user()->is_superadmin || auth()->user()->is_client)
                     <li class="nav-item">
                         <a href="{{ route('admin.parent-stages.index') }}"
                             class="nav-link {{ request()->is('admin/parent-stages') || request()->is('admin/parent-stages/*') ? 'active' : '' }}">

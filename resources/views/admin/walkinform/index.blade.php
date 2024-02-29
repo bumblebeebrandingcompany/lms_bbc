@@ -56,7 +56,7 @@
                                 <td> {{ $walkin->secondary_phone }}</td>
                                 {{-- <td> {{ $walkin->project->name ?? '' }}</td> --}}
                                 {{-- <td> {{ $walkin->campaign->campaign_name ?? '' }}</td> --}}
-                                <td> {{ $walkin->sources->name ?? '' }}</td>
+                                <td> {{ $walkin->promo->source->name ?? '' }}</td>
                                 <td>
                                     @foreach ($walkin->leads as $lead)
                                         {{ $lead->createdBy->representative_name ?? '' }}

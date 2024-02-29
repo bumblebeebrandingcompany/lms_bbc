@@ -78,6 +78,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('/applications', 'ApplicationPurchasedController');
 
     Route::resource('/walkinform', 'WalkinController');
+    Route::resource('/promo', 'PromoController');
+
     Route::resource('/admission', 'AdmissionFollowUpController');
     Route::resource('/application', 'ApplicationNotPurchasedController');
      Route::resource('/admission', 'AdmissionFollowUpController');
@@ -144,6 +146,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::delete('agencies/destroy', 'AgencyController@massDestroy')->name('agencies.massDestroy');
     Route::resource('agencies', 'AgencyController');
     Route::resource('lead-activity', 'LeadActivityController');
+    Route::resource('file-import', 'FileImportController');
 
 
     // Source

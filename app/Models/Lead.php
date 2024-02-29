@@ -212,13 +212,20 @@ class Lead extends Model
     }
 
 
-public function walkin()
-{
-    return $this->hasMany(Walkin::class,'walkin_id');
-}
+    public function walkin()
+    {
+        return $this->belongsTo(Walkin::class, 'walkin_id');
+    }
     public function application()
     {
         return $this->hasOne(ApplicationPurchased::class);
     }
+    public function promo()
+    {
+        return $this->hasOne(Promo::class, 'id', 'promo_id')
+            ->select('id', 'campaign_id','project_id','source_id')
+            ->withDefault();
+    }
+
 }
 
