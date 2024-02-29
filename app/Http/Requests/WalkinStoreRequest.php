@@ -17,23 +17,23 @@ class WalkinStoreRequest extends FormRequest
 
     public function rules()
     {
-        $promo_id = $this->input('promo_id');
+        $sub_source_id = $this->input('sub_source_id');
         return [
-            'name' => 'required',
+            'father_name' => 'required',
             'email' => [
                 auth()->user()->is_superadmin ? '' : 'required',
                 auth()->user()->is_superadmin ? '' : 'email',
-                Rule::unique('leads')->where(function ($query) use ($promo_id) {
-                    return $query->whereNotNull('email')->where('promo_id', $promo_id);
+                Rule::unique('leads')->where(function ($query) use ($sub_source_id) {
+                    return $query->whereNotNull('email')->where('sub_source_id', $sub_source_id);
                 }),
             ],
             'phone' => [
                 auth()->user()->is_superadmin ? '' : 'required',
-                Rule::unique('leads')->where(function ($query) use ($promo_id) {
-                    return $query->whereNotNull('phone')->where('promo_id', $promo_id);
+                Rule::unique('leads')->where(function ($query) use ($sub_source_id) {
+                    return $query->whereNotNull('phone')->where('sub_source_id', $sub_source_id);
                 }),
             ],
-            'promo_id' => 'required|integer',
+            'sub_source_id' => 'required|integer',
             'stage_id' => 'nullable|integer', // Add this line for stage_id
         ];
     }

@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('leads', function (Blueprint $table) {
-            $table->bigInteger('promo_id'); // Add the new lead_id column
+            $table->bigInteger('sub_source_id'); // Add the new lead_id column
         });
     }
 

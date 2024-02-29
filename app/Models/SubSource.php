@@ -59,7 +59,7 @@ class SubSource extends Model
     }
     public function walkin()
     {
-        return $this->hasMany(Walkin::class, 'promo_id');
+        return $this->hasMany(Walkin::class, 'sub_source_id');
     }
 
 

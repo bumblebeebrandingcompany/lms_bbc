@@ -48,15 +48,15 @@
                             </select> --}}
 
                             <div class="form-group">
-                                <label class="required" for="promo_id">SubSource</label>
-                                <select class="form-control {{ $errors->has('promo_id') ? 'is-invalid' : '' }}" name="promo_id" id="promo_id" required>
+                                <label class="required" for="sub_source_id">SubSource</label>
+                                <select class="form-control {{ $errors->has('sub_source_id') ? 'is-invalid' : '' }}" name="sub_source_id" id="sub_source_id" required>
                                     <option value="">Select SubSource</option>
                                     @foreach($promos as $subsource)
-                                        <option value="{{ $subsource->id }}" {{ old('promo_id') == $subsource->id ? 'selected' : '' }}>{{ $subsource->name }}</option>
+                                        <option value="{{ $subsource->id }}" {{ old('sub_source_id') == $subsource->id ? 'selected' : '' }}>{{ $subsource->name }}</option>
                                     @endforeach
                                 </select>
-                                @if($errors->has('promo_id'))
-                                    <span class="text-danger">{{ $errors->first('promo_id') }}</span>
+                                @if($errors->has('sub_source_id'))
+                                    <span class="text-danger">{{ $errors->first('sub_source_id') }}</span>
                                 @endif
                                 <span class="help-block">Select the subsource associated with the walk-in</span>
                             </div>

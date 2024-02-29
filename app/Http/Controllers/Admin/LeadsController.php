@@ -12,6 +12,7 @@ use App\Models\Lead;
 use App\Models\LeadTimeline;
 use App\Models\SiteVisit;
 use App\Models\Followup;
+use App\Models\Promo;
 use App\Models\CallRecord;
 use App\Models\Project;
 use App\Models\Clients;
@@ -414,7 +415,7 @@ class LeadsController extends Controller
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
-        $project_id = request()->get('project_id', null);
+        $sub_source_id = request()->get('sub_source_id', null);
         $promos=SubSource::all();
         return view('admin.leads.create', compact('campaigns', 'projects', 'project_id','promos'));
     }
@@ -426,7 +427,7 @@ class LeadsController extends Controller
         $input['created_by'] = auth()->user()->id;
         $input['stage_id'] = $request->input('stage_id');
         $input['user_id'] = $request->input('user_id');
-        $input['promo_id'] = $request->input('promo_id');
+        $input['sub_source_id'] = $request->input('sub_source_id');
 
         $existingLeads = Lead::where('phone', $input['phone'])->get();
         $lead = Lead::all();
@@ -628,11 +629,11 @@ class LeadsController extends Controller
     {
         if ($request->ajax()) {
             $index = $request->get('index') + 1;
-            if (empty($request->get('project_id'))) {
+            if (empty($request->get('sub_source_id'))) {
                 return view('admin.leads.partials.lead_detail')
                     ->with(compact('index'));
             } else {
-                $project = Project::findOrFail($request->get('project_id'));
+                $project = Project::findOrFail($request->get('sub_source_id'));
                 $webhook_fields = $project->webhook_fields ?? [];
                 return view('admin.leads.partials.lead_detail')
                     ->with(compact('index', 'webhook_fields'));
@@ -658,10 +659,10 @@ class LeadsController extends Controller
     {
         if ($request->ajax()) {
             $lead_details = [];
-            $project_id = $request->input('project_id');
+            $sub_source_id = $request->input('sub_source_id');
             $lead_id = $request->input('lead_id');
-            $project = Project::findOrFail($project_id);
-            $webhook_fields = $project->webhook_fields ?? [];
+            $promo = Promo::findOrFail($sub_source_id);
+            $webhook_fields = $promo->webhook_fields ?? [];
             if (!empty($lead_id)) {
                 $lead = Lead::findOrFail($lead_id);
                 $lead_details = $lead->lead_info;

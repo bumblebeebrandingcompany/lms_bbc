@@ -28,7 +28,7 @@ class Walkin extends Model
         'phone',
         'secondary_phone',
         'secondary_email',
-        'promo_id'
+        'subsource_id'
     ];
 
 
@@ -39,7 +39,7 @@ class Walkin extends Model
 
     public function subsource()
     {
-        return $this->belongsTo(SubSource::class, 'promo_id');
+        return $this->belongsTo(SubSource::class, 'sub_source_id');
     }
 
 }

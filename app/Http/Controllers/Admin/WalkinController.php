@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\Promo;
 use App\Models\SubSource;
 use Illuminate\Http\Request;
 use App\Models\Walkin;
@@ -58,14 +59,14 @@ class WalkinController extends Controller
         $phone = $request->input('phone');
         $email = $request->input('email');
 
-        $promo_id = request()->get('promo_id', null);
-        $promos=SubSource::all();
+        $sub_source_id = request()->get('sub_source_id', null);
+        $subsources=SubSource::all();
         $leads = Lead::where('phone', $phone)->orWhere('email', $email)->get();
 
         $client = Clients::all();
         $leads = Lead::all();
         $walkins=Walkin::all();
-        return view('admin.walkinform.create', compact( 'leads','walkins','promos'));
+        return view('admin.walkinform.create', compact( 'leads','walkins','subsources'));
     }
 
 
@@ -73,10 +74,10 @@ class WalkinController extends Controller
     {
         try {
             $request->validate([
-                'name' => 'required|string|max:255',
+                'father_name' => 'required|string|max:255',
                 'email' => 'required|string',
                 'phone' => 'required|string|max:255',
-                'promo_id' => 'required',
+                'sub_source_id' => 'required',
             ]);
 
             // Check if lead with the same phone number or email already exists
@@ -92,24 +93,24 @@ class WalkinController extends Controller
 
             // Continue with creating a new walkin and lead
             $walkin = Walkin::create([
-                'name' => $request->input('name'),
+                'father_name' => $request->input('father_name'),
                 'email' => $request->input('email'),
                 'phone' => $request->input('phone'),
-                'promo_id' => $request->input('promo_id'),
-                'additional_email' => $request->input('additional_email'),
+                'sub_source_id' => $request->input('sub_source_id'),
+                'secondary_email' => $request->input('secondary_email'),
                 'secondary_phone' => $request->input('secondary_phone'),
             ]);
 
             $lead = Lead::create([
                 'walkin_id' => $walkin->id,
-                'name' => $walkin->name,
+                'father_name' => $walkin->father_name,
                 'email' => $walkin->email,
                 'phone' => $walkin->phone,
                 'stage_id' => 11,
                 'created_by' => auth()->user()->id,
-                'additional_email' => $request->additional_email,
+                'secondary_email' => $request->secondary_email,
                 'secondary_phone' => $request->secondary_phone,
-                'promo_id' => $request->promo_id,
+                'sub_source_id' => $request->sub_source_id,
             ]);
 
             $lead->ref_num = $this->util->generateLeadRefNum($lead);
@@ -139,20 +140,20 @@ return redirect()->back()->withErrors($e->errors(), 'storeWalkin')
     {
         $walkinform = Walkin::findOrFail($id);
          $lead=Lead::all();
-         $promos=SubSource::all();
-        return view('admin.walkinform.edit', compact('walkinform','lead','promos'));
+         $subsources=SubSource::all();
+        return view('admin.walkinform.edit', compact('walkinform','lead','subsources'));
     }
 
     public function update(Request $request, Walkin $walkinform)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'father_name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
         ]);
 
         $data = $request->only([
-            'name',
+            'father_name',
             'email',
             'phone',
             'additional_email',
