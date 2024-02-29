@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('promo', function (Blueprint $table) {
-            $table->bigInteger('project_id'); // Add the new lead_id column
-
-            $table->bigInteger('camapign_id'); // Add the new lead_id column
-            $table->bigInteger('source_id'); // Add the new lead_id column
-
+        Schema::table('leads', function (Blueprint $table) {
+            $table->bigInteger('promo_id'); // Add the new lead_id column
         });
     }
 
@@ -25,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('promo', function (Blueprint $table) {
+        Schema::table('leads', function (Blueprint $table) {
             //
         });
     }

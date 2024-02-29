@@ -22,7 +22,7 @@
                         <th width="10">
                         </th>
                         <th>
-                            {{ trans('cruds.campaign.fields.campaign_name') }}
+                            {{ trans('cruds.campaign.fields.name') }}
                         </th>
                         <th>
                             {{ trans('cruds.campaign.fields.start_date') }}
@@ -141,8 +141,8 @@
                         name: 'placeholder'
                     },
                     {
-                        data: 'campaign_name',
-                        name: 'campaign_name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'start_date',
@@ -153,7 +153,7 @@
                         name: 'end_date'
                     },
                     {
-                        data: 'project_name',
+                        data: 'name',
                         name: 'project.name'
                     },
                     {

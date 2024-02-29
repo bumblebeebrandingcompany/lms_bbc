@@ -113,7 +113,7 @@
                         <div class="col-md-12 mb-3 bg-info p-2">
                             <small>
                             Fields with predefined prefix are initial fields present in the system.<br/>
-                            <b>predefined_source_name:</b> It will take the source name. But if lead is added by channel partner it'll take channel partner name as source
+                            <b>predefined_name:</b> It will take the source name. But if lead is added by channel partner it'll take channel partner name as source
                             </small>
                         </div>
                     </div>

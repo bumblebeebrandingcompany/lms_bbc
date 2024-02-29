@@ -23,7 +23,7 @@
                 <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-walkin">
                     <thead>
                         <tr>
-                            <th width="10"></th>
+                            <th>No</th>
                             <th>Ref_num</th>
                             <th>Name</th>
                             <th>Email</th>
@@ -40,9 +40,13 @@
                         </tr>
                     </thead>
                     <tbody>
+                        @php
+                        $counter = 1;
+                    @endphp
                         @foreach ($walkins as $walkin)
                             <tr>
-                                <td width="10"></td>
+                                <td>{{ $counter++ }}</td>
+
                                 {{-- @foreach ($walkin as $lead) --}}
                                 <td>
                                     @foreach ($walkin->leads as $lead)
@@ -55,7 +59,7 @@
                                 <td> {{ $walkin->phone }}</td>
                                 <td> {{ $walkin->secondary_phone }}</td>
                                 {{-- <td> {{ $walkin->project->name ?? '' }}</td> --}}
-                                {{-- <td> {{ $walkin->campaign->campaign_name ?? '' }}</td> --}}
+                                {{-- <td> {{ $walkin->campaign->name ?? '' }}</td> --}}
                                 <td> {{ $walkin->sources->name ?? '' }}</td>
                                 <td>
                                     @foreach ($walkin->leads as $lead)

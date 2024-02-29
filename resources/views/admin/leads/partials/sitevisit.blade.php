@@ -71,14 +71,14 @@
                         <td>
                             {{ $sitevisit->lead_id }}
                         </td>
-                        <td>{{ $lead->campaign->campaign_name }}</td>
+                        <td>{{ $lead->campaign->name }}</td>
 
                         <td>{{ $sitevisit->follow_up_date }}</td>
                         <td>{{ $sitevisit->follow_up_time }}</td>
                         <td>
                             {{ $sitevisit->notes }}
                             <td style="text-align: center;">
-                                @if ($sitevisit->parent_stage_id == 10)
+                                @if ($sitevisit->stage_id == 10)
                                 @if (auth()->user()->is_client && !auth()->user()->is_frontoffice)
                                 <div
                                             style="background-color: rgb(47, 230, 236); padding: 5px; display: inline-block; border-radius: 5px;"title="Scheduled">
@@ -90,7 +90,7 @@
                                     <form action="{{ route('admin.sitevisits.reschedule', $sitevisit->id) }}" method="POST">
                                         @csrf
                                         @method('PUT')
-                                        @if ($sitevisit->parent_stage_id == 19)
+                                        @if ($sitevisit->stage_id == 19)
                                             @if (!auth()->user()->is_superadmin)
                                                 <div
                                                     style="background-color: rgb(236, 47, 220); padding: 5px; display: inline-block; border-radius: 5px;"title="Resceduled">
@@ -102,9 +102,9 @@
                                                     <i class="fas fa-check-double" style="font-size:17px"></i>
                                                 </div>
                                             @endif
-                                        @elseif (!auth()->user()->is_client && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10,13]))
+                                        @elseif (!auth()->user()->is_client && $sitevisit->lead && in_array($sitevisit->stage_id, [11, 20, 27, 10,13]))
 
-                                        @elseif (!auth()->user()->is_client &&!auth()->user()->is_frontoffice && $sitevisit->lead && $sitevisit->parent_stage_id != 20)
+                                        @elseif (!auth()->user()->is_client &&!auth()->user()->is_frontoffice && $sitevisit->lead && $sitevisit->stage_id != 20)
                                             <button type="button" class="btn btn-sm btn-warning" data-toggle="modal"
                                                 data-target="#editModal{{ $sitevisit->id }}">
                                                 Reschedule
@@ -125,7 +125,7 @@
                                                         <input type="hidden" name="lead_id" value="{{ $sitevisit->lead_id }}">
                                                         <h3 class="card-title">Lead Id : {{ $sitevisit->lead_id }}</h3>
                                                         <div class="form-group">
-                                                            <input type="hidden" name="parent_stage_id" value="10">
+                                                            <input type="hidden" name="stage_id" value="10">
                                                             @if ($errors->has('client'))
                                                                 <span class="text-danger">{{ $errors->first('client') }}</span>
                                                             @endif
@@ -167,7 +167,7 @@
                                 <form action="{{ route('admin.sitevisits.conducted', $sitevisit->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    @if ($sitevisit->parent_stage_id == 11)
+                                    @if ($sitevisit->stage_id == 11)
                                         @if (!auth()->user()->is_superadmin)
                                             <div style="background-color: green; padding: 5px; display: inline-block; border-radius: 5px;"
                                                 title="Conducted">
@@ -179,10 +179,10 @@
                                                 <i class="far fa fa-check nav-icon"></i>
                                             </div>
                                         @endif
-                                    @elseif (!auth()->user()->is_superadmin &&  $sitevisit->lead && in_array($sitevisit->parent_stage_id, [26, 27, 20, 19,13]))
+                                    @elseif (!auth()->user()->is_superadmin &&  $sitevisit->lead && in_array($sitevisit->stage_id, [26, 27, 20, 19,13]))
 
-                                    @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 11)
-                                        @if ($sitevisit->parent_stage_id != 12)
+                                    @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->stage_id != 11)
+                                        @if ($sitevisit->stage_id != 12)
                                             <!-- Add this condition to exclude Not Visited -->
                                             @if(!auth()->user()->is_client)
                                             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
@@ -230,7 +230,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <input type="hidden" name="parent_stage_id" value="11">
+                                                    <input type="hidden" name="stage_id" value="11">
                                                     <button type="submit" class="btn btn-danger">Confirm</button>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 </div>
@@ -242,7 +242,7 @@
                                 <form action="{{ route('admin.applications.store') }}" method="POST">
                                     @csrf
 
-                                    @if ($sitevisit->parent_stage_id == 13)
+                                    @if ($sitevisit->stage_id == 13)
                                         @if (!auth()->user()->is_superadmin)
                                             <div style="background-color: rgb(235, 202, 19); padding: 5px; display: inline-block; border-radius: 5px;"
                                                 title="Conducted">
@@ -254,10 +254,10 @@
                                                 <i class="	fas fa-receipt nav-icon"></i>
                                             </div>
                                         @endif
-                                    @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+                                    @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->stage_id, [26, 27, 20, 19]))
 
-                                    @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 13)
-                                        @if ($sitevisit->parent_stage_id != 12)
+                                    @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->stage_id != 13)
+                                        @if ($sitevisit->stage_id != 12)
                                             <!-- Add this condition to exclude Not Visited -->
                                             @if(!auth()->user()->is_client)
                                             <button type="button" class="btn btn-sm btn-primary" data-toggle="modal"
@@ -297,7 +297,7 @@
                                                     <br>
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <input type="hidden" name="parent_stage_id" value="13">
+                                                    <input type="hidden" name="stage_id" value="13">
                                                     <button type="submit" class="btn btn-danger">Confirm</button>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 </div>
@@ -315,17 +315,17 @@
                                         @csrf
                                         @method('PUT')
 
-                                        @if ($sitevisit->parent_stage_id == 20)
+                                        @if ($sitevisit->stage_id == 20)
                                             <div
                                                 style="background-color: rgb(240, 18, 18); padding: 5px; display: inline-block; border-radius: 5px;"title="Cancelled">
                                                 <i class="fa fa-close" style="font-size:18px"></i>
                                             </div>
                                 </div>
                                 </div>
-                            @elseif ($sitevisit->parent_stage_id != 11 && $sitevisit->parent_stage_id != 10 && $sitevisit->parent_stage_id != 19&& $sitevisit->parent_stage_id != 13)
+                            @elseif ($sitevisit->stage_id != 11 && $sitevisit->stage_id != 10 && $sitevisit->stage_id != 19&& $sitevisit->stage_id != 13)
                                 <!-- Add this condition to hide "Cancel" button if the stage is conducted or 10 -->
                                 @php
-                                    $canCancel = !auth()->user()->is_client && !auth()->user()->is_frontoffice && $sitevisit->lead && $sitevisit->parent_stage_id != 20;
+                                    $canCancel = !auth()->user()->is_client && !auth()->user()->is_frontoffice && $sitevisit->lead && $sitevisit->stage_id != 20;
                                 @endphp
                                 @if ($canCancel)
                                     <br>
@@ -347,7 +347,7 @@
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </div>
-                                            <input type="hidden" name="parent_stage_id" value="20">
+                                            <input type="hidden" name="stage_id" value="20">
 
                                             <div class="modal-body">
                                                 Are you sure you want to cancel?
@@ -366,7 +366,7 @@
                                 <form action="{{ route('admin.sitevisits.notvisited', $sitevisit->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    @if ($sitevisit->parent_stage_id == 12)
+                                    @if ($sitevisit->stage_id == 12)
                                         @if (!auth()->user()->is_superadmin && !auth()->user()->is_presales)
                                             <div class=float-center>
                                                 <div style="background-color: rgb(119, 84, 214); padding: 5px; display: inline-block; border-radius: 5px;"
@@ -381,9 +381,9 @@
                                                 </div>
                                         @endif
                                         </div>
-                                    @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19,13]))
+                                    @elseif (!auth()->user()->is_superadmin && $sitevisit->lead && in_array($sitevisit->stage_id, [11, 26, 27, 20, 19,13]))
 
-                                    @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->parent_stage_id != 12)
+                                    @elseif (!auth()->user()->is_superadmin && !auth()->user()->is_presales && $sitevisit->lead && $sitevisit->stage_id != 12)
 
                                     @if(!auth()->user()->is_client)
                                     <button type="button" class="btn btn-sm btn-danger" data-toggle="modal"
@@ -409,7 +409,7 @@
                                                     Are you sure this site visit is not visited?
                                                 </div>
                                                 <div class="modal-footer">
-                                                    <input type="hidden" name="parent_stage_id" value="12">
+                                                    <input type="hidden" name="stage_id" value="12">
                                                     <button type="submit" class="btn btn-danger">Confirm</button>
                                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                                 </div>

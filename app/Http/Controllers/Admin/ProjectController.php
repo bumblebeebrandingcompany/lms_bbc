@@ -52,7 +52,7 @@ class ProjectController extends Controller
 
             if (!$user->is_superadmin) {
                 $query = $query->where(function ($q) use($user) {
-                    $q->where('created_by_id', $user->id)
+                    $q->where('created_by', $user->id)
                         ->orWhere('client_id', $user->client_id);
                 });
             }
@@ -147,7 +147,7 @@ class ProjectController extends Controller
 
 
     // Add other project details
-    $project_details['created_by_id'] = auth()->user()->id;
+    $project_details['created_by'] = auth()->user()->id;
 
     // Create the project
     $project = Project::create($project_details);
@@ -378,7 +378,7 @@ class ProjectController extends Controller
     {
         if ($request->ajax()) {
             $campaigns = Campaign::where('project_id', $request->input('project_id'))
-                        ->pluck('campaign_name', 'id')
+                        ->pluck('name', 'id')
                         ->toArray();
 
             return view('admin.projects.partials.campaigns_dropdown')

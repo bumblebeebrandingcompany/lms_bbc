@@ -34,8 +34,8 @@ class Lead extends Model
         'predefined_cp_comments',
         'predefined_created_by',
         'predefined_created_at',
-        'predefined_source_name',
-        'predefined_campaign_name',
+        'predefined_name',
+        'predefined_name',
         'predefined_agency_name',
         'predefined_additional_email',
         'predefined_secondary_phone',
@@ -98,7 +98,7 @@ class Lead extends Model
 
     public function parentStage()
     {
-        return $this->belongsTo(ParentStage::class, 'parent_stage_id');
+        return $this->belongsTo(ParentStage::class, 'stage_id');
     }
 
     public function stage()
@@ -161,8 +161,8 @@ class Lead extends Model
     public static function getStages()
     {
 
-        $stages = Lead::whereNotNull('parent_stage_id')
-            ->pluck('parent_stage_id', )
+        $stages = Lead::whereNotNull('stage_id')
+            ->pluck('stage_id', )
             ->toArray();
         $unique_stages = array_unique($stages);
 
@@ -170,7 +170,7 @@ class Lead extends Model
         $lead_stages = [];
         foreach ($unique_stages as $stage) {
             $parentStage = ParentStage::find($stage); // Adjust the model name accordingly
-            $dataForStage = Lead::where('parent_stage_id', $stage)->get();
+            $dataForStage = Lead::where('stage_id', $stage)->get();
             $lead_stages[$stage] = [
                 'class' => $card_classes[array_rand($card_classes)],
                 'title' => $parentStage ? $parentStage->name : ucfirst(str_replace('_', ' ', $stage)),

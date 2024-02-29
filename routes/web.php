@@ -69,6 +69,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::match(['post', 'put'], '/admin/sitevisit/notvisited', 'SiteVisitController@notvisitedstage')->name('sitevisit.notvisited');
     Route::match(['post', 'put'], '/admin/sitevisit/cancel', 'SiteVisitController@cancelstage')->name('sitevisit.cancel');
 
+    // Route::get('/admin/get-leads', 'WalkinController@getLeads')->name('admin.get.leads');
 
 
     // Route::put('sitevisit/{sitevisit}', 'SiteVisitController@update')->name('admin.sitevisit.update');
@@ -78,7 +79,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('/applications', 'ApplicationPurchasedController');
 
     Route::resource('/walkinform', 'WalkinController');
-    Route::resource('/promo', 'PromoController');
+    Route::resource('/importfile', 'FileImportController');
+    Route::resource('/subsource', 'SubSourceController');
 
     Route::resource('/admission', 'AdmissionFollowUpController');
     Route::resource('/application', 'ApplicationNotPurchasedController');

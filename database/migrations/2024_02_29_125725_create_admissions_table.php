@@ -11,16 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('walkinform', function (Blueprint $table) {
+        Schema::create('admissions', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone');
-            $table->bigInteger('enquiry_id');
-            $table->bigInteger('project_id');
-            $table->string('ref_num')
-
-                ->nullable();
+            $table->date('admission_date');
+            $table->date('admission_time');
+            $table->string('notes');
+            $table->bigInteger('stage_id');
+            $table->bigInteger('application_id');
             $table->timestamps();
         });
     }
@@ -30,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('walkinform');
+        Schema::dropIfExists('admissions');
     }
 };

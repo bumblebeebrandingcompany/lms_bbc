@@ -25,7 +25,7 @@ class Util
                 if ($user->is_channel_partner) {
                     $q->whereIn('id', $cp_project_ids);
                 } else {
-                    $q->where('created_by_id', $user->id)
+                    $q->where('created_by', $user->id)
                         ->orWhere('client_id', $user->client_id);
                 }
             });
@@ -185,7 +185,7 @@ class Util
         $parentStageId = 8;
 
         $lead->ref_num = $this->generateLeadRefNum($lead);
-        $lead->parent_stage_id = 8;
+        $lead->stage_id = 8;
         $lead->save();
 
         $this->storeUniqueWebhookFields($lead);
@@ -435,18 +435,18 @@ class Util
             return $lead->created_at ?? '';
         } else if (
             !empty($field) &&
-            in_array($field, ['predefined_source_name'])
+            in_array($field, ['predefined_name'])
         ) {
             if (!empty($lead->createdBy) && $lead->createdBy->user_type == 'ChannelPartner') {
                 return 'Channel Partner';
             } else {
-                return optional($lead->source)->source_name ?? '';
+                return optional($lead->source)->name ?? '';
             }
         } else if (
             !empty($field) &&
-            in_array($field, ['predefined_campaign_name'])
+            in_array($field, ['predefined_name'])
         ) {
-            return optional($lead->campaign)->campaign_name ?? '';
+            return optional($lead->campaign)->name ?? '';
         } else if (
             !empty($field) &&
             in_array($field, ['predefined_agency_name']) &&
@@ -521,7 +521,7 @@ class Util
         if ($for_cp) {
             $sources_arr = [];
             foreach ($sources as $source) {
-                $sources_arr[$source->id] = $source->project->name . ' | ' . $source->campaign->campaign_name . ' | ' . $source->name;
+                $sources_arr[$source->id] = $source->project->name . ' | ' . $source->campaign->name . ' | ' . $source->name;
             }
             return $sources_arr;
         }

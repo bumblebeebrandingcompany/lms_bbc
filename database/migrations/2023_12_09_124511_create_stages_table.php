@@ -10,11 +10,11 @@ class CreateStagesTable extends Migration
     {
         Schema::create('stages', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('parent_stage_id');
+            $table->unsignedBigInteger('stage_id');
             $table->json('selected_child_stages');
             $table->timestamps();
 
-            $table->foreign('parent_stage_id')->references('id')->on('parent_stages')->onDelete('cascade');
+            $table->foreign('stage_id')->references('id')->on('parent_stages')->onDelete('cascade');
         });
     }
 

@@ -39,15 +39,15 @@ class NoteController extends Controller
     {
         $lead = Lead::find($request->lead_id);
         if ($lead) {
-            $parentStageId = $request->input('parent_stage_id');
+            $parentStageId = $request->input('stage_id');
             $note = new Note();
             $note->lead_id = $lead->id;
-            $note->parent_stage_id = $parentStageId;
+            $note->stage_id = $parentStageId;
             $note->note_text = $request->input('note_text');
             $note->save();
 
-            // Update the parent_stage_id in the leads table
-            $lead->parent_stage_id = $parentStageId;
+            // Update the stage_id in the leads table
+            $lead->stage_id = $parentStageId;
             $lead->save();
 
             // Log the timeline event

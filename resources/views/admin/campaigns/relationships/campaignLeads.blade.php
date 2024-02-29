@@ -54,7 +54,7 @@
                                     {{ $lead->project->name ?? '' }}
                                 </td>
                                 <td>
-                                    {{ $lead->campaign->campaign_name ?? '' }}
+                                    {{ $lead->campaign->name ?? '' }}
                                 </td>
                                 <td>
                                     <a class="btn btn-xs btn-primary" href="{{ route('admin.leads.show', $lead->id) }}">

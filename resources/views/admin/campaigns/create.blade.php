@@ -12,12 +12,12 @@
         <form method="POST" action="{{ route("admin.campaigns.store") }}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
-                <label class="required" for="campaign_name">{{ trans('cruds.campaign.fields.campaign_name') }}</label>
-                <input class="form-control {{ $errors->has('campaign_name') ? 'is-invalid' : '' }}" type="text" name="campaign_name" id="campaign_name" value="{{ old('campaign_name', '') }}" required>
-                @if($errors->has('campaign_name'))
-                    <span class="text-danger">{{ $errors->first('campaign_name') }}</span>
+                <label class="required" for="name">{{ trans('cruds.campaign.fields.name') }}</label>
+                <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" name="name" id="name" value="{{ old('name', '') }}" required>
+                @if($errors->has('name'))
+                    <span class="text-danger">{{ $errors->first('name') }}</span>
                 @endif
-                <span class="help-block">{{ trans('cruds.campaign.fields.campaign_name_helper') }}</span>
+                <span class="help-block">{{ trans('cruds.campaign.fields.name_helper') }}</span>
             </div>
             <div class="form-group">
                 <label for="start_date">{{ trans('cruds.campaign.fields.start_date') }}</label>

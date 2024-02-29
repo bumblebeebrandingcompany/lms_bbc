@@ -13,9 +13,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($followUps->where('parent_stage_id', 9) as $followUp)
+                @foreach ($followUps->where('stage_id', 9) as $followUp)
                     <tr>
-                        <td>{{ $lead->campaign->campaign_name }}</td>
+                        <td>{{ $lead->campaign->name }}</td>
                         <td>{{ $followUp->follow_up_time }}</td>
                         <td>{{ $followUp->follow_up_date }}</td>
                         <td>{{ $followUp->notes }}</td>
@@ -41,9 +41,9 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($followUps->where('parent_stage_id', 28) as $followUp)
+                @foreach ($followUps->where('stage_id', 28) as $followUp)
                     <tr>
-                        <td>{{ $lead->campaign->campaign_name }}</td>
+                        <td>{{ $lead->campaign->name }}</td>
                         <td>{{ $followUp->follow_up_time }}</td>
                         <td>{{ $followUp->follow_up_date }}</td>
                         <td>{{ $followUp->notes }}</td>

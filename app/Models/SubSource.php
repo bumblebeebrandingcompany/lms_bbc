@@ -7,11 +7,11 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Promo extends Model
+class SubSource extends Model
 {
 
 
-    public $table = 'promo';
+    public $table = 'sub_source';
 
     public static $searchable = [
         'name',
@@ -21,7 +21,7 @@ class Promo extends Model
         'name',
         'project_id',
         'campaign_id',
-        'source_id'
+        'source_id',
     ];
 
 
@@ -57,5 +57,11 @@ class Promo extends Model
     {
         return $this->belongsTo(Source::class, 'source_id');
     }
+    public function walkin()
+    {
+        return $this->hasMany(Walkin::class, 'promo_id');
+    }
+
+
 }
 

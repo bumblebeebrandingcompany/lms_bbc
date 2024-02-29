@@ -31,7 +31,7 @@
                 </label>
                 <input type="email" name="additional_email" id="additional_email_key" value="{{ old('additional_email') ?? $lead->additional_email }}" class="form-control">
             </div>
-            <input type="hidden" name="parent_stage_id" value="{{ $lead->parent_stage_id }}">
+            <input type="hidden" name="stage_id" value="{{ $lead->stage_id }}">
 
             <div class="form-group">
                 <label for="phone" @if(!auth()->user()->is_superadmin) class="required" @endif>

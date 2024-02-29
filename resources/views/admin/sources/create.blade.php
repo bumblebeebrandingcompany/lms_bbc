@@ -46,12 +46,12 @@
                 <span class="help-block">{{ trans('cruds.source.fields.name_helper') }}</span>
             </div>
             <div class="form-group">
-                <label class="required" for="source_name">{{ trans('messages.source_name') }}</label>
-                <input class="form-control {{ $errors->has('source_name') ? 'is-invalid' : '' }}" type="text" name="source_name" id="source_name" value="{{ old('source_name') }}" required>
-                @if($errors->has('source_name'))
-                    <span class="text-danger">{{ $errors->first('source_name') }}</span>
+                <label class="required" for="name">{{ trans('messages.name') }}</label>
+                <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" name="name" id="name" value="{{ old('name') }}" required>
+                @if($errors->has('name'))
+                    <span class="text-danger">{{ $errors->first('name') }}</span>
                 @endif
-                <span class="help-block">{{ trans('messages.source_name_help_text') }}</span>
+                <span class="help-block">{{ trans('messages.name_help_text') }}</span>
             </div>
             @includeIf('admin.sources.partials.custom_fields')
             <div class="form-group">

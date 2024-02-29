@@ -3,29 +3,26 @@
 <div class="row mb-2">
    <div class="col-sm-12">
         <h2>
-          Create Promo
+          Create SubSource
         </h2>
    </div>
 </div>
 <div class="card card-primary card-outline">
     <div class="card-body">
-        <form method="POST" action="{{ route("admin.promo.store") }}" enctype="multipart/form-data">
+        <form method="POST" action="{{ route("admin.subsource.store") }}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
-                <label class="required" for="project_id">{{ trans('cruds.source.fields.project') }}</label>
+                <label class="required" for="project_id">{{ trans('cruds.campaign.fields.project') }}</label>
                 <br>
-                <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
-                    name="project_id" id="project_id" required>
-                    @foreach ($projects as $id => $entry)
-                        @if ($id == 44)
-                            <option value="{{ $id }}" selected>{{ $entry }}</option>
-                        @endif
+                <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
+                    @foreach($projects as $id => $entry)
+                        <option value="{{ $id }}" {{ (old('project_id') == $id) || ($project_id == $id) ? 'selected' : '' }}>{{ $entry }}</option>
                     @endforeach
                 </select>
-                @if ($errors->has('project'))
+                <br>
+                @if($errors->has('project'))
                     <span class="text-danger">{{ $errors->first('project') }}</span>
                 @endif
-                <span class="help-block">{{ trans('cruds.source.fields.project_helper') }}</span>
             </div>
             <div class="form-group">
                 <label class="required"
@@ -33,10 +30,8 @@
                 <br>
                 <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}"
                     name="campaign_id" id="campaign_id" required>
-                    {{-- Outputting $campaigns array for debugging --}}
                     {{ var_dump($campaigns) }}
 
-                    {{-- Loop through $campaigns and exclude option with ID 12 --}}
                     @foreach ($campaigns as $id => $entry)
                         @if ($id != 12)
                             <option value="{{ $id }}"
@@ -58,7 +53,7 @@
                         name="source_id" id="source_id" required>
                     @foreach ($sources as $id => $entry)
                         @if ($id != 25)
-                            <option value="{{ $id }}" {{ old('source_id') == $id ? 'selected' : '' }}>
+                            <option value="{{ $entry->id }}" {{ old('source_id') == $id ? 'selected' : '' }}>
                                 {{ $entry->name }}
                             </option>
                         @endif
@@ -70,23 +65,13 @@
                 @endif
             </div>
             <div class="form-group">
-                <label class="required" for="name">Promo name</label>
+                <label class="required" for="name">SubSource name</label>
                 <input class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" type="text" name="name" id="name" value="{{ old('name', '') }}" required>
                 @if($errors->has('name'))
-                    <span class="text-danger">{{ $errors->first('name') }}</span>
+ 1                    <span class="text-danger">{{ $errors->first('name') }}</span>
                 @endif
-                <span class="help-block">Name of the promo</span>
+                <span class="help-block">Name of the subsource</span>
             </div>
-
-            {{-- <div class="form-group">
-                <label class="required" for="source_name">{{ trans('messages.source_name') }}</label>
-                <input class="form-control {{ $errors->has('source_name') ? 'is-invalid' : '' }}" type="text" name="source_name" id="source_name" value="{{ old('source_name') }}" required>
-                @if($errors->has('source_name'))
-                    <span class="text-danger">{{ $errors->first('source_name') }}</span>
-                @endif
-                <span class="help-block">{{ trans('messages.source_name_help_text') }}</span>
-            </div> --}}
-            {{-- @includeIf('admin.sources.partials.custom_fields') --}}
             <div class="form-group">
                 <button class="btn btn-danger" type="submit">
                     {{ trans('global.save') }}

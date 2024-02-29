@@ -91,7 +91,7 @@ class WebhookReceiverController extends Controller
 
             $lead = Lead::create($details);
             $lead->ref_num = $this->util->generateLeadRefNum($lead);
-            $lead->parent_stage_id = 8;
+            $lead->stage_id = 8;
             $lead->save();
 
             $this->util->storeUniqueWebhookFields($lead);

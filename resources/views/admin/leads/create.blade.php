@@ -13,8 +13,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="name" class="required">
-                        @lang('messages.name')
-                    </label>
+Name                    </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}"
                         class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
                 </div>
@@ -46,54 +45,21 @@
                     <input type="text" name="secondary_phone" id="secondary_phone_key"
                         value="{{ old('secondary_phone') }}" class="form-control input_number">
                 </div>
-                <input type="hidden" name="parent_stage_id" id="parent_stage_id" value="8">
+                <input type="hidden" name="stage_id" id="stage_id" value="8">
+
                 <div class="form-group">
-                    <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
-                    <br>
-                    <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
-                        name="project_id" id="project_id" required>
-                        @foreach ($projects as $id => $entry)
-                            <option value="{{ $id }}"
-                                {{ old('project_id') == $id || $project_id == $id ? 'selected' : '' }}>
-                                {{ $entry }}</option>
+                    <label class="required" for="promo_id">SubSource</label>
+                    <select class="form-control {{ $errors->has('promo_id') ? 'is-invalid' : '' }}" name="promo_id" id="promo_id" required>
+                        <option value="">Select SubSource</option>
+                        @foreach($promos as $subsource)
+                            <option value="{{ $subsource->id }}" {{ old('promo_id') == $subsource->id ? 'selected' : '' }}>{{ $subsource->name }}</option>
                         @endforeach
                     </select>
-                    <br>
-                    @if ($errors->has('project'))
-                        <span class="text-danger">{{ $errors->first('project') }}</span>
+                    @if($errors->has('promo_id'))
+                        <span class="text-danger">{{ $errors->first('promo_id') }}</span>
                     @endif
-                    <span class="help-block">{{ trans('cruds.lead.fields.project_helper') }}</span>
+                    <span class="help-block">Select the subsource associated with the walk-in</span>
                 </div>
-                @if (!auth()->user()->is_channel_partner)
-                    <div class="form-group">
-                        <label for="campaign_id">{{ trans('cruds.lead.fields.campaign') }}</label>
-                        <br>
-                        <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}"
-                            name="campaign_id" id="campaign_id">
-                            @foreach ($campaigns as $id => $entry)
-                                <option value="{{ $id }}" {{ old('campaign_id') == $id ? 'selected' : '' }}>
-                                    {{ $entry }}</option>
-                            @endforeach
-                        </select>
-                        <br>
-                        @if ($errors->has('campaign'))
-                            <span class="text-danger">{{ $errors->first('campaign') }}</span>
-                        @endif
-                        <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
-                    </div>
-                    <div class="form-group">
-                        <label class="required" for="source_id">{{ trans('messages.source') }}</label>
-                        <br>
-                        <select class="form-control select2 {{ $errors->has('source_id') ? 'is-invalid' : '' }}"
-                            name="source_id" id="source_id" required>
-
-                        </select>
-                        <br>
-                        @if ($errors->has('source_id'))
-                            <span class="text-danger">{{ $errors->first('source_id') }}</span>
-                        @endif
-                    </div>
-                @endif
                 <div class="form-group">
                     <label for="comments">{{ trans('messages.customer_comments') }}</label>
                     <textarea name="comments" class="form-control" id="comments" rows="2">{!! old('comments') !!}</textarea>

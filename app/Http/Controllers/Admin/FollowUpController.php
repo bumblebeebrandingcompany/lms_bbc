@@ -72,17 +72,17 @@ class FollowUpController extends Controller
 
         // Check if the lead is not null before proceeding
         if ($lead) {
-            $parentStageId = $request->input('parent_stage_id');
+            $parentStageId = $request->input('stage_id');
             $followup = new Followup();
             $followup->lead_id = $lead->id;
             $followup->follow_up_date = $input['follow_up_date'];
             $followup->follow_up_time = $input['follow_up_time'];
             $followup->notes = $input['notes'];
-            $followup->parent_stage_id = $parentStageId;
+            $followup->stage_id = $parentStageId;
             $followup->save();
             // Check if $followup->lead is not null before updating
             if ($followup->lead) {
-                $followup->lead->update(['parent_stage_id' => $followup->parent_stage_id]);
+                $followup->lead->update(['stage_id' => $followup->stage_id]);
             }
             return redirect()->back()->with('success', 'Form submitted successfully!');
         } else {

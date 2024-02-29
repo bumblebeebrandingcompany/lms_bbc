@@ -31,9 +31,9 @@
                         {{ trans('cruds.source.fields.name') }}
                     </th>
                     <th>
-                        {{ trans('messages.source_name') }}
+                        {{ trans('messages.name') }}
                         <i class="fas fa-info-circle" data-html="true" data-toggle="tooltip"
-                            title="{{ trans('messages.source_name_help_text') }}">
+                            title="{{ trans('messages.name_help_text') }}">
                         </i>
                     </th>
                     <th>
@@ -58,7 +58,7 @@
                             <select class="search">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach ($campaigns as $key => $item)
-                                    <option value="{{ $item->campaign_name }}">{{ $item->campaign_name }}</option>
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
                                 @endforeach
                             </select>
                         @endif
@@ -133,20 +133,20 @@
                         name: 'placeholder'
                     },
                     {
-                        data: 'project_name',
+                        data: 'name',
                         name: 'project.name'
                     },
                     {
-                        data: 'campaign_campaign_name',
-                        name: 'campaign.campaign_name'
+                        data: 'campaign_name',
+                        name: 'campaign.name'
                     },
                     {
                         data: 'name',
                         name: 'name'
                     },
                     {
-                        data: 'source_name',
-                        name: 'source_name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'actions',

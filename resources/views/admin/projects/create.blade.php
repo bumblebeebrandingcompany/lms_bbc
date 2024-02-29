@@ -21,7 +21,7 @@
                     @endif
                     <span class="help-block">{{ trans('cruds.project.fields.name_helper') }}</span>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="start_date">{{ trans('cruds.project.fields.start_date') }}</label>
                     <input class="form-control date {{ $errors->has('start_date') ? 'is-invalid' : '' }}" type="text"
                         name="start_date" id="start_date" value="{{ old('start_date') }}">
@@ -38,7 +38,7 @@
                         <span class="text-danger">{{ $errors->first('end_date') }}</span>
                     @endif
                     <span class="help-block">{{ trans('cruds.project.fields.end_date_helper') }}</span>
-                </div>
+                </div> --}}
                 <div class="form-group">
                     <label class="required" for="client_id">{{ trans('cruds.project.fields.client') }}</label>
                     <br>
@@ -54,7 +54,7 @@
                     @endif
                     <span class="help-block">{{ trans('cruds.project.fields.client_helper') }}</span>
                 </div>
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="location">{{ trans('cruds.project.fields.location') }}</label>
                     <input class="form-control {{ $errors->has('location') ? 'is-invalid' : '' }}" type="text"
                         name="location" id="location" value="{{ old('location', '') }}">
@@ -71,7 +71,7 @@
                         <span class="text-danger">{{ $errors->first('description') }}</span>
                     @endif
                     <span class="help-block">{{ trans('cruds.project.fields.description_helper') }}</span>
-                </div>
+                </div> --}}
                 <div class="form-group">
                     <div class="col-md-6">
                         <label for="essential_fields">{{ trans('cruds.project.fields.essential') }}</label>
@@ -294,11 +294,11 @@
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control" name="system_fields[1][name_key]"
-                                id="email_value" value="campaign_name" readonly>
+                                id="email_value" value="name" readonly>
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control" name="system_fields[1][name_value]"
-                                id="name_value" value="bbc_lms[lead][campaign_name]" readonly>
+                                id="name_value" value="bbc_lms[lead][name]" readonly>
                         </div>
                         <div class="col-md-1">
                             <label class="switch">
@@ -316,11 +316,11 @@
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control" name="system_fields[2][name_key]"
-                                id="email_value" value="source_name" readonly>
+                                id="email_value" value="name" readonly>
                         </div>
                         <div class="col-md-3">
                             <input type="text" class="form-control" name="system_fields[2][name_value]"
-                                id="name_value" value="bbc_lms[lead][source_name]" readonly>
+                                id="name_value" value="bbc_lms[lead][name]" readonly>
                         </div>
                         <div class="col-md-1">
                             <label class="switch">

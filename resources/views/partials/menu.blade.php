@@ -297,11 +297,11 @@
                 @endif
                 @if (auth()->user()->is_superadmin || auth()->user()->is_client)
                 <li class="nav-item">
-                    <a href="{{ route('admin.promo.index') }}"
-                        class="nav-link {{ request()->is('admin/promo') || request()->is('admin/promo/*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.subsource.index') }}"
+                        class="nav-link {{ request()->is('admin/subsource') || request()->is('admin/subsource/*') ? 'active' : '' }}">
                         <i class="fa-fw nav-icon fas fa-external-link-alt"></i>
                         <p>
-                           Promo
+                           SubSource
                         </p>
                     </a>
                 </li>
@@ -354,6 +354,17 @@
                         </a>
                     </li>
                 @endif
+                <li class="nav-item">
+                    <a href="{{ route('admin.importfile.index') }}"
+                        class="nav-link {{ request()->is('admin/importfile') || request()->is('admin/importfile/*') ? 'active' : '' }}">
+                        {{-- <i class='fas fa-walking' style='font-size:20px'></i> --}}
+                        <i class="fa-fw nav-icon fas fa-walking" style='font-size:22px'>
+                        </i>
+                        <p>
+                           CSV import
+                        </p>
+                    </a>
+                </li>
                 @if (auth()->user()->is_superadmin)
                     <li class="nav-item">
                         <a href="{{ route('admin.systemCalendar') }}"

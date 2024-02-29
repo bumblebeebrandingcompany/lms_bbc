@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('stage_notes', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('parent_stage_id');
+            $table->bigInteger('stage_id');
             $table->string('stage');
             $table->bigInteger('lead_id');
             $table->string('notes');

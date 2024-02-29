@@ -21,22 +21,22 @@ class UpdateProjectRequest extends FormRequest
                 'string',
                 'required',
             ],
-            'start_date' => [
-                'date_format:' . config('panel.date_format'),
-                'nullable',
-            ],
-            'end_date' => [
-                'date_format:' . config('panel.date_format'),
-                'nullable',
-            ],
+            // 'start_date' => [
+            //     'date_format:' . config('panel.date_format'),
+            //     'nullable',
+            // ],
+            // 'end_date' => [
+            //     'date_format:' . config('panel.date_format'),
+            //     'nullable',
+            // ],
             'client_id' => [
                 'required',
                 'integer',
             ],
-            'location' => [
-                'string',
-                'nullable',
-            ],
+            // 'location' => [
+            //     'string',
+            //     'nullable',
+            // ],
         ];
     }
 }

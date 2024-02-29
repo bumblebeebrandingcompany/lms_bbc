@@ -17,7 +17,6 @@ class StoreLeadRequest extends FormRequest
     public function rules()
     {
         $project_id = request()->input('project_id');
-
         return [
             'name' => 'required',
             'email' => [
@@ -34,7 +33,7 @@ class StoreLeadRequest extends FormRequest
                 }),
             ],
             'project_id' => 'required|integer',
-            'parent_stage_id' => 'nullable|integer', // Add this line for parent_stage_id
+            'stage_id' => 'nullable|integer', // Add this line for stage_id
         ];
     }
 

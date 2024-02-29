@@ -21,7 +21,7 @@ class ParentStage extends Model
     public function childStages()
     {
         // Adjust the relationship based on your actual column names
-        return $this->hasMany(Stage::class, 'parent_stage_id', 'id');
+        return $this->hasMany(Stage::class, 'stage_id', 'id');
     }
 
     public function getChildStagesByTag($tagId)

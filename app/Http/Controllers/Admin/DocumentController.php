@@ -45,7 +45,7 @@ class DocumentController extends Controller
 
             $query = Document::leftJoin('projects', 'documents.project_id', '=', 'projects.id')
                         ->leftJoin('users', 'documents.created_by', '=', 'users.id')
-                        ->select(['documents.id as id', 'documents.title as title', 'projects.name as project_name', 'users.name as added_by', 'documents.created_at as created_at'])
+                        ->select(['documents.id as id', 'documents.title as title', 'projects.name as name', 'users.name as added_by', 'documents.created_at as created_at'])
                         ->groupBy('documents.id');
 
             if(!empty($request->input('project_id'))) {
@@ -76,8 +76,8 @@ class DocumentController extends Controller
                 ));
             });
 
-            $table->addColumn('project_name', function ($row) {
-                return $row->project_name ? $row->project_name : '';
+            $table->addColumn('name', function ($row) {
+                return $row->name ? $row->name : '';
             });
 
             $table->addColumn('added_by', function ($row) {
@@ -88,7 +88,7 @@ class DocumentController extends Controller
                 {{@format_datetime($created_at)}}
             ');
 
-            $table->rawColumns(['actions', 'project_name', 'added_by', 'created_at', 'placeholder']);
+            $table->rawColumns(['actions', 'name', 'added_by', 'created_at', 'placeholder']);
 
             return $table->make(true);
         }

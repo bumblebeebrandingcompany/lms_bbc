@@ -22,6 +22,8 @@ use App\Models\Tag;
 use App\Models\Admitted;
 use App\Models\NoteNotInterested;
 use App\Models\User;
+use App\Models\SubSource;
+
 use Gate;
 use GuzzleHttp\Client;
 use Illuminate\Http\Request;
@@ -120,7 +122,7 @@ class LeadsController extends Controller
 
                 $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application withdrawn'];
             }
-            $stageId = $request->input('parent_stage_id');
+            $stageId = $request->input('stage_id');
             $admissionName = $request->input('admission_team_name');
             $frontoffice = $request->input('supervised_by');
 
@@ -150,7 +152,7 @@ class LeadsController extends Controller
                 if ($user->is_admissionteam) {
                     $query->where('user_id', $user->id);
                 } elseif ($user->is_superadmin || $user->is_frontoffice) {
-                    $query->orWhereNull('parent_stage_id');
+                    $query->orWhereNull('stage_id');
                 }
             });
             $table = Datatables::of($query);
@@ -236,7 +238,7 @@ class LeadsController extends Controller
                 }
             });
 
-            $table->addColumn('project_name', function ($row) {
+            $table->addColumn('name', function ($row) {
                 return $row->project ? $row->project->name : '';
             });
             $table->addColumn('parent_stage_name', function ($row) {
@@ -269,11 +271,11 @@ class LeadsController extends Controller
                 }
             });
 
-            $table->addColumn('campaign_campaign_name', function ($row) {
-                return $row->campaign ? $row->campaign->campaign_name : '';
+            $table->addColumn('campaign_name', function ($row) {
+                return $row->campaign ? $row->campaign->name : '';
             });
 
-            $table->addColumn('source_name', function ($row) {
+            $table->addColumn('name', function ($row) {
                 return $row->source ? $row->source->name : '';
             });
 
@@ -305,7 +307,7 @@ class LeadsController extends Controller
                 }
             });
 
-            $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'source_name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
+            $table->rawColumns(['actions', 'email', 'phone', 'secondary_phone', 'placeholder', 'project', 'campaign', 'created_at', 'updated_at', 'name', 'added_by', 'overall_status', 'sell_do_date', 'sell_do_time', 'sell_do_lead_id']);
 
             return $table->make(true);
         }
@@ -352,17 +354,17 @@ class LeadsController extends Controller
                     // If the user is part of the admission team, filter by user_id
                     $query->where('user_id', $user->id);
                 } elseif ($user->is_superadmin || $user->is_frontoffice) {
-                    // If the user is super admin or front office, include leads with empty parent_stage_id
-                    $query->orWhereNull('parent_stage_id');
+                    // If the user is super admin or front office, include leads with empty stage_id
+                    $query->orWhereNull('stage_id');
                 }
             });
-            $stage_wise_leads = $query->get()->groupBy('parent_stage_id');
+            $stage_wise_leads = $query->get()->groupBy('stage_id');
             $lead_stages = Lead::getStages();
             $parentStages = ParentStage::all(); // Fetch all parent stages
         $sales = User::where('user_type', 'Presales')->get(); // Fetch all parent stages
         $frontoffice = User::where('user_type', 'Frontoffice')->get(); // Fetch all parent stages
         $admissionteams = User::where('user_type', 'Admissionteam')->get();
-        $stageId = $request->input('parent_stage_id');
+        $stageId = $request->input('stage_id');
         $admissionName = $request->input('admission_team_name');
         $front_office = $request->input('supervised_by');// Fetch all parent stages
         $query->where(function ($query) use ($lead_stage, $user, $stageId, $admissionName,$front_office) {
@@ -390,7 +392,7 @@ class LeadsController extends Controller
             if ($user->is_admissionteam) {
                 $query->where('user_id', $user->id);
             } elseif ($user->is_superadmin || $user->is_frontoffice) {
-                $query->orWhereNull('parent_stage_id');
+                $query->orWhereNull('stage_id');
             }
         });
             $filters = $request->except(['view']);
@@ -410,25 +412,22 @@ class LeadsController extends Controller
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-            ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $project_id = request()->get('project_id', null);
-
-        return view('admin.leads.create', compact('campaigns', 'projects', 'project_id'));
+        $promos=SubSource::all();
+        return view('admin.leads.create', compact('campaigns', 'projects', 'project_id','promos'));
     }
     // Add country code to phone number if missing
-
-
-
-
-
     public function store(StoreLeadRequest $request)
     {
         $input = $request->except(['_method', '_token']);
         $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
         $input['created_by'] = auth()->user()->id;
-        $input['parent_stage_id'] = $request->input('parent_stage_id');
+        $input['stage_id'] = $request->input('stage_id');
         $input['user_id'] = $request->input('user_id');
+        $input['promo_id'] = $request->input('promo_id');
+
         $existingLeads = Lead::where('phone', $input['phone'])->get();
         $lead = Lead::all();
         foreach ($existingLeads as $existingLead) {
@@ -489,7 +488,7 @@ class LeadsController extends Controller
         $projects = Project::whereIn('id', $project_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-            ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
         $lead->load('project', 'campaign');
 
         return view('admin.leads.edit', compact('campaigns', 'lead', 'projects'));
@@ -512,14 +511,14 @@ class LeadsController extends Controller
         $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
 
         // Ensure that 'stage_id' is present in the $input array
-        $input['parent_stage_id'] = $request->input('parent_stage_id');
+        $input['stage_id'] = $request->input('stage_id');
 
-        // Log the update of 'parent_stage_id'
-        $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['parent_stage_id']}");
+        // Log the update of 'stage_id'
+        $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['stage_id']}");
 
         // Log the general update
 
-        // Update the 'parent_stage_id' directly without any authorization checks
+        // Update the 'stage_id' directly without any authorization checks
         $lead->update($input);
 
         // Assuming you have a method like storeUniqueWebhookFields
@@ -593,7 +592,7 @@ class LeadsController extends Controller
         //       })
         //       ->get();
 //     $followUps = $followUps->filter(function ($followUp) {
-//     return $followUp->parent_stage_id == 28 || $followUp->parent_stage_id == 9;
+//     return $followUp->stage_id == 28 || $followUp->stage_id == 9;
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
@@ -737,4 +736,14 @@ class LeadsController extends Controller
 
             ->sortByDesc('created_at');
     }
+    public function getLeads(Request $request)
+{
+    $phone = $request->input('phone');
+    $email = $request->input('email');
+
+    // Query the database to find leads based on phone or email
+    $leads = Lead::where('phone', $phone)->orWhere('email', $email)->get();
+
+    return response()->json($leads);
+}
 }

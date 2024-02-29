@@ -13,8 +13,8 @@
                     <div class="row">
                         <div class="col-md-5">
                             <div class="form-group">
-                                <label for="parent_stage_id">Parent Stage:</label>
-                                <select name="parent_stage_id" id="parent_stage_id" class="form-control" required>
+                                <label for="stage_id">Parent Stage:</label>
+                                <select name="stage_id" id="stage_id" class="form-control" required>
                                     @foreach ($parentStages as $parentStage)
                                         <option value="{{ $parentStage->id }}">{{ $parentStage->name }}</option>
                                     @endforeach
@@ -116,11 +116,11 @@
                             @method('PUT')
                             <!-- Add your form fields for editing here -->
                             <div class="form-group">
-                                <label for="parent_stage_id">Edited Parent Stage:</label>
-                                <select name="parent_stage_id" id="parent_stage_id" class="form-control" required>
+                                <label for="stage_id">Edited Parent Stage:</label>
+                                <select name="stage_id" id="stage_id" class="form-control" required>
                                     @foreach ($parentStages as $parentStage)
                                         <option value="{{ $parentStage->id }}"
-                                            {{ $parentStage->id == $stage->parent_stage_id ? 'selected' : '' }}>
+                                            {{ $parentStage->id == $stage->stage_id ? 'selected' : '' }}>
                                             {{ $parentStage->name }}</option>
                                     @endforeach
                                 </select>

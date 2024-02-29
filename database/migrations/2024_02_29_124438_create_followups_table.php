@@ -11,20 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('follow_ups', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('followups', function (Blueprint $table) {
+            $table->id();
+            $table->date('followup_date');
+            $table->date('followup_time');
+            $table->string('notes');
+            $table->bigInteger('stage_id');
             $table->bigInteger('lead_id');
-            $table->bigInteger('user_id');
-            $table->date('follow_up_date');
-            $table->time('follow_up_time');
+            $table->bigInteger('created_by');
             $table->timestamps();
-            $table->softDeletes();
-
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('follow_ups');
+        Schema::dropIfExists('followups');
     }
 };

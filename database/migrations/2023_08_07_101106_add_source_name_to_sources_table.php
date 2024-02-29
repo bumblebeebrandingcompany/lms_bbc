@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('sources', function (Blueprint $table) {
-            $table->string('source_name')
+            $table->string('name')
                 ->after('name')
-                ->comment('to be used for predefined_source_name in outgoing webhook')
+                ->comment('to be used for predefined_name in outgoing webhook')
                 ->nullable();
         });
     }

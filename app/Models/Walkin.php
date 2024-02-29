@@ -11,7 +11,7 @@ class Walkin extends Model
     use HasFactory;
     protected $appends = ['is_superadmin', 'is_client', 'is_agency', 'is_admissionteam', 'is_frontoffice',];
 
-    public $table = 'walkinform';
+    public $table = 'walkins';
 
     public static $searchable = [
         'name',
@@ -27,10 +27,8 @@ class Walkin extends Model
         'email',
         'phone',
         'secondary_phone',
-        'additional_email',
-        'source_id',
-        'project_id',
-        'campaign_id',
+        'secondary_email',
+        'promo_id'
     ];
 
 
@@ -39,17 +37,9 @@ class Walkin extends Model
         return $this->hasMany(Lead::class);
     }
 
-    public function sources()
+    public function subsource()
     {
-        return $this->belongsTo(Source::class, 'source_id');
+        return $this->belongsTo(SubSource::class, 'promo_id');
     }
 
-    public function campaign()
-    {
-        return $this->belongsTo(Campaign::class, 'campaign_id');
-    }
-    public function project()
-    {
-        return $this->belongsTo(Project::class, 'project_id');
-    }
 }

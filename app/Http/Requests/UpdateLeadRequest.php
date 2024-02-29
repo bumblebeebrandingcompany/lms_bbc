@@ -39,7 +39,7 @@ class UpdateLeadRequest extends FormRequest
                 // 'required',
                 'integer',
             ],
-            'parent_stage_id'=>['integer'],
+            'stage_id'=>['integer'],
         ];
     }
 }

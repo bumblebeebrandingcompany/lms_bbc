@@ -64,7 +64,7 @@
                             @php
                                 $counter = 1;
                             @endphp
-                            @foreach ($followUps->where('parent_stage_id', 9) as $followUp)
+                            @foreach ($followUps->where('stage_id', 9) as $followUp)
                                 <tr data-created-at="{{ $followUp->follow_up_date }}">
                                     <td>{{ $counter++ }}</td>
                                     <td>
@@ -86,7 +86,7 @@
                                     <td>
                                         @foreach ($lead as $leads)
                                             @if ($leads->id === $followUp->lead_id)
-                                                {{ $leads->campaign->campaign_name }}
+                                                {{ $leads->campaign->name }}
                                             @endif
                                         @endforeach
                                     </td>

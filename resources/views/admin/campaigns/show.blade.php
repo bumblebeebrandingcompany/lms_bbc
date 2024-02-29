@@ -3,7 +3,7 @@
 <div class="row mb-2">
    <div class="col-sm-12">
         <h2>
-            {{ trans('cruds.campaign.title') }} <span class="text-primary">{{ $campaign->campaign_name }}</span>
+            {{ trans('cruds.campaign.title') }} <span class="text-primary">{{ $campaign->name }}</span>
         </h2>
    </div>
 </div>
@@ -22,10 +22,10 @@
                 <tbody>
                     <tr>
                         <th>
-                            {{ trans('cruds.campaign.fields.campaign_name') }}
+                            {{ trans('cruds.campaign.fields.name') }}
                         </th>
                         <td>
-                            {{ $campaign->campaign_name }}
+                            {{ $campaign->name }}
                         </td>
                     </tr>
                     <tr>

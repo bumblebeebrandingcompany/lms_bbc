@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Campaign;
+use App\Models\SubSource;
 use Illuminate\Http\Request;
 use App\Models\Walkin;
 use App\Utils\Util;
@@ -13,7 +14,7 @@ use App\Models\Source;
 use App\Http\Requests\WalkinStoreRequest;
 use App\Models\Clients;
 use Illuminate\Support\Facades\View;
-
+use Illuminate\Validation\ValidationException;
 class WalkinController extends Controller
 {
     protected $util;
@@ -36,95 +37,94 @@ class WalkinController extends Controller
 
         } else {
             $walkins = $walkins->filter(function ($walkin) {
-                // Check if the 'leads' relationship is not null
                 return $walkin->leads && $walkin->leads->contains('created_by', auth()->id());
             });
         }
 
 
-        $projects = Project::pluck('name', 'id');
-        $clients = Clients::all();
-        $sources = Source::all();
-        $campaigns = Campaign::all();
+        $subsource = SubSource::pluck('name', 'id');
 
-        return view('admin.walkinform.index', compact('walkins', 'clients', 'sources', 'campaigns', 'projects'));
+        $clients = Clients::all();
+
+
+        return view('admin.walkinform.index', compact('walkins', 'clients', ));
     }
 
-    public function create()
+    public function create(Request $request)
     {
         if (!(auth()->user()->is_superadmin || auth()->user()->is_front_office)) {
             abort(403, 'Unauthorized.');
         }
-        $project_ids = $this->util->getUserProjects(auth()->user());
-        $campaign_ids = $this->util->getCampaigns(auth()->user());
-        $projects = Project::whereIn('id', $project_ids)
-            ->pluck('name', 'id');
-        $campaigns = Campaign::whereIn('id', $campaign_ids)
-            ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
-        $project_id = request()->get('project_id', null);
-        $excludedSourceIds = [13];
-        $sources = Source::whereNotIn('id', $excludedSourceIds)->get();
+        $phone = $request->input('phone');
+        $email = $request->input('email');
+
+        $promo_id = request()->get('promo_id', null);
+        $promos=SubSource::all();
+        $leads = Lead::where('phone', $phone)->orWhere('email', $email)->get();
+
         $client = Clients::all();
         $leads = Lead::all();
         $walkins=Walkin::all();
-        return view('admin.walkinform.create', compact('projects', 'project_ids', 'client', 'sources', 'campaigns', 'campaign_ids', 'project_id', 'leads','walkins'));
+        return view('admin.walkinform.create', compact( 'leads','walkins','promos'));
     }
+
+
     public function store(WalkinStoreRequest $request)
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string',
-            'phone' => 'required|string|max:255',
-        ]);
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|string',
+                'phone' => 'required|string|max:255',
+                'promo_id' => 'required',
+            ]);
 
-        $walkin = Walkin::create([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'phone' => $request->input('phone'),
-            'source_id' => $request->input('source_id'),
-            'project_id' => $request->input('project_id'),
-            'campaign_id' => $request->input('campaign_id'),
-            'additional_email' => $request->input('additional_email'),
-            'secondary_phone' => $request->input('secondary_phone'),
-        ]);
+            // Check if lead with the same phone number or email already exists
+            $existingLead = Lead::where('email', $request->email)
+                ->orWhere('phone', $request->phone)
+                ->first();
 
-        $lead = Lead::create([
-            'walkin_id' => $walkin->id,
-            'name' => $walkin->name,
-            'email' => $walkin->email,
-            'phone' => $walkin->phone,
-            'source_id' => $walkin->source_id,
-            'project_id' => $walkin->project_id,
-            'campaign_id' => $walkin->campaign_id,
-            'parent_stage_id' => 11,
-            'created_by' => auth()->user()->id,
-            'additional_email' => $request->additional_email,
-            'secondary_phone' => $request->secondary_phone,
-        ]);
+            if ($existingLead) {
+                // If lead exists, throw validation exception with custom message
+                throw ValidationException::withMessages(['lead_exists' => 'Lead already exists.'])
+                    ->errorBag('storeWalkin');
+            }
 
-        $input = $request->except(['_method', '_token']);
-        $existingLeads = Lead::where('phone', $input['phone'])->get();
+            // Continue with creating a new walkin and lead
+            $walkin = Walkin::create([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'phone' => $request->input('phone'),
+                'promo_id' => $request->input('promo_id'),
+                'additional_email' => $request->input('additional_email'),
+                'secondary_phone' => $request->input('secondary_phone'),
+            ]);
 
-        foreach ($existingLeads as $existingLead) {
-            // Update each existing lead with the new data
-            $existingLead->fill($input);
-            $existingLead->save();
-        }
+            $lead = Lead::create([
+                'walkin_id' => $walkin->id,
+                'name' => $walkin->name,
+                'email' => $walkin->email,
+                'phone' => $walkin->phone,
+                'stage_id' => 11,
+                'created_by' => auth()->user()->id,
+                'additional_email' => $request->additional_email,
+                'secondary_phone' => $request->secondary_phone,
+                'promo_id' => $request->promo_id,
+            ]);
 
-        $lead->ref_num = $this->util->generateLeadRefNum($lead);
-        $lead->save();
-        $this->util->storeUniqueWebhookFields($lead);
-        $walkins=Walkin::all();
+            $lead->ref_num = $this->util->generateLeadRefNum($lead);
+            $lead->save();
 
-        // Define $existingLeads as an empty array
-        $existingLeads = [];
+            $walkins = Walkin::all();
+            $subsource = SubSource::all();
 
-        if ($existingLead) {
-            // You can access the 'ref_no' attribute
-            $ref_num = $existingLead->ref_num;
-            return view('admin.walkinform.index')->with(compact('existingLead', 'ref_num', 'existingLeads','walkins'));
-        } else {
-            return response()->json(['error' => 'Lead not found'], 404);
+            return view('admin.walkinform.index')->with(compact('walkins', 'subsource'));
+        } catch (ValidationException $e) {
+            // Catch the validation exception and redirect back with errors and existing lead reference number
+          // Inside the catch block
+return redirect()->back()->withErrors($e->errors(), 'storeWalkin')
+    ->with(['existingLeadRefNum' => $existingLead->ref_num ?? null]);
+
         }
     }
 
@@ -138,10 +138,9 @@ class WalkinController extends Controller
     public function edit($id)
     {
         $walkinform = Walkin::findOrFail($id);
-$projects=Project::all();
-$lead=Lead::all();
-$campaigns=Campaign::all();
-        return view('admin.walkinform.edit', compact('walkinform','projects','lead','campaigns'));
+         $lead=Lead::all();
+         $promos=SubSource::all();
+        return view('admin.walkinform.edit', compact('walkinform','lead','promos'));
     }
 
     public function update(Request $request, Walkin $walkinform)
@@ -150,57 +149,27 @@ $campaigns=Campaign::all();
             'name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
-
         ]);
 
         $data = $request->only([
             'name',
             'email',
             'phone',
-            'source_id',
-            'project_id',
-            'campaign_id',
             'additional_email',
             'secondary_phone',
         ]);
 
         $walkinform->update($data);
-
         if ($walkinform->leads()->exists()) {
             $lead = $walkinform->leads()->first();
-
             $lead->update($data);
-
             $this->util->storeUniqueWebhookFields($lead);
         }
 
         return redirect()->route('admin.walkinform.index')->with('success', 'Form updated successfully');
     }
 
-    public function getLeadDetailsRows(Request $request)
-    {
-        if ($request->ajax()) {
 
-            $lead_details = [];
-            $project_id = $request->input('project_id');
-            $lead_id = $request->input('lead_id');
-            $project = Project::findOrFail($project_id);
-            $webhook_fields = $project->webhook_fields ?? [];
-
-            if (!empty($lead_id)) {
-                $lead = Lead::findOrFail($lead_id);
-                $lead_details = $lead->lead_info;
-            }
-            $html = View::make('admin.leads.partials.lead_details_rows')
-                ->with(compact('webhook_fields', 'lead_details'))
-                ->render();
-
-            return [
-                'html' => $html,
-                'count' => !empty($webhook_fields) ? count($webhook_fields) - 1 : 0
-            ];
-        }
-    }
     public function getLeadDetailsKeyValuePair($lead_details_arr)
     {
         if (!empty($lead_details_arr)) {
@@ -220,5 +189,27 @@ $campaigns=Campaign::all();
         $walkinform->delete();
         return redirect()->route('admin.walkinform.index')->with('success', 'Walkin deleted successfully');
     }
+    // Inside your WalkinController
+public function checkDuplicate(Request $request)
+{
+    $phoneExists = Walkin::where('phone', $request->input('phone'))->exists();
+    $emailExists = Walkin::where('email', $request->input('email'))->exists();
+
+    return response()->json([
+        'duplicatePhone' => $phoneExists,
+        'duplicateEmail' => $emailExists,
+    ]);
+}
+public function getLeads(Request $request)
+{
+    $phone = $request->input('phone');
+    $email = $request->input('email');
+
+    // Query the database to find leads based on phone or email
+    $leads = Lead::where('phone', $phone)->orWhere('email', $email)->get();
+    return response()->json($leads);
+}
+
+
 }
 

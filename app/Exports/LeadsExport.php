@@ -45,16 +45,20 @@ class LeadsExport implements FromCollection, WithMapping, WithHeadings, ShouldAu
             // $row->sell_do_stage,
             // $row->sell_do_lead_id,
             $row->project ? $row->project->name : '',
-            $row->campaign ? $row->campaign->campaign_name : '',
+            $row->campaign ? $row->campaign->name : '',
             $row->source ? $row->source->name : '',
             $row->comments,
-            // $row->cp_comments,
             $row->createdBy ? $row->createdBy->name : '',
+            $row->created_at ? $row->created_at : '',
+
+            $row->parentStage ? $row->parentStage->name : '',
+            $row->application && $row->application->user ? $row->application->user->representative_name : '',
+            $row->application && $row->application->users ? $row->application->users->representative_name : '',
             Carbon::parse($row->created_at)->toDayDateTimeString(),
         ];
 
         if(
-            isset($this->additional_columns) && 
+            isset($this->additional_columns) &&
             !empty($this->additional_columns) &&
             !empty($row->lead_info)
         ) {
@@ -87,7 +91,15 @@ class LeadsExport implements FromCollection, WithMapping, WithHeadings, ShouldAu
             __('messages.customer_comments'),
             // __('messages.cp_comments'),
             __('messages.added_by'),
-            __('messages.created_at')
+
+            __('messages.created_at'),
+            __('Stage'),
+            __('Supervised by'),
+            __('Admission Team'),
+
+
+
+
         ];
 
         if(isset($this->additional_columns) && !empty($this->additional_columns)) {
@@ -97,3 +109,6 @@ class LeadsExport implements FromCollection, WithMapping, WithHeadings, ShouldAu
         return $headings_arr;
     }
 }
+
+
+

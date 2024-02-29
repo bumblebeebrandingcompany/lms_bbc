@@ -11,7 +11,6 @@
                     <form action="{{ route('admin.walkinform.update', [$walkinform->id]) }}" method="POST">
                         @csrf
                         @method('PUT')
-
                         <div class="form-group">
                             <label for="name">Name:</label>
                             <input type="text" name="name" class="form-control" value="{{ $walkinform->name }}"
@@ -37,7 +36,7 @@
                             <input type="text" name="secondary_phone" class="form-control"
                                 value="{{ $walkinform->secondary_phone }}">
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
                             <br>
                             <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
@@ -46,10 +45,22 @@
                                         {{ $entry->name }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </select> --}}
 
-                            <br>
-                            @if($errors->has('project'))
+                            <div class="form-group">
+                                <label class="required" for="promo_id">SubSource</label>
+                                <select class="form-control {{ $errors->has('promo_id') ? 'is-invalid' : '' }}" name="promo_id" id="promo_id" required>
+                                    <option value="">Select SubSource</option>
+                                    @foreach($promos as $subsource)
+                                        <option value="{{ $subsource->id }}" {{ old('promo_id') == $subsource->id ? 'selected' : '' }}>{{ $subsource->name }}</option>
+                                    @endforeach
+                                </select>
+                                @if($errors->has('promo_id'))
+                                    <span class="text-danger">{{ $errors->first('promo_id') }}</span>
+                                @endif
+                                <span class="help-block">Select the subsource associated with the walk-in</span>
+                            </div>
+                            {{-- @if($errors->has('project'))
                                 <span class="text-danger">{{ $errors->first('project') }}</span>
                             @endif
                             <span class="help-block">{{ trans('cruds.lead.fields.project_helper') }}</span>
@@ -79,7 +90,7 @@
                             @if ($errors->has('source_id'))
                                 <span class="text-danger">{{ $errors->first('source_id') }}</span>
                             @endif
-                        </div>
+                        </div> --}}
 
                         <input type="hidden" name="comments" class="form-control" value= "Direct Walk-in attended"
                             required>
