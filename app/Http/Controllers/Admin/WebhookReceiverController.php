@@ -80,7 +80,7 @@ class WebhookReceiverController extends Controller
                 'name' => ($req_data['lead']['first_name'] ?? '') . ' ' . ($req_data['lead']['last_name'] ?? ''),
                 'email' => $req_data['lead']['email'] ?? null,
                 'phone' => $req_data['bbc_lms']['lead']['phone'] ?? null,
-                'additional_email' => $req_data['payload']['secondary_emails'][0] ?? null,
+                'secondary_email' => $req_data['payload']['secondary_emails'][0] ?? null,
                 'secondary_phone' => $req_data['payload']['secondary_phones'][0] ?? null,
                 'sell_do_lead_id' => $req_data['lead_id'] ?? null,
                 'sell_do_is_exist' => 0,

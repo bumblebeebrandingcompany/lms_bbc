@@ -197,7 +197,7 @@ class Util
             'source_id' => $source->id,
             'name' => $name ?? '',
             'email' => $email ?? '',
-            'additional_email' => $additionalEmail ?? '',
+            'secondary_email' => $additionalEmail ?? '',
             'phone' => $phone ?? '',
             'secondary_phone' => $secondaryPhone ?? '',
             'project_id' => $source->project_id,
@@ -486,9 +486,9 @@ class Util
         } else if (
             !empty($field) &&
             in_array($field, ['predefined_additional_email']) &&
-            !empty($lead->additional_email)
+            !empty($lead->secondary_email)
         ) {
-            return $lead->additional_email ?? '';
+            return $lead->secondary_email ?? '';
         } else if (
             !empty($field) &&
             in_array($field, ['predefined_secondary_phone']) &&

@@ -92,10 +92,10 @@
                 {{-- <li class="list-group-item">
                 <b>@lang('messages.additional_email_key')</b>
                 <a class="float-right">
-                    @if (auth()->user()->is_channel_partner_manager && !empty($lead->additional_email))
-                        {{ maskEmail($lead->additional_email) }}
+                    @if (auth()->user()->is_channel_partner_manager && !empty($lead->secondary_email))
+                        {{ maskEmail($lead->secondary_email) }}
                     @else
-                        {{ $lead->additional_email ?? '' }}
+                        {{ $lead->secondary_email ?? '' }}
                     @endif
                 </a>
             </li> --}}
@@ -104,17 +104,17 @@
                     <a class="float-right">
 
                         <span class="value-container">
-                            @if (!$errors->has('additional_email'))
+                            @if (!$errors->has('secondary_email'))
                                 <span class="display-value">
-                                    {{ $lead->additional_email }}
+                                    {{ $lead->secondary_email }}
                                 </span>
                             @endif
-                            <input type="email" name="additional_email" class="edit-field"
+                            <input type="email" name="secondary_email" class="edit-field"
                                 placeholder="Enter additional mail"
-                                style="{{ $errors->has('additional_email') ? '' : 'display:none;' }}"
-                                value="{{ old('additional_email') }}">
+                                style="{{ $errors->has('secondary_email') ? '' : 'display:none;' }}"
+                                value="{{ old('secondary_email') }}">
                         </span>
-                        @error('additional_email')
+                        @error('secondary_email')
                             <div class="text-danger">{{ $message }}</div>
                             <script>
                                 // Show save button when there is an error
@@ -1095,26 +1095,27 @@
         var fieldName = $(this).attr('name');
         var updatedValue = $(this).siblings('.edit-field').val();
 
-        // Perform validation for each field
-        switch (fieldName) {
-            case 'additional_email':
-                if (!isValidEmail(updatedValue)) {
-                    isValid = false;
-                    $('.error-message').text('Invalid email address.');
-                }
-                break;
-            case 'secondary_phone':
-                if (!isValidPhoneNumber(updatedValue)) {
-                    isValid = false;
-                    $('.error-message').text(
-                        'Invalid phone number (10 digits required).');
-                }
-                break;
-            case 'intake_year':
-                // Add validation logic if needed
-                break;
-            case 'grade_enquired':
-                break;
+                    // Perform validation for each field
+                    switch (fieldName) {
+                        case 'secondary_email':
+                            if (!isValidEmail(updatedValue)) {
+                                isValid = false;
+                                $('.error-message').text('Invalid email address.');
+                            }
+                            break;
+                        case 'secondary_phone':
+                            if (!isValidPhoneNumber(updatedValue)) {
+                                isValid = false;
+                                $('.error-message').text(
+                                    'Invalid phone number (10 digits required).');
+                            }
+                            break;
+                        case 'intake_year':
+                            // Add validation logic if needed
+                            break;
+                        case 'grade_enquired':
+                            // Add validation logic if needed
+                            break;
 
             case 'previous_school':
                 // Add validation logic if needed

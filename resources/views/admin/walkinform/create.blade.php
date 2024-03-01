@@ -15,8 +15,8 @@
                         @csrf
 
                         <div class="form-group" class="required">
-                            <label for="name">Name:</label>
-                            <input type="text" name="name" class="form-control" required>
+                            <label for="father_name">Name:</label>
+                            <input type="text" name="father_name" class="form-control" required>
                         </div>
 
                         <div class="form-group" class="required">
@@ -34,8 +34,8 @@
                             <input type="email" name="email" class="form-control" value="{{ old('email') ? old('email') : $email ?? '' }}" required>
                         </div>
                         <div class="form-group" class="required">
-                            <label for="additional_email">Additional Email:</label>
-                            <input type="email" name="additional_email" class="form-control" value="{{ old('additional_email') ? old('additional_email') : $additional_email ?? '' }}" required>
+                            <label for="email">Additional Email:</label>
+                            <input type="email" name="secondary_email" class="form-control" value="{{ old('secondary_email') ? old('secondary_email') : $secondary_email ?? '' }}" required>
                         </div>
 
                         <input type="hidden" name="comments" class="form-control" value= "Direct Walk-in attended"
@@ -45,7 +45,7 @@
                             <label class="required" for="sub_source_id">SubSource</label>
                             <select class="form-control {{ $errors->has('sub_source_id') ? 'is-invalid' : '' }}" name="sub_source_id" id="sub_source_id" required>
                                 <option value="">Select SubSource</option>
-                                @foreach($promos as $subsource)
+                                @foreach($subsources as $subsource)
                                     <option value="{{ $subsource->id }}" {{ old('sub_source_id') == $subsource->id ? 'selected' : '' }}>{{ $subsource->name }}</option>
                                 @endforeach
                             </select>

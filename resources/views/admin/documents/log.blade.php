@@ -48,14 +48,14 @@
                                                     @if(!empty($activity->lead->ref_num))
                                                         (<code><small>{{$activity->lead->ref_num ?? ''}}</small></code>)
                                                     @endif
-                                                    @if(!empty($activity->lead) && (!empty($activity->lead->email) || !empty($activity->lead->additional_email)))
+                                                    @if(!empty($activity->lead) && (!empty($activity->lead->email) || !empty($activity->lead->secondary_email)))
                                                         <br>
                                                         {{$activity->lead->email ?? ''}}
-                                                        @if(!empty($activity->lead->additional_email))
+                                                        @if(!empty($activity->lead->secondary_email))
                                                             @if(!empty($activity->lead->email))
                                                                 {{'/'}}
                                                             @endif
-                                                            {{$activity->lead->additional_email}}
+                                                            {{$activity->lead->secondary_email}}
                                                         @endif
                                                     @endif
                                                 </td>

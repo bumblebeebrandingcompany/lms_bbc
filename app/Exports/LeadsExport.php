@@ -35,7 +35,7 @@ class LeadsExport implements FromCollection, WithMapping, WithHeadings, ShouldAu
             $row->ref_num,
             $row->name,
             $row->email,
-            $row->additional_email,
+            $row->secondary_email,
             $row->phone,
             $row->secondary_phone,
             // $row->sell_do_is_exist ? 'Duplicate' : 'New',

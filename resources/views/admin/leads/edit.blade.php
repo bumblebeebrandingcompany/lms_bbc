@@ -29,7 +29,7 @@
                 <label for="additional_email_key">
                     @lang('messages.additional_email_key')
                 </label>
-                <input type="email" name="additional_email" id="additional_email_key" value="{{ old('additional_email') ?? $lead->additional_email }}" class="form-control">
+                <input type="email" name="secondary_email" id="additional_email_key" value="{{ old('secondary_email') ?? $lead->secondary_email }}" class="form-control">
             </div>
             <input type="hidden" name="stage_id" value="{{ $lead->stage_id }}">
 

@@ -36,7 +36,7 @@
                                 </tr>
                                 <tr>
                                     <th>Secondary Email</th>
-                                    <td>{{ $walkin->additional_email ?? '' }}</td>
+                                    <td>{{ $walkin->secondary_email ?? '' }}</td>
                                 </tr>
                                 <tr>
                                     <th>Phone</th>

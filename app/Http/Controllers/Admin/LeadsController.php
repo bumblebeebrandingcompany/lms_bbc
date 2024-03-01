@@ -376,7 +376,7 @@ class LeadsController extends Controller
                             ->orWhere('ref_num', 'like', "%" . $search_term . "%")
                             ->orWhere('sell_do_lead_id', 'like', "%" . $search_term . "%")
                             ->orWhere('email', 'like', "%" . $search_term . "%")
-                            ->orWhere('additional_email', 'like', "%" . $search_term . "%")
+                            ->orWhere('secondary_email', 'like', "%" . $search_term . "%")
                             ->orWhere('phone', 'like', "%" . $search_term . "%")
                             ->orWhere('secondary_phone', 'like', "%" . $search_term . "%");
                     });
@@ -488,10 +488,8 @@ class LeadsController extends Controller
         $subsources = SubSource::all();
         $projects = Project::whereIn('id', $project_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
-
         $sub_source_id = request()->get('sub_source_id', null);
         $subsources = SubSource::all();
         return view('admin.leads.create', compact('campaigns', 'projects', 'sub_source_id', 'subsources', 'subsources'));
@@ -544,15 +542,15 @@ class LeadsController extends Controller
 
         // Update source and campaign for the new lead if necessary
         if (auth()->user()->is_channel_partner) {
-            $source = Source::where('is_cp_source', 1)
-                ->where('project_id', $input['project_id'])
-                ->first();
+            // $source = Source::where('is_cp_source', 1)
+            //     ->where('project_id', $input['project_id'])
+            //     ->first();
 
-            if (!empty($source)) {
-                $lead->source_id = $source->id;
-                $lead->campaign = $source->campaign;
-                $lead->save();
-            }
+            // if (!empty($source)) {
+                // $lead->source_id = $source->id;
+                // $lead->campaign = $source->campaign;
+            //     $lead->save();
+            // }
 
             $this->util->storeUniqueWebhookFields($lead);
 
@@ -600,7 +598,7 @@ class LeadsController extends Controller
         $timeline->activity_type = $type;
         $timeline->lead_id = $lead->id;
         $timeline->payload = json_encode($lead->toArray()); // Convert array to JSON
-        $timeline->description = $description;
+        // $timeline->description = $description;
         $timeline->save();
     }
 
@@ -722,11 +720,11 @@ class LeadsController extends Controller
     {
         if ($request->ajax()) {
             $index = $request->get('index') + 1;
-            if (empty($request->get('project_id'))) {
+            if (empty($request->get('sub_source_id'))) {
                 return view('admin.leads.partials.lead_detail')
                     ->with(compact('index'));
             } else {
-                $project = Project::findOrFail($request->get('project_id'));
+                $project = Project::findOrFail($request->get('sub_source_id'));
                 $webhook_fields = $project->webhook_fields ?? [];
                 return view('admin.leads.partials.lead_detail')
                     ->with(compact('index', 'webhook_fields'));
@@ -752,10 +750,10 @@ class LeadsController extends Controller
     {
         if ($request->ajax()) {
             $lead_details = [];
-            $project_id = $request->input('project_id');
+            $sub_source_id = $request->input('sub_source_id');
             $lead_id = $request->input('lead_id');
-            $project = Project::findOrFail($project_id);
-            $webhook_fields = $project->webhook_fields ?? [];
+            $subsource = SubSource::findOrFail($sub_source_id);
+            $webhook_fields = $subsource->webhook_fields ?? [];
             if (!empty($lead_id)) {
                 $lead = Lead::findOrFail($lead_id);
                 $lead_details = $lead->lead_info;
@@ -802,11 +800,11 @@ class LeadsController extends Controller
         try {
             $mails = [];
             if (!empty($lead->email)) {
-                $mails[$lead->email] = $lead->name ?? $lead->ref_num;
+                $mails[$lead->email] = $lead->father_name ?? $lead->ref_num;
             }
 
-            if (!empty($lead->additional_email)) {
-                $mails[$lead->additional_email] = $lead->name ?? $lead->ref_num;
+            if (!empty($lead->secondary_email)) {
+                $mails[$lead->secondary_email] = $lead->father_name ?? $lead->ref_num;
             }
 
             if (!empty($mails)) {

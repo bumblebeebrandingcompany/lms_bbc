@@ -19,7 +19,7 @@ class WalkinStoreRequest extends FormRequest
     {
         $sub_source_id = $this->input('sub_source_id');
         return [
-            'name' => 'required',
+            'father_name' => 'required',
             'email' => [
                 auth()->user()->is_superadmin ? '' : 'required',
                 auth()->user()->is_superadmin ? '' : 'email',
