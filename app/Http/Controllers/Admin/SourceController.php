@@ -15,18 +15,19 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
 use App\Utils\Util;
+
 class SourceController extends Controller
 {
     /**
-    * All Utils instance.
-    *
-    */
+     * All Utils instance.
+     *
+     */
     protected $util;
 
     /**
-    * Constructor
-    *
-    */
+     * Constructor
+     *
+     */
     public function __construct(Util $util)
     {
         $this->util = $util;
@@ -34,17 +35,17 @@ class SourceController extends Controller
 
     public function index(Request $request)
     {
-        if(!auth()->user()->is_superadmin && !auth()->user()->is_client  ) {
+        if (!auth()->user()->is_superadmin && !auth()->user()->is_client) {
             abort(403, 'Unauthorized.');
         }
 
         if ($request->ajax()) {
             $query = Source::with(['project', 'campaign'])->select(sprintf('%s.*', (new Source)->table));
             $__global_clients_filter = $this->util->getGlobalClientsFilter();
-            if(!empty($__global_clients_filter)) {
+            if (!empty($__global_clients_filter)) {
                 $project_ids = $this->util->getClientsProjects($__global_clients_filter);
                 $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
-                $query->where(function ($q) use($project_ids, $campaign_ids) {
+                $query->where(function ($q) use ($project_ids, $campaign_ids) {
                     $q->whereIn('sources.project_id', $project_ids)
                         ->orWhereIn('sources.campaign_id', $campaign_ids);
                 })->groupBy('sources.id');
@@ -58,10 +59,10 @@ class SourceController extends Controller
             $table->addColumn('actions', '&nbsp;');
 
             $table->editColumn('actions', function ($row) {
-                $viewGate      = 'source_show' ;
-                $user=auth()->user();
-                $editGate      = 'source_edit'  && $user->is_superadmin;
-                $deleteGate    = 'source_delete' && $user->is_superadmin;
+                $viewGate = 'source_show';
+                $user = auth()->user();
+                $editGate = 'source_edit' && $user->is_superadmin;
+                $deleteGate = 'source_delete' && $user->is_superadmin;
                 $webhookSecretGate = $user->is_superadmin;
                 $crudRoutePart = 'sources';
 
@@ -73,22 +74,21 @@ class SourceController extends Controller
                     'webhookSecretGate',
                     'crudRoutePart',
                     'row'
-                ));
+                )
+                );
             });
 
             $table->addColumn('project_name', function ($row) {
                 return $row->project ? $row->project->name : '';
             });
 
-            $table->addColumn('campaign_campaign_name', function ($row) {
-                return $row->campaign ? $row->campaign->campaign_name : '';
+            $table->addColumn('campaign_name', function ($row) {
+                return $row->campaign ? $row->campaign->name : '';
             });
 
             $table->editColumn('name', function ($row) {
-                $html =  $row->name ? $row->name : '';
-                if($row->is_cp_source) {
-                    $html .= "<br>".'<span class="badge badge-pill badge-info">'.__('messages.cp_source').'</span>';
-                }
+                $html = $row->name ? $row->name : '';
+
                 return $html;
             });
 
@@ -100,18 +100,18 @@ class SourceController extends Controller
         $project_ids = $this->util->getUserProjects(auth()->user());
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
-        $projects  = Project::whereIn('id', $project_ids)
-                        ->get();
+        $projects = Project::whereIn('id', $project_ids)
+            ->get();
 
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-                        ->get();
+            ->get();
 
         return view('admin.sources.index', compact('projects', 'campaigns'));
     }
 
     public function create()
     {
-        if(!auth()->user()->is_superadmin) {
+        if (!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 
@@ -119,17 +119,17 @@ class SourceController extends Controller
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
         $projects = Project::whereIn('id', $project_ids)
-                        ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-                        ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         return view('admin.sources.create', compact('campaigns', 'projects'));
     }
 
     public function store(StoreSourceRequest $request)
     {
-        if(!auth()->user()->is_superadmin) {
+        if (!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
         $source_details = $request->except('_token');
@@ -141,7 +141,7 @@ class SourceController extends Controller
 
     public function edit(Source $source)
     {
-        if(!auth()->user()->is_superadmin) {
+        if (!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 
@@ -149,10 +149,10 @@ class SourceController extends Controller
         $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
         $projects = Project::whereIn('id', $project_ids)
-                        ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $campaigns = Campaign::whereIn('id', $campaign_ids)
-                        ->pluck('campaign_name', 'id')->prepend(trans('global.pleaseSelect'), '');
+            ->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 
         $source->load('project', 'campaign');
 
@@ -161,7 +161,7 @@ class SourceController extends Controller
 
     public function update(UpdateSourceRequest $request, Source $source)
     {
-        if(!auth()->user()->is_superadmin) {
+        if (!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 
@@ -173,7 +173,7 @@ class SourceController extends Controller
 
     public function show(Source $source)
     {
-        if(!auth()->user()->is_superadmin && !auth()->user()->is_client) {
+        if (!auth()->user()->is_superadmin && !auth()->user()->is_client) {
             abort(403, 'Unauthorized.');
         }
 
@@ -193,7 +193,7 @@ class SourceController extends Controller
 
     public function massDestroy(MassDestroySourceRequest $request)
     {
-        if(!auth()->user()->is_superadmin) {
+        if (!auth()->user()->is_superadmin) {
             abort(403, 'Unauthorized.');
         }
 
@@ -207,25 +207,25 @@ class SourceController extends Controller
     }
     public function getSource(Request $request)
     {
-        if($request->ajax()) {
+        if ($request->ajax()) {
 
             $query = Source::where('project_id', $request->input('project_id'))
-                    ->where('campaign_id', $request->input('campaign_id'));
+                ->where('campaign_id', $request->input('campaign_id'));
 
-            if(auth()->user()->is_channel_partner) {
+            if (auth()->user()->is_channel_partner) {
                 $assigned_sources = auth()->user()->sources;
                 $query->whereIn('id', $assigned_sources);
             }
 
             $sources = $query->pluck('name', 'id')
-                        ->toArray();
+                ->toArray();
 
             $sources_arr = [['id' => '', 'text' => __('messages.please_select')]];
-            if(!empty($sources)) {
+            if (!empty($sources)) {
                 foreach ($sources as $id => $text) {
                     $sources_arr[] = [
                         'id' => $id,
-                        'text' =>$text
+                        'text' => $text
                     ];
                 }
             }

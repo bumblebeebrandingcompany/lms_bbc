@@ -39,10 +39,8 @@ class Project extends Model implements HasMedia
         // 'end_date',
         'created_by',
         'client_id',
-        'location',
-        'description',
-        'webhook_fields',
-        'outgoing_apis',
+
+
         'created_at',
         'updated_at',
         'deleted_at',
@@ -109,7 +107,7 @@ class Project extends Model implements HasMedia
         $this->attributes['end_date'] = $value ? Carbon::createFromFormat(config('panel.date_format'), $value)->format('Y-m-d') : null;
     }
 
-    public function created_by()
+    public function user()
     {
         return $this->belongsTo(User::class, 'created_by');
     }
