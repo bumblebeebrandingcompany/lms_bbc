@@ -98,7 +98,7 @@
                                                         @lang('messages.additional_email_key')
                                                     </td>
                                                     <td>
-                                                        {{ $lead->additional_email ?? '' }}
+                                                        {{ $lead->secondary_email ?? '' }}
                                                     </td>
                                                 </tr>
                                                 <tr>

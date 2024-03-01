@@ -42,10 +42,10 @@
                     @lang('messages.additional_email_key')
                 </th>
                 <td>
-                    @if(auth()->user()->is_channel_partner_manager && !empty($lead->additional_email))
-                        {{ maskEmail($lead->additional_email) }}
+                    @if(auth()->user()->is_channel_partner_manager && !empty($lead->secondary_email))
+                        {{ maskEmail($lead->secondary_email) }}
                     @else
-                        {{ $lead->additional_email ?? '' }}
+                        {{ $lead->secondary_email ?? '' }}
                     @endif
                 </td>
             </tr>

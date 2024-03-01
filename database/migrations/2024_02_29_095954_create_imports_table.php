@@ -11,8 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('walkinform', function (Blueprint $table) {
-            $table->string('secondary_email') ;
+        Schema::create('imports', function (Blueprint $table) {
+            $table->id();
+            $table->string('first_name');
+            $table->string('last_name');
+            $table->timestamps();
         });
     }
 
@@ -21,8 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('walkinform', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('imports');
     }
 };

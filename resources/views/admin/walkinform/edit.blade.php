@@ -23,8 +23,8 @@
                         </div>
                         <div class="form-group">
                             <label for="phone">Additional Email:</label>
-                            <input type="text" name="additional_email" class="form-control"
-                                value="{{ $walkinform->additional_email }}">
+                            <input type="text" name="secondary_email" class="form-control"
+                                value="{{ $walkinform->secondary_email }}">
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone:</label>

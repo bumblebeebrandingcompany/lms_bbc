@@ -12,10 +12,10 @@
             <form method="POST" action="{{ route('admin.leads.store') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="form-group">
-                    <label for="name" class="required">
+                    <label for="father_name" class="required">
 Name                    </label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}"
-                        class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
+                    <input type="text" name="father_name" id="father_name" value="{{ old('father_name') }}"
+                        class="form-control {{ $errors->has('father_name') ? 'is-invalid' : '' }}" required>
                 </div>
                 <div class="form-group">
                     <label for="email" @if (!auth()->user()->is_superadmin) class="required" @endif>
@@ -48,11 +48,14 @@ Name                    </label>
                 <input type="hidden" name="stage_id" id="stage_id" value="8">
 
                 <div class="form-group">
-                    <label class="required" for="sub_source_id">SubSource</label>
-                    <select class="form-control {{ $errors->has('sub_source_id') ? 'is-invalid' : '' }}" name="sub_source_id" id="sub_source_id" required>
-                        <option value="">Select SubSource</option>
-                        @foreach($promos as $subsource)
-                            <option value="{{ $subsource->id }}" {{ old('sub_source_id') == $subsource->id ? 'selected' : '' }}>{{ $subsource->name }}</option>
+                    <label class="required" for="sub_source_id">{{ trans('cruds.lead.fields.project') }}</label>
+                    <br>
+                    <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
+                        name="sub_source_id" id="sub_source_id" required>
+                        @foreach ($promos as $id => $entry)
+                            <option value="{{ $entry->id }}"
+                                {{ old('sub_source_id') == $id || $sub_source_id == $id ? 'selected' : '' }}>
+                                {{ $entry->name }}</option>
                         @endforeach
                     </select>
                     @if($errors->has('sub_source_id'))

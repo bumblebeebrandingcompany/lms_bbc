@@ -15,7 +15,7 @@
                         @csrf
 
                         <div class="form-group" class="required">
-                            <label for="name">Name:</label>
+                            <label for="father_name">Name:</label>
                             <input type="text" name="father_name" class="form-control" required>
                         </div>
 
@@ -112,28 +112,28 @@
                 });
             }
             function getSource() {
-    let data = {
-        project_id: $('#project_id').val(),
-        campaign_id: $('#campaign_id').val(),
-    };
+                let data = {
+                    project_id: $('#project_id').val(),
+                    campaign_id: $('#campaign_id').val(),
+                };
 
-    $.ajax({
-        method: "GET",
-        url: "{{ route('admin.get.sources') }}",
-        data: data,
-        dataType: "json",
-        success: function(response) {
-            // Remove option with value '25'
-            response = response.filter(function(item) {
-                return item.id !== 25;
-            });
-            // Initialize Select2 after removing the option
-            $('#source_id').select2('destroy').empty().select2({
-                data: response
-            });
-        }
-    });
-}
+                $.ajax({
+                    method: "GET",
+                    url: "{{ route('admin.get.sources') }}",
+                    data: data,
+                    dataType: "json",
+                    success: function(response) {
+                        // Remove option with value '25'
+                        response = response.filter(function(item) {
+                            return item.id !== 25;
+                        });
+                        // Initialize Select2 after removing the option
+                        $('#source_id').select2('destroy').empty().select2({
+                            data: response
+                        });
+                    }
+                });
+            }
 
             $(document).on('change', '#project_id', function() {
                 getCampaigns();

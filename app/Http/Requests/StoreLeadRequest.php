@@ -16,23 +16,23 @@ class StoreLeadRequest extends FormRequest
     }
     public function rules()
     {
-        $project_id = request()->input('project_id');
+        $sub_source_id = request()->input('sub_source_id');
         return [
-            'name' => 'required',
+            'father_name' => 'required',
             'email' => [
                 auth()->user()->is_superadmin ? '' : 'required',
                 auth()->user()->is_superadmin ? '' : 'email',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('email')->where('project_id', $project_id);
+                Rule::unique('leads')->where(function ($query) use ($sub_source_id) {
+                    return $query->whereNotNull('email')->where('sub_source_id', $sub_source_id);
                 }),
             ],
             'phone' => [
                 auth()->user()->is_superadmin ? '' : 'required',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('phone')->where('project_id', $project_id);
+                Rule::unique('leads')->where(function ($query) use ($sub_source_id) {
+                    return $query->whereNotNull('phone')->where('sub_source_id', $sub_source_id);
                 }),
             ],
-            'project_id' => 'required|integer',
+            'sub_source_id' => 'required|integer',
             'stage_id' => 'nullable|integer', // Add this line for stage_id
         ];
     }

@@ -14,7 +14,7 @@ class Walkin extends Model
     public $table = 'walkins';
 
     public static $searchable = [
-        'name',
+        'father_name',
     ];
 
     protected $dates = [
@@ -23,18 +23,16 @@ class Walkin extends Model
     ];
 
     protected $fillable = [
-        'name',
+        'father_name',
         'email',
         'phone',
         'secondary_phone',
         'secondary_email',
         'subsource_id'
     ];
-
-
     public function leads()
     {
-        return $this->hasMany(Lead::class);
+        return $this->hasMany(Lead::class,'walkin_id');
     }
 
     public function subsource()
@@ -42,4 +40,12 @@ class Walkin extends Model
         return $this->belongsTo(SubSource::class, 'sub_source_id');
     }
 
+    public function campaign()
+    {
+        return $this->belongsTo(Campaign::class, 'campaign_id');
+    }
+    public function project()
+    {
+        return $this->belongsTo(Project::class, 'project_id');
+    }
 }

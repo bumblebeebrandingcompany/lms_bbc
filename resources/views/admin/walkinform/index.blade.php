@@ -53,14 +53,14 @@
                                         {{ $lead->ref_num ?? '' }}
                                     @endforeach
                                 </td>
-                                <td> {{ $walkin->name }}</td>
+                                <td> {{ $walkin->father_name }}</td>
                                 <td> {{ $walkin->email }}</td>
-                                <td> {{ $walkin->additional_email }}</td>
+                                <td> {{ $walkin->secondary_email }}</td>
                                 <td> {{ $walkin->phone }}</td>
                                 <td> {{ $walkin->secondary_phone }}</td>
                                 {{-- <td> {{ $walkin->project->name ?? '' }}</td> --}}
-                                {{-- <td> {{ $walkin->campaign->name ?? '' }}</td> --}}
-                                <td> {{ $walkin->sources->name ?? '' }}</td>
+                                {{-- <td> {{ $walkin->campaign->campaign_name ?? '' }}</td> --}}
+                                <td> {{ $walkin->subsource->source->name ?? '' }}</td>
                                 <td>
                                     @foreach ($walkin->leads as $lead)
                                         {{ $lead->createdBy->representative_name ?? '' }}
@@ -137,7 +137,6 @@
                                         @endif
                                     </div>
             </div>
-
         </div>
         </td>
         {{-- @endforeach --}}

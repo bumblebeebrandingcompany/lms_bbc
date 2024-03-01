@@ -20,9 +20,9 @@ return new class extends Migration
             $table->string('mother_name');
             $table->string('mother_occupation');
             $table->string('mother_income');
-            $table->string('gaurdian_name');
-            $table->string('gaurdian_occupation');
-            $table->string('gaurdian_income');
+            $table->string('guardian_name');
+            $table->string('guardian_occupation');
+            $table->string('guardian_income');
             $table->string('child_name');
             $table->string('child_age');
             $table->string('child_gender');
@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('intake_year');
             $table->string('board');
             $table->string('previous_school_location');
-            $table->biginteger('sub_source_id');
+            $table->json('sub_source_id');
             $table->bigInteger('added_by');
             $table->bigInteger('stage_id');
             $table->string('comments');

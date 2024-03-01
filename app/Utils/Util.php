@@ -66,6 +66,33 @@ class Util
         return $campaign_ids;
     }
 
+    public function getSource($user, $project_ids = [], $campaign_ids = [])
+    {
+        $query = new Source();
+
+        if (!$user->is_superadmin && $user->is_agency) {
+            $query = $query->where(function ($q) use ($user) {
+                $q->where('agency_id', $user->agency_id);
+            });
+        }
+
+        if (!$user->is_superadmin && $user->is_client) {
+            $query = $query->where(function ($q) use ($project_ids) {
+                $q->whereIn('project_id', $project_ids);
+            });
+        }
+
+        if (!$user->is_superadmin && $user->is_client) {
+            $query = $query->where(function ($q) use ($campaign_ids) {
+                $q->whereIn('campaign_id', $campaign_ids);
+            });
+        }
+
+        $source_ids = $query->pluck('id')->toArray();
+
+        return $source_ids;
+    }
+
     public function generateWebhookSecret()
     {
         $webhookSecret = (string) Str::uuid();
@@ -170,7 +197,7 @@ class Util
             'source_id' => $source->id,
             'name' => $name ?? '',
             'email' => $email ?? '',
-            'additional_email' => $additionalEmail ?? '',
+            'secondary_email' => $additionalEmail ?? '',
             'phone' => $phone ?? '',
             'secondary_phone' => $secondaryPhone ?? '',
             'project_id' => $source->project_id,
@@ -459,9 +486,9 @@ class Util
         } else if (
             !empty($field) &&
             in_array($field, ['predefined_additional_email']) &&
-            !empty($lead->additional_email)
+            !empty($lead->secondary_email)
         ) {
-            return $lead->additional_email ?? '';
+            return $lead->secondary_email ?? '';
         } else if (
             !empty($field) &&
             in_array($field, ['predefined_secondary_phone']) &&
@@ -528,7 +555,7 @@ class Util
 
         return $sources->pluck('name', 'id')->toArray();
     }
-    // public function getSourcesForProjectAndCampaign($project_id, $campaign_id)
+    //     public function getSourcesForProjectAndCampaign($project_id, $campaign_id)
 // {
 //     $sources = Source::whereHas('project', function ($query) use ($project_id) {
 //             $query->where('id', $project_id);
@@ -538,7 +565,7 @@ class Util
 //         })
 //         ->get();
 
-    //     return $sources->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
+    //         return $sources->pluck('name', 'id')->prepend(trans('global.pleaseSelect'), '');
 // }
 
     public function postWebhook($url, $method, $headers = [], $body = [])
@@ -647,6 +674,23 @@ class Util
         return $campaign_ids;
     }
 
+    public function getClientsSources($client_ids = [])
+    {
+        $project_ids = $this->getClientsProjects($client_ids);
+        $campaign_ids = $this->getClientsCampaigns($client_ids);
+
+
+        if (empty($project_ids)) {
+            return [];
+        }
+
+        $source_ids = Source::whereIn('project_id', $project_ids)
+            ->orWhereIn('campaign_id', $campaign_ids)
+            ->pluck('id')->toArray();
+
+        return $source_ids;
+    }
+
     public function getWebhookFieldsTags($id)
     {
         $project = Project::findOrFail($id);
@@ -747,10 +791,11 @@ class Util
         return $this->generateReferenceNumber($user->id, $prefixes[$user->user_type]);
     }
 
-    public function getFIlteredLeads($request)
+    public function getFilteredLeads($request)
     {
         $user = auth()->user();
         $__global_clients_filter = $this->getGlobalClientsFilter();
+
         if (!empty($__global_clients_filter)) {
             $project_ids = $this->getClientsProjects($__global_clients_filter);
             $campaign_ids = $this->getClientsCampaigns($__global_clients_filter);
@@ -760,7 +805,9 @@ class Util
         }
 
         $query = Lead::with(['project', 'campaign', 'source', 'createdBy'])
-            ->select(sprintf('%s.*', (new Lead)->table));
+
+            ->select(sprintf('%s.*', (new Lead)->getTable()));
+
 
         if ($request->has('leads_status')) {
             $leads_status = $request->get('leads_status');
@@ -775,46 +822,68 @@ class Util
         }
 
         if ($user->is_channel_partner_manager) {
-            $query = $query->whereHas('createdBy', function ($q) {
+            $query->whereHas('createdBy', function ($q) {
                 $q->where('user_type', '=', 'ChannelPartner');
             });
         } else {
-            $query = $query->where(function ($q) use ($project_ids, $campaign_ids, $user) {
+            $query->where(function ($q) use ($project_ids, $campaign_ids, $user) {
                 if ($user->is_channel_partner) {
-                    $q->where('leads.created_by', $user->id);
+                    $q->where('created_by', $user->id);
                 } else {
-                    $q->whereIn('leads.project_id', $project_ids)
-                        ->orWhereIn('leads.campaign_id', $campaign_ids);
+                    $q->where(function ($query) {
+                        $query->whereRaw("JSON_LENGTH(sub_source_id) > 1")
+                            ->orWhereNull('sub_source_id');
+                    })
+                        ->orWhere(function ($query) {
+                            $query->whereJsonDoesntContain('sub_source_id', []);
+                        });
                 }
             });
         }
 
-        $query->groupBy('id');
-
-        //filter leads
         if (!empty($request->input('project_id'))) {
-            $query->where('leads.project_id', $request->input('project_id'));
+            $query->whereHas('subsource', function ($subSourceQuery) use ($request) {
+                $subSourceQuery->where('project_id', $request->input('project_id'));
+            });
         }
 
         if (!empty($request->input('campaign_id'))) {
-            $query->where('leads.campaign_id', $request->input('campaign_id'));
+            $query->whereHas('subsource', function ($subSourceQuery) use ($request) {
+                $subSourceQuery->where('campaign_id', $request->input('campaign_id'));
+            });
         }
 
-        if (!empty($request->input('source'))) {
-            $query->where('leads.source_id', $request->input('source'));
+        if (!empty($request->input('source_id'))) {
+            $query->whereHas('subsource', function ($subSourceQuery) use ($request) {
+                $subSourceQuery->where('source_id', $request->input('source_id'));
+            });
+        }
+        $query->where(function ($q) {
+            $q->where('sub_source_id', '<>', 0)
+                ->orWhereNull('sub_source_id');
+        });
+
+
+
+        if (!empty($request->input('sub_source_id'))) {
+            $promoIds = $request->input('sub_source_id');
+            $query->whereRaw("JSON_CONTAINS(leads.sub_source_id, ?)", [json_encode($promoIds)])
+                ->orWhereRaw('JSON_CONTAINS(leads.sub_source_id, ?)', [$promoIds]);
+
         }
 
         if (!empty($request->input('no_lead_id')) && $request->input('no_lead_id') === 'true') {
-            $query->whereNull('leads.sell_do_lead_id');
+            $query->whereNull('sell_do_lead_id');
         }
 
         if (!empty($request->input('start_date')) && !empty($request->input('end_date'))) {
-            $query->whereDate('leads.created_at', '>=', $request->input('start_date'))
-                ->whereDate('leads.created_at', '<=', $request->input('end_date'));
+            $query->whereDate('created_at', '>=', $request->input('start_date'))
+                ->whereDate('created_at', '<=', $request->input('end_date'));
         }
 
         return $query;
     }
+
 
     public function getLeadBySellDoLeadId($sell_do_lead_id)
     {

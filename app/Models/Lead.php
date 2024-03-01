@@ -27,7 +27,7 @@ class Lead extends Model
     ];
 
     public const DEFAULT_WEBHOOK_FIELDS = [
-        'name',
+        'father_name',
         'email',
         'phone',
         'predefined_comments',
@@ -212,13 +212,20 @@ class Lead extends Model
     }
 
 
-public function walkin()
-{
-    return $this->hasMany(Walkin::class,'walkin_id');
-}
+    public function walkin()
+    {
+        return $this->belongsTo(Walkin::class, 'walkin_id');
+    }
     public function application()
     {
         return $this->hasOne(ApplicationPurchased::class);
     }
+    public function subsource()
+    {
+        return $this->hasOne(SubSource::class, 'id', 'sub_source_id')
+            ->select('id', 'campaign_id','project_id','source_id')
+            ->withDefault();
+    }
+
 }
 

@@ -42,27 +42,29 @@ let dtOverrideGlobals = {
         data: function (d) {
             d.project_id = $("#project_id").val();
             d.campaign_id = $("#campaign_id").val();
+            d.sub_source_id = $("#sub_source_id").val();
             d.stage_id = $("#stage_id").val();
             d.admission_team_name = $('#admission_team_name').val();
             d.supervised_by = $('#supervised_by').val()
 
-             // Ensure this line is correct
 
             if ($("#source_id").length) {
-                d.source = $("#source_id").val();
+                d.source_id = $("#source_id").val();
             }
             if ($(".date_range").length) {
                 d.start_date = $('#added_on').data('daterangepicker').startDate.format('YYYY-MM-DD');
                 d.end_date = $('#added_on').data('daterangepicker').endDate.format('YYYY-MM-DD');
             }
+
+
         }
     },
     columns: [
         { data: 'placeholder', name: 'placeholder' },
         { data: 'ref_num', name: 'ref_num' },
-        { data: 'name', name: 'name' },
+        { data: 'father_name', name: 'father_name' },
         { data: 'email', name: 'email' },
-        { data: 'additional_email', name: 'additional_email' },
+        { data: 'secondary_email', name: 'secondary_email' },
         { data: 'phone', name: 'phone' },
         { data: 'secondary_phone', name: 'secondary_phone' },
         { data: 'child_name', name: 'child_name' },
@@ -71,8 +73,9 @@ let dtOverrideGlobals = {
         { data: 'application_num', name: 'application_num' },
         { data: 'supervised_by', name: 'supervised_by' },
         { data: 'admission_team_name', name: 'admission_team_name' },
-        { data: 'campaign_name', name: 'campaign.name' },
-        { data: 'name', name: 'source.name' },
+        { data: 'campaign_campaign_name', name: 'campaign.campaign_name' },
+        { data: 'source_name', name: 'source.name' },
+        { data: 'sub_source_name', name: 'subsource.name' },
         { data: 'added_by', name: 'added_by' },
         { data: 'created_at', name: 'leads.created_at' },
         { data: 'actions', name: '{{ trans('global.actions') }}' }
@@ -102,7 +105,7 @@ table.on('draw', function () {
 });
 
 // Call updateLeadCount after any filtering or data change
-$(document).on('change', '#project_id, #campaign_id, #source_id, #added_on, #leads_status, #no_lead_id, #stage_id, #admission_team_name, #supervised_by', function () {
+$(document).on('change', '#project_id, #campaign_id, #source_id,#sub_source_id, #added_on, #leads_status, #no_lead_id, #parent_stage_id, #admission_team_name, #supervised_by', function () {
     table.ajax.reload(function () {
         updateLeadCount();
     });

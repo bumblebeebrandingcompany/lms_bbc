@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('walkinform', function (Blueprint $table) {
-            $table->string('secondary_email') ;
+        Schema::table('leads', function (Blueprint $table) {
+            $table->bigInteger('sub_source_id');
         });
     }
 
@@ -21,7 +21,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('walkinform', function (Blueprint $table) {
+        Schema::table('leads', function (Blueprint $table) {
             //
         });
     }

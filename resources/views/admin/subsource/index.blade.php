@@ -28,7 +28,7 @@
                         {{ trans('cruds.source.fields.campaign') }}
                     </th>
                     <th>
-                        Source Name </th>
+                        Source </th>
                     <th>
                         SubSource Name </th>
                     <th>
@@ -59,11 +59,20 @@
                         @endif
                     </td>
                     <td>
+                        @if (empty($__global_clients_filter))
+                            <select class="search">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach ($sources as $key => $item)
+                                    <option value="{{ $item->name }}">{{ $item->name }}</option>
+                                @endforeach
+                            </select>
+                        @endif
+                    </td>
+                    <td>
                         <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                     </td>
                     <td></td>
-                    <td>
-                    </td>
+
                 </tr>
             </thead>
         </table>
@@ -127,15 +136,15 @@
                         name: 'placeholder'
                     },
                     {
-                        data: 'name',
+                        data: 'project_name',
                         name: 'project.name'
                     },
                     {
-                        data: 'name',
+                        data: 'campaign_name',
                         name: 'campaign.name'
                     },
                     {
-                        data: 'name',
+                        data: 'source_name',
                         name: 'source.name'
                     },
                     {

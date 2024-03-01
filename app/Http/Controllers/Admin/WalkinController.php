@@ -72,61 +72,66 @@ class WalkinController extends Controller
 
     public function store(WalkinStoreRequest $request)
     {
-        try {
-            $request->validate([
-                'father_name' => 'required|string|max:255',
-                'email' => 'required|string',
-                'phone' => 'required|string|max:255',
-                'sub_source_id' => 'required',
-            ]);
+        $input = $request->all();
+        \Log::info('Request Data: ' . json_encode($request->all()));
+$subsource=SubSource::all();
+        $request->validate([
+            'father_name' => 'required|string|max:255',
+            'email' => 'required|string',
+            'phone' => 'required|string|max:255',
+            'sub_source_id' => 'required',
+        ]);
 
-            // Check if lead with the same phone number or email already exists
-            $existingLead = Lead::where('email', $request->email)
-                ->orWhere('phone', $request->phone)
-                ->first();
+        $walkin = Walkin::create([
+            'father_name' => $request->input('father_name'),
+            'email' => $request->input('email'),
+            'phone' => $request->input('phone'),
+            // 'source_id' => $request->input('source_id'),
+            // 'project_id' => $request->input('project_id'),
+            // 'campaign_id' => $request->input('campaign_id'),
+            'sub_source_id' => $request->input('sub_source_id'),
+            'secondary_email' => $request->input('secondary_email'),
+            'secondary_phone' => $request->input('secondary_phone'),
+        ]);
+        $promo_details = $request->except('_token');
 
-            if ($existingLead) {
-                // If lead exists, throw validation exception with custom message
-                throw ValidationException::withMessages(['lead_exists' => 'Lead already exists.'])
-                    ->errorBag('storeWalkin');
-            }
+        $lead = Lead::create([
+            'walkin_id' => $walkin->id,
+            'father_name' => $walkin->father_name,
+            'email' => $walkin->email,
+            'phone' => $walkin->phone,
+            // 'source_id' => $walkin->source_id,
+            // 'project_id' => $walkin->project_id,
+            // 'campaign_id' => $walkin->campaign_id,
+            'parent_stage_id' => 11,
+            'created_by' => auth()->user()->id,
+            'secondary_email' => $request->secondary_email,
+            'secondary_phone' => $request->secondary_phone,
+            'sub_source_id' => $request->sub_source_id,
+        ]);$input = $request->except(['_method', '_token']);
+        // $existingLeads = Lead::where('phone', $input['phone'])->get();
 
-            // Continue with creating a new walkin and lead
-            $walkin = Walkin::create([
-                'father_name' => $request->input('father_name'),
-                'email' => $request->input('email'),
-                'phone' => $request->input('phone'),
-                'sub_source_id' => $request->input('sub_source_id'),
-                'secondary_email' => $request->input('secondary_email'),
-                'secondary_phone' => $request->input('secondary_phone'),
-            ]);
+        // foreach ($existingLeads as $existingLead) {
+        //     // Update each existing lead with the new data
+        //     $existingLead->fill($input);
+        //     $existingLead->save();
+        // }
 
-            $lead = Lead::create([
-                'walkin_id' => $walkin->id,
-                'father_name' => $walkin->father_name,
-                'email' => $walkin->email,
-                'phone' => $walkin->phone,
-                'stage_id' => 11,
-                'created_by' => auth()->user()->id,
-                'secondary_email' => $request->secondary_email,
-                'secondary_phone' => $request->secondary_phone,
-                'sub_source_id' => $request->sub_source_id,
-            ]);
+        $lead->ref_num = $this->util->generateLeadRefNum($lead);
+        $lead->save();
+        // $this->util->storeUniqueWebhookFields($lead);
+        $walkins=Walkin::all();
 
-            $lead->ref_num = $this->util->generateLeadRefNum($lead);
-            $lead->save();
+        // // Define $existingLeads as an empty array
+        // $existingLeads = [];
 
-            $walkins = Walkin::all();
-            $subsource = SubSource::all();
-
-            return view('admin.walkinform.index')->with(compact('walkins', 'subsource'));
-        } catch (ValidationException $e) {
-            // Catch the validation exception and redirect back with errors and existing lead reference number
-          // Inside the catch block
-return redirect()->back()->withErrors($e->errors(), 'storeWalkin')
-    ->with(['existingLeadRefNum' => $existingLead->ref_num ?? null]);
-
-        }
+        // if ($existingLead) {
+        //     // You can access the 'ref_no' attribute
+        //     $ref_num = $existingLead->ref_num;
+            return view('admin.walkinform.index')->with(compact( 'walkins'));
+        // } else {
+        //     return response()->json(['error' => 'Lead not found'], 404);
+        // }
     }
 
 
@@ -156,7 +161,7 @@ return redirect()->back()->withErrors($e->errors(), 'storeWalkin')
             'father_name',
             'email',
             'phone',
-            'additional_email',
+            'secondary_email',
             'secondary_phone',
         ]);
 

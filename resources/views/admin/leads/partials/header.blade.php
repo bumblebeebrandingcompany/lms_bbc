@@ -67,10 +67,21 @@
                             <label for="source_id">
                                 Source
                             </label>
-                            <select class="search form-control" name="source" id="source_id">
+                            <select class="search form-control" name="source_id" id="source_id">
                                 <option value>{{ trans('global.all') }}</option>
                                 @foreach($sources as $source)
                                     <option value="{{$source->id}}" @if(isset($filters['source']) && $filters['source'] == $item->id) selected @endif>{{ $source->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-3 promo_div">
+                            <label for="sub_source_id">
+                                SubSource
+                            </label>
+                            <select class="search form-control" name="sub_source_id" id="sub_source_id">
+                                <option value>{{ trans('global.all') }}</option>
+                                @foreach($promos as $subsource)
+                                    <option value="{{$subsource->id}}" @if(isset($filters['subsource']) && $filters['subsource'] == $item->id) selected @endif>{{ $subsource->name }}</option>
                                 @endforeach
                             </select>
                         </div>
