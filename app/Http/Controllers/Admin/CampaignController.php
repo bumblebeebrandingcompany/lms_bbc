@@ -16,18 +16,19 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Utils\Util;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
+
 class CampaignController extends Controller
 {
     /**
-    * All Utils instance.
-    *
-    */
+     * All Utils instance.
+     *
+     */
     protected $util;
 
     /**
-    * Constructor
-    *
-    */
+     * Constructor
+     *
+     */
     public function __construct(Util $util)
     {
         $this->util = $util;
@@ -35,13 +36,13 @@ class CampaignController extends Controller
 
     public function index(Request $request)
     {
-        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
+        if (auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
         $__global_clients_filter = $this->util->getGlobalClientsFilter();
         $project_ids = $this->util->getUserProjects(auth()->user());
-        if(!empty($__global_clients_filter)) {
+        if (!empty($__global_clients_filter)) {
             $campaign_ids = $this->util->getClientsCampaigns($__global_clients_filter);
         } else {
             $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
@@ -52,17 +53,17 @@ class CampaignController extends Controller
             $user = auth()->user();
 
             $query = Campaign::whereIn('campaigns.id', $campaign_ids)
-                        ->with(['project', 'agency'])->select(sprintf('%s.*', (new Campaign)->table));
+                ->with(['project', 'agency'])->select(sprintf('%s.*', (new Campaign)->table));
 
             $table = Datatables::of($query);
 
             $table->addColumn('placeholder', '&nbsp;');
             $table->addColumn('actions', '&nbsp;');
 
-            $table->editColumn('actions', function ($row) use($user) {
-                $viewGate      = true;
-                $editGate      = $user->is_superadmin;
-                $deleteGate    = $user->is_superadmin;
+            $table->editColumn('actions', function ($row) use ($user) {
+                $viewGate = true;
+                $editGate = $user->is_superadmin;
+                $deleteGate = $user->is_superadmin;
                 $crudRoutePart = 'campaigns';
 
                 return view('partials.datatablesActions', compact(
@@ -71,7 +72,8 @@ class CampaignController extends Controller
                     'deleteGate',
                     'crudRoutePart',
                     'row'
-                ));
+                )
+                );
             });
             $table->editColumn('name', function ($row) {
                 return $row->name ? $row->name : '';
@@ -90,7 +92,7 @@ class CampaignController extends Controller
         }
 
         $projects = Project::whereIn('id', $project_ids)
-                        ->get();
+            ->get();
         $agencies = Agency::get();
 
         return view('admin.campaigns.index', compact('projects', 'agencies'));
@@ -121,7 +123,7 @@ class CampaignController extends Controller
 
     public function edit(Campaign $campaign)
     {
-        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
+        if (auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
@@ -136,7 +138,7 @@ class CampaignController extends Controller
 
     public function update(UpdateCampaignRequest $request, Campaign $campaign)
     {
-        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
+        if (auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
@@ -147,7 +149,7 @@ class CampaignController extends Controller
 
     public function show(Campaign $campaign)
     {
-        if(auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
+        if (auth()->user()->is_channel_partner || auth()->user()->is_channel_partner_manager) {
             abort(403, 'Unauthorized.');
         }
 
@@ -178,22 +180,22 @@ class CampaignController extends Controller
 
     public function getCampaigns(Request $request)
     {
-        if($request->ajax()) {
+        if ($request->ajax()) {
 
             $project_ids = $this->util->getUserProjects(auth()->user());
             $campaign_ids = $this->util->getCampaigns(auth()->user(), $project_ids);
 
             $campaigns = Campaign::whereIn('id', $campaign_ids)
-                            ->where('project_id', $request->input('project_id'))
-                            ->pluck('name', 'id')
-                            ->toArray();
+                ->where('project_id', $request->input('project_id'))
+                ->pluck('name', 'id')
+                ->toArray();
 
             $campaigns_arr = [['id' => '', 'text' => __('messages.please_select')]];
-            if(!empty($campaigns)) {
+            if (!empty($campaigns)) {
                 foreach ($campaigns as $id => $text) {
                     $campaigns_arr[] = [
                         'id' => $id,
-                        'text' =>$text
+                        'text' => $text
                     ];
                 }
             }
