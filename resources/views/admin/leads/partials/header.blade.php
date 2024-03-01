@@ -80,7 +80,7 @@
                             </label>
                             <select class="search form-control" name="sub_source_id" id="sub_source_id">
                                 <option value>{{ trans('global.all') }}</option>
-                                @foreach($promos as $subsource)
+                                @foreach($subsources as $subsource)
                                     <option value="{{$subsource->id}}" @if(isset($filters['subsource']) && $filters['subsource'] == $item->id) selected @endif>{{ $subsource->name }}</option>
                                 @endforeach
                             </select>

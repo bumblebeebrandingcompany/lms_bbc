@@ -62,13 +62,13 @@ let dtOverrideGlobals = {
     columns: [
         { data: 'placeholder', name: 'placeholder' },
         { data: 'ref_num', name: 'ref_num' },
-        { data: 'name', name: 'name' },
+        {{-- { data: 'name', name: 'name' }, --}}
         { data: 'email', name: 'email' },
-        { data: 'additional_email', name: 'additional_email' },
+        {{-- { data: 'additional_email', name: 'additional_email' }, --}}
         { data: 'phone', name: 'phone' },
         { data: 'secondary_phone', name: 'secondary_phone' },
         { data: 'child_name', name: 'child_name' },
-        { data: 'grade_enquired', name: 'grade_enquired' },
+        {{-- { data: 'grade_enquired', name: 'grade_enquired' }, --}}
         { data: 'parent_stage_name', name: 'stage_id' },
         { data: 'application_num', name: 'application_num' },
         { data: 'supervised_by', name: 'supervised_by' },
@@ -105,7 +105,7 @@ table.on('draw', function () {
 });
 
 // Call updateLeadCount after any filtering or data change
-$(document).on('change', '#project_id, #campaign_id, #source_id,#sub_source_id, #added_on, #leads_status, #no_lead_id, #parent_stage_id, #admission_team_name, #supervised_by', function () {
+$(document).on('change', '#project_id, #campaign_id, #source_id,#sub_source_id, #added_on, #leads_status, #no_lead_id, #stage_id, #admission_team_name, #supervised_by', function () {
     table.ajax.reload(function () {
         updateLeadCount();
     });

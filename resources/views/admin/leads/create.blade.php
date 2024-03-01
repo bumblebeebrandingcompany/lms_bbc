@@ -13,7 +13,7 @@
                 @csrf
                 <div class="form-group">
                     <label for="name" class="required">
-Name                    </label>
+                        Name </label>
                     <input type="text" name="name" id="name" value="{{ old('name') }}"
                         class="form-control {{ $errors->has('name') ? 'is-invalid' : '' }}" required>
                 </div>
@@ -52,13 +52,13 @@ Name                    </label>
                     <br>
                     <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}"
                         name="sub_source_id" id="sub_source_id" required>
-                        @foreach ($promos as $id => $entry)
+                        @foreach ($subsources as $id => $entry)
                             <option value="{{ $entry->id }}"
                                 {{ old('sub_source_id') == $id || $sub_source_id == $id ? 'selected' : '' }}>
                                 {{ $entry->name }}</option>
                         @endforeach
                     </select>
-                    @if($errors->has('sub_source_id'))
+                    @if ($errors->has('sub_source_id'))
                         <span class="text-danger">{{ $errors->first('sub_source_id') }}</span>
                     @endif
                     <span class="help-block">Select the subsource associated with the walk-in</span>
@@ -67,12 +67,12 @@ Name                    </label>
                     <label for="comments">{{ trans('messages.customer_comments') }}</label>
                     <textarea name="comments" class="form-control" id="comments" rows="2">{!! old('comments') !!}</textarea>
                 </div>
-                @if (auth()->user()->is_channel_partner)
+                {{-- @if (auth()->user()->is_channel_partner)
                     <div class="form-group">
                         <label for="cp_comments">{{ trans('messages.cp_comments') }}</label>
                         <textarea name="cp_comments" class="form-control" id="cp_comments" rows="2">{!! old('cp_comments') !!}</textarea>
                     </div>
-                @endif
+                @endif --}}
                 @if (!auth()->user()->is_channel_partner)
                     <h4>
                         {{ trans('cruds.lead.fields.lead_details') }}/@lang('messages.additional_fields')
