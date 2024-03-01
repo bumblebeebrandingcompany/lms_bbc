@@ -18,8 +18,8 @@ class Followup extends Model
         'created_at',
         'updated_at',
         'deleted_at',
-        'follow_up_date',
-        'follow_up_time',
+        'followup_date',
+        'followup_time',
         'notes'
     ];
     // public function users()

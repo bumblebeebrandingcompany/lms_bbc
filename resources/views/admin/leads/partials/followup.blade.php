@@ -15,9 +15,9 @@
             <tbody>
                 @foreach ($followUps->where('stage_id', 9) as $followUp)
                     <tr>
-                        <td>{{ $lead->campaign->name }}</td>
-                        <td>{{ $followUp->follow_up_time }}</td>
-                        <td>{{ $followUp->follow_up_date }}</td>
+                        <td>{{ $lead->campaign->name ?? ''}}</td>
+                        <td>{{ $followUp->followup_time }}</td>
+                        <td>{{ $followUp->followup_date }}</td>
                         <td>{{ $followUp->notes }}</td>
                         <td>{{ $followUp->created_at }}</td>
                     </tr>
@@ -44,8 +44,8 @@
                 @foreach ($followUps->where('stage_id', 28) as $followUp)
                     <tr>
                         <td>{{ $lead->campaign->name }}</td>
-                        <td>{{ $followUp->follow_up_time }}</td>
-                        <td>{{ $followUp->follow_up_date }}</td>
+                        <td>{{ $followUp->followup_time }}</td>
+                        <td>{{ $followUp->followup_date }}</td>
                         <td>{{ $followUp->notes }}</td>
                         <td>{{ $followUp->created_at }}</td>
 

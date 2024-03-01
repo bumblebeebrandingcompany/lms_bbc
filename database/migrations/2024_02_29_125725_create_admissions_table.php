@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('admissions', function (Blueprint $table) {
             $table->id();
             $table->date('admission_date');
-            $table->date('admission_time');
+            $table->time('admission_time');
             $table->string('notes');
             $table->bigInteger('stage_id');
             $table->bigInteger('application_id');

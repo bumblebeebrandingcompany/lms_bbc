@@ -76,14 +76,14 @@ class WalkinController extends Controller
         \Log::info('Request Data: ' . json_encode($request->all()));
 $subsource=SubSource::all();
         $request->validate([
-            'father_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
             'sub_source_id' => 'required',
         ]);
 
         $walkin = Walkin::create([
-            'father_name' => $request->input('father_name'),
+            'name' => $request->input('name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
             // 'source_id' => $request->input('source_id'),
@@ -97,7 +97,7 @@ $subsource=SubSource::all();
 
         $lead = Lead::create([
             'walkin_id' => $walkin->id,
-            'father_name' => $walkin->father_name,
+            'name' => $walkin->name,
             'email' => $walkin->email,
             'phone' => $walkin->phone,
             // 'source_id' => $walkin->source_id,
@@ -152,13 +152,13 @@ $subsource=SubSource::all();
     public function update(Request $request, Walkin $walkinform)
     {
         $request->validate([
-            'father_name' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
         ]);
 
         $data = $request->only([
-            'father_name',
+            'name',
             'email',
             'phone',
             'secondary_email',

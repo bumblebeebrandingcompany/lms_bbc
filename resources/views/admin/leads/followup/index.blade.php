@@ -86,15 +86,15 @@
                                     <td>
                                         @foreach ($lead as $leads)
                                             @if ($leads->id === $followUp->lead_id)
-                                                {{ $leads->campaign->name }}
+                                                {{ $leads->campaign->name ?? ''}}
                                             @endif
                                         @endforeach
                                     </td>
                                     <td>
-                                        {{ $followUp->follow_up_date }}
+                                        {{ $followUp->followup_date }}
                                     </td>
                                     <td>
-                                        {{ $followUp->follow_up_time }}
+                                        {{ $followUp->followup_time }}
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"

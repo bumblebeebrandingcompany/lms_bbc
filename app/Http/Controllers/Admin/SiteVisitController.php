@@ -64,10 +64,10 @@ class SiteVisitController extends Controller
         $parentStageId = $request->input('stage_id');
         $sitevisit = new SiteVisit();
         $sitevisit->lead_id = $lead->id;
-        $sitevisit->follow_up_date = $input['follow_up_date']; // Assign the date
-        $sitevisit->follow_up_time = $input['follow_up_time']; // Assign the time
+        $sitevisit->visit_date = $input['visit_date']; // Assign the date
+        $sitevisit->visit_time = $input['visit_time']; // Assign the time
         $sitevisit->notes = $input['notes'];
-        $sitevisit->user_id = auth()->user()->id;
+        // $sitevisit->user_id = auth()->user()->id;
         $sitevisit->created_by=auth()->user()->id;
         $sitevisit->stage_id = $parentStageId;
         $sitevisit->save();
@@ -89,7 +89,7 @@ class SiteVisitController extends Controller
         ];
 
         $timeline->payload = json_encode($payload); // Convert array to JSON
-        $timeline->description = $description;
+        // $timeline->description = $description;
         $timeline->save();
     }
     public function rescheduleSiteVisit(Request $request)
@@ -97,11 +97,11 @@ class SiteVisitController extends Controller
         // Validate the request data
         $request->validate([
             'lead_id' => 'required|integer',
-            'follow_up_date' => 'required|date',
-            'follow_up_time' => 'required',
+            'visit_date' => 'required|date',
+            'visit_time' => 'required',
             'notes' => 'required|string',
             'stage_id' => 'required|integer',
-            'user_id' => 'required|integer',
+            // 'user_id' => 'required|integer',
         ]);
 
         // Get the stage_id from the request
@@ -119,10 +119,10 @@ class SiteVisitController extends Controller
 
         // Create a new SiteVisit
         $newSiteVisit = new SiteVisit();
-        $newSiteVisit->follow_up_date = $request->follow_up_date;
-        $newSiteVisit->follow_up_time = $request->follow_up_time;
+        $newSiteVisit->visit_date = $request->visit_date;
+        $newSiteVisit->visit_time = $request->visit_time;
         $newSiteVisit->lead_id = $request->lead_id;
-        $newSiteVisit->user_id = $request->user_id;
+        // $newSiteVisit->user_id = $request->user_id;
 
         $newSiteVisit->notes = $request->notes;
         $newSiteVisit->stage_id = $parentStageId; // Set stage_id directly
@@ -138,8 +138,8 @@ class SiteVisitController extends Controller
     public function reschedule(Request $request, $id)
     {
         $request->validate([
-            'follow_up_date' => 'date',
-            'follow_up_time' => 'date_format:H:i',
+            'visit_date' => 'date',
+            'visit_time' => 'date_format:H:i',
             'deleted_at' => 'date',
             'lead_id' => [
                 'required',
@@ -161,8 +161,8 @@ class SiteVisitController extends Controller
 
         // Create a new SiteVisit
         $newSiteVisit = new SiteVisit();
-        $newSiteVisit->follow_up_date = $request->follow_up_date;
-        $newSiteVisit->follow_up_time = $request->follow_up_time;
+        $newSiteVisit->visit_date = $request->visit_date;
+        $newSiteVisit->visit_time = $request->visit_time;
         $newSiteVisit->lead_id = $request->lead_id;
         // $newSiteVisit->user_id = $request->user_id;
         $newSiteVisit->notes = $request->notes;
@@ -348,9 +348,9 @@ class SiteVisitController extends Controller
             $applicationpurchased->who_assigned = auth()->user()->id; // Store current user_id
             $applicationpurchased->for_whom = $request->input('user_id');
             $applicationpurchased->application_no = $request->input('application_no');
-            $applicationpurchased->follow_up_date = $request->input('follow_up_date');
+            $applicationpurchased->visit_date = $request->input('visit_date');
             $applicationpurchased->notes = $request->input('notes');
-            $applicationpurchased->follow_up_time = $request->input('follow_up_time');
+            $applicationpurchased->visit_time = $request->input('visit_time');
             $applicationpurchased->stage_id = $parentStageId;
             $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
             $applicationpurchased->save();

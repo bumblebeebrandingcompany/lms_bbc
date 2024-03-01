@@ -17,7 +17,7 @@ class StoreLeadRequest extends FormRequest
     public function rules()
     {
         return [
-            'father_name' => 'required',
+            'name' => 'required',
             'email' => [
                 auth()->user()->is_superadmin ? '' : 'required',
                 auth()->user()->is_superadmin ? '' : 'email',

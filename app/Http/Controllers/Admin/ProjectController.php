@@ -90,16 +90,16 @@ class ProjectController extends Controller
                 return $row->created_by ? $row->created_by->name : '';
             });
 
-            $table->addColumn('client_name', function ($row) {
-                return $row->client ? $row->client->name : '';
-            });
+            // $table->addColumn('client_name', function ($row) {
+            //     return $row->client ? $row->client->name : '';
+            // });
 
-            $table->editColumn('client.email', function ($row) {
-                return $row->client ? (is_string($row->client) ? $row->client : $row->client->email) : '';
-            });
-            $table->editColumn('location', function ($row) {
-                return $row->location ? $row->location : '';
-            });
+            // $table->editColumn('client.email', function ($row) {
+            //     return $row->client ? (is_string($row->client) ? $row->client : $row->client->email) : '';
+            // });
+            // $table->editColumn('location', function ($row) {
+            //     return $row->location ? $row->location : '';
+            // });
 
             $table->rawColumns(['actions', 'placeholder', 'created_by', 'client']);
 

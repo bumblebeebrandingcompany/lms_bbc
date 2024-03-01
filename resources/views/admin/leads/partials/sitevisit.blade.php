@@ -71,7 +71,7 @@
                         <td>
                             {{ $sitevisit->lead_id }}
                         </td>
-                        <td>{{ $lead->campaign->name }}</td>
+                        <td>{{ $lead->campaign->name ?? ''}}</td>
 
                         <td>{{ $sitevisit->follow_up_date }}</td>
                         <td>{{ $sitevisit->follow_up_time }}</td>

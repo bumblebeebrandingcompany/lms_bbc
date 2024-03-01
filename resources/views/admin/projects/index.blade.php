@@ -32,12 +32,12 @@
                         <th>
                             {{ trans('cruds.project.fields.name') }}
                         </th>
-                        <th>
+                        {{-- <th>
                             {{ trans('cruds.project.fields.start_date') }}
                         </th>
                         <th>
                             {{ trans('cruds.project.fields.end_date') }}
-                        </th>
+                        </th> --}}
                         <th>
                             {{ trans('cruds.project.fields.created_by') }}
                         </th>

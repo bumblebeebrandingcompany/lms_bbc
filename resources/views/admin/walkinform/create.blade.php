@@ -15,8 +15,8 @@
                         @csrf
 
                         <div class="form-group" class="required">
-                            <label for="father_name">Name:</label>
-                            <input type="text" name="father_name" class="form-control" required>
+                            <label for="name">Name:</label>
+                            <input type="text" name="name" class="form-control" required>
                         </div>
 
                         <div class="form-group" class="required">

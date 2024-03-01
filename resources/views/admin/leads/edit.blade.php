@@ -45,7 +45,7 @@
                 </label>
                 <input type="text" name="secondary_phone" id="secondary_phone_key" value="{{ old('secondary_phone') ?? $lead->secondary_phone }}" class="form-control input_number">
             </div>
-            <div class="form-group">
+            {{-- <div class="form-group">
                 <label class="required" for="project_id">{{ trans('cruds.lead.fields.project') }}</label>
                 <br>
                 <select class="form-control select2 {{ $errors->has('project') ? 'is-invalid' : '' }}" name="project_id" id="project_id" required>
@@ -57,10 +57,10 @@
                 @if($errors->has('project'))
                     <span class="text-danger">{{ $errors->first('project') }}</span>
                 @endif
-                <span class="help-block">{{ trans('cruds.lead.fields.project_helper') }}</span>
+                <span class="help-block">{{ trans('cruds.lead.fields.project_helper') }}</span> --}}
             </div>
             @if(!auth()->user()->is_channel_partner)
-                <div class="form-group">
+                {{-- <div class="form-group">
                     <label for="campaign_id">{{ trans('cruds.lead.fields.campaign') }}</label>
                     <br>
                     <select class="form-control select2 {{ $errors->has('campaign') ? 'is-invalid' : '' }}" name="campaign_id" id="campaign_id">
@@ -73,7 +73,7 @@
                         <span class="text-danger">{{ $errors->first('campaign') }}</span>
                     @endif
                     <span class="help-block">{{ trans('cruds.lead.fields.campaign_helper') }}</span>
-                </div>
+                </div> --}}
                 <div class="form-group">
                     <label class="required" for="source_id">{{ trans('messages.source') }}</label>
                     <br>

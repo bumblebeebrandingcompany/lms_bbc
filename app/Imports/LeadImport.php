@@ -16,7 +16,7 @@ class LeadImport implements ToModel
     {
         return new FileImport([
 
-            'father_name'     => $row['father_name'],
+            'name'     => $row['name'],
             'mother_name'    => $row['mother_name'],
         ]);
     }

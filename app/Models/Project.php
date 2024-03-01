@@ -20,7 +20,7 @@ class Project extends Model implements HasMedia
 
     public static $searchable = [
         'name',
-        'location',
+        // 'location',
     ];
 
     protected $dates = [

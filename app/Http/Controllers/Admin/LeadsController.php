@@ -13,7 +13,6 @@ use App\Models\LeadTimeline;
 use App\Models\SubSource;
 use App\Models\SiteVisit;
 use App\Models\Followup;
-use App\Models\Promo;
 use App\Models\CallRecord;
 use App\Models\Project;
 use App\Models\Clients;
@@ -612,7 +611,7 @@ class LeadsController extends Controller
         $lead->update($input);
 
         // Assuming you have a method like storeUniqueWebhookFields
-        $this->util->storeUniqueWebhookFields($lead);
+        // $this->util->storeUniqueWebhookFields($lead);
 
         return redirect()->back()->with('success', 'Form submitted successfully!');
     }
@@ -750,8 +749,8 @@ class LeadsController extends Controller
             $lead_details = [];
             $sub_source_id = $request->input('sub_source_id');
             $lead_id = $request->input('lead_id');
-            $promo = Promo::findOrFail($sub_source_id);
-            $webhook_fields = $promo->webhook_fields ?? [];
+            $subsource = SubSource::findOrFail($sub_source_id);
+            $webhook_fields = $subsource->webhook_fields ?? [];
             if (!empty($lead_id)) {
                 $lead = Lead::findOrFail($lead_id);
                 $lead_details = $lead->lead_info;
@@ -798,11 +797,11 @@ class LeadsController extends Controller
         try {
             $mails = [];
             if (!empty($lead->email)) {
-                $mails[$lead->email] = $lead->father_name ?? $lead->ref_num;
+                $mails[$lead->email] = $lead->name ?? $lead->ref_num;
             }
 
             if (!empty($lead->secondary_email)) {
-                $mails[$lead->secondary_email] = $lead->father_name ?? $lead->ref_num;
+                $mails[$lead->secondary_email] = $lead->name ?? $lead->ref_num;
             }
 
             if (!empty($mails)) {

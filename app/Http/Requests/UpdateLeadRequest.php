@@ -16,8 +16,7 @@ class UpdateLeadRequest extends FormRequest
 }
     public function rules()
     {
-        $lead_id = request()->input('lead_id');
-        $project_id = request()->input('project_id');
+        // $lead_id = request()->input('lead_id');
         return [
             'name' => [
                 // 'required'
@@ -25,20 +24,17 @@ class UpdateLeadRequest extends FormRequest
             'email' => [
                 auth()->user()->is_superadmin ? '' : 'nullable',
                 auth()->user()->is_superadmin ? '' : 'email',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('email')->where('project_id', $project_id);
-                })->ignore($lead_id),
+                // Rule::unique('leads')->where(function ($query) use ($project_id) {
+                //     return $query->whereNotNull('email')->where('project_id', $project_id);
+                // })->ignore($lead_id),
             ],
             'phone' => [
-                auth()->user()->is_superadmin ? '' : '=nullable',
-                Rule::unique('leads')->where(function ($query) use ($project_id) {
-                    return $query->whereNotNull('phone')->where('project_id', $project_id);
-                })->ignore($lead_id),
+                // auth()->user()->is_superadmin ? '' : '=nullable',
+                // Rule::unique('leads')->where(function ($query) use ($project_id) {
+                //     return $query->whereNotNull('phone')->where('project_id', $project_id);
+                // })->ignore($lead_id),
             ],
-            'project_id' => [
-                // 'required',
-                'integer',
-            ],
+
             'stage_id'=>['integer'],
         ];
     }

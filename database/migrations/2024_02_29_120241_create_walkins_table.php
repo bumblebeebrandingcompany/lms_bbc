@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('walkins', function (Blueprint $table) {
             $table->id();
             $table->string('ref_num');
-            $table->string('father_name');
+            $table->string('name');
             $table->string('father_occupation');
             $table->string('father_income');
             $table->string('mother_name');

@@ -16,16 +16,11 @@ class StoreFollowupRequest extends FormRequest
 
     public function rules()
     {
-        $lead_id = request()->input('lead_id');
 
-        $follow_up_date = request()->input('follow_up_date');
-        $follow_up_time = request()->input('follow_up_time');
-        $notes = request()->input('notes');
-        $deleted_at = request()->input('deleted_at');
 
         return [
-            'follow_up_date' => 'required|date',
-            'follow_up_time' => 'required|date_format:H:i',
+            'followup_date' => 'required|date',
+            'followup_time' => 'required|date_format:H:i',
             'deleted_at' => 'date',
             'lead_id' => [
                 'required',

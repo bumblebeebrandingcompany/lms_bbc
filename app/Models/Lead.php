@@ -27,7 +27,7 @@ class Lead extends Model
     ];
 
     public const DEFAULT_WEBHOOK_FIELDS = [
-        'father_name',
+        'name',
         'email',
         'phone',
         'predefined_comments',
@@ -59,7 +59,7 @@ class Lead extends Model
      * @var array
      */
     protected $casts = [
-        'lead_details' => 'array',
+        'sub_source_id' => 'json',
         'webhook_response' => 'array',
         'lead_event_webhook_response' => 'array',
 
@@ -226,6 +226,22 @@ class Lead extends Model
             ->select('id', 'campaign_id','project_id','source_id')
             ->withDefault();
     }
+    public function model(array $row)
+    {
+        // Check if both 'first_name' and 'last_name' keys exist in the $row array
+        if(isset($row['first_name']) && isset($row['last_name'])) {
+            // Create a new FileImport model instance with the provided data
+            $fileImport = new Lead([
+                'first_name' => $row['first_name'],
+                'last_name' => $row['last_name'],
+            ]);
 
+            // Return the model instance
+            return $fileImport;
+        } else {
+
+            return null;
+        }
+    }
 }
 

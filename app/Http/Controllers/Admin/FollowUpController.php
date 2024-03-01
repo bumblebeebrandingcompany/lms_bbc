@@ -75,8 +75,8 @@ class FollowUpController extends Controller
             $parentStageId = $request->input('stage_id');
             $followup = new Followup();
             $followup->lead_id = $lead->id;
-            $followup->follow_up_date = $input['follow_up_date'];
-            $followup->follow_up_time = $input['follow_up_time'];
+            $followup->followup_date = $input['followup_date'];
+            $followup->followup_time = $input['followup_time'];
             $followup->notes = $input['notes'];
             $followup->stage_id = $parentStageId;
             $followup->save();
