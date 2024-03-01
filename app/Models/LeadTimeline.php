@@ -11,6 +11,7 @@ class LeadTimeline extends Model
 
 
     protected $table = 'leadtimeline';
+
     protected $fillable = ['lead_id', 'description','activity_type','payload'];
 
 

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('activity_type');
             $table->json('payload');
-            $table->string('discription');
+            $table->string('description');
             $table->string('lead_id');
             $table->timestamps();
         });

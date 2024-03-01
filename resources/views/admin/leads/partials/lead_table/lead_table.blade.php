@@ -13,14 +13,15 @@
             <th>
                 @lang('messages.ref_num')
             </th>
-            <th>
+            {{-- <th>
                 Parent Name </th>
-            <th>
+            <th> --}}
+                <th>
                 @lang('messages.email')
             </th>
-            <th>
+            {{-- <th>
                 Addtl Email
-            </th>
+            </th> --}}
             <th>
                 @lang('messages.phone')
             </th>
@@ -30,9 +31,9 @@
             <th>
                 Child Name
             </th>
-            <th>
+            {{-- <th>
                 Child Grade
-            </th>
+            </th> --}}
             <th>
                 Stage
             </th>
@@ -45,18 +46,10 @@
             <th>
                 Admission Team Name
             </th>
-            <!-- <th>
+            {{-- <th>
                 @lang('messages.status')
-            </th>
-            <th>
-                @lang('messages.sell_do_date')
-            </th>
-            <th>
-                @lang('messages.sell_do_time')
-            </th>
-            <th>
-                @lang('messages.sell_do_lead_id')
-            </th> -->
+            </th> --}}
+
 
             <th>
                 {{ trans('cruds.lead.fields.campaign') }}
