@@ -62,12 +62,14 @@ let dtOverrideGlobals = {
     columns: [
         { data: 'placeholder', name: 'placeholder' },
         { data: 'ref_num', name: 'ref_num' },
-        {{-- { data: 'name', name: 'name' }, --}}
+        { data: 'father_name', name: 'father_name' },
+        { data: 'mother_name', name: 'mother_name' },
         { data: 'email', name: 'email' },
-        {{-- { data: 'additional_email', name: 'additional_email' }, --}}
+        { data: 'secondary_email', name: 'secondary_email' },
         { data: 'phone', name: 'phone' },
         { data: 'secondary_phone', name: 'secondary_phone' },
         { data: 'child_name', name: 'child_name' },
+        { data: 'child_age', name: 'child_age' },
         {{-- { data: 'grade_enquired', name: 'grade_enquired' }, --}}
         { data: 'parent_stage_name', name: 'stage_id' },
         { data: 'application_num', name: 'application_num' },

@@ -2,35 +2,22 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Exports\LeadsExport;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MassDestroyLeadRequest;
 use App\Http\Requests\StoreFollowupRequest;
-use App\Http\Requests\UpdateLeadRequest;
 use App\Models\Campaign;
-use App\Models\Document;
 use App\Models\Lead;
-use App\Models\LeadEvents;
 use App\Models\Project;
 use App\Models\Source;
 use App\Models\User;
 use App\Models\Followup;
 use App\Utils\Util;
-use Carbon\Carbon;
-use Exception;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 use Symfony\Component\HttpFoundation\Response;
-use Yajra\DataTables\Facades\DataTables;
-use DateTimeInterface;
 
 class FollowUpController extends Controller
 {
-    /**
-     * All Utils instance.
-     *
-     */
+
     protected $util;
     public function __construct(Util $util)
     {
@@ -54,39 +41,37 @@ class FollowUpController extends Controller
         $itemsPerPage = request('perPage', 10);
         $followUps = Followup::paginate($itemsPerPage);
         $projects = Project::whereIn('id', $project_ids)
-        ->get();
-    $campaigns = Campaign::whereIn('id', $campaign_ids)
-        ->get();
+            ->get();
+        $campaigns = Campaign::whereIn('id', $campaign_ids)
+            ->get();
 
-    $sources = Source::whereIn('project_id', $project_ids)
-        ->whereIn('campaign_id', $campaign_ids)
-        ->get();
-        return view('admin.leads.followup.index', compact('campaigns', 'agencies', 'lead', 'followUps','projects','sources'));
+        $sources = Source::whereIn('project_id', $project_ids)
+            ->whereIn('campaign_id', $campaign_ids)
+            ->get();
+        return view('admin.leads.followup.index', compact('campaigns', 'agencies', 'lead', 'followUps', 'projects', 'sources'));
     }
     public function store(StoreFollowupRequest $request)
     {
 
         $input = $request->validated();
-        // Find the lead based on its ID
         $lead = Lead::findOrFail($input['lead_id']);
 
-        // Check if the lead is not null before proceeding
         if ($lead) {
             $parentStageId = $request->input('stage_id');
             $followup = new Followup();
             $followup->lead_id = $lead->id;
-            $followup->followup_date = $input['followup_date'];
-            $followup->followup_time = $input['followup_time'];
+            $followup->followup_date = $input['follow_up_date'];
+            $followup->followup_time = $input['follow_up_time'];
             $followup->notes = $input['notes'];
+            $followup->created_by = auth()->user()->id;
             $followup->stage_id = $parentStageId;
             $followup->save();
-            // Check if $followup->lead is not null before updating
+            $this->logTimeline($lead, $$followup, 'Followup created', 'followup_created');
             if ($followup->lead) {
                 $followup->lead->update(['stage_id' => $followup->stage_id]);
             }
             return redirect()->back()->with('success', 'Form submitted successfully!');
         } else {
-            // Handle the case where the lead is not found
             return redirect()->back()->with('error', 'Lead not found!');
         }
     }

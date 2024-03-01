@@ -27,7 +27,7 @@
     <td>
         @foreach ($lead as $leads)
             @if ($leads->id === $sitevisit->lead_id)
-                {{ $leads->name }}
+                {{ $leads->father_name }}
             @endif
         @endforeach
     </td>
@@ -48,24 +48,22 @@
     <td>
         {{ $sitevisit->visit_time }}
     </td>
-    {{-- <td>
-        {{ $sitevisit->users->representative_name ?? 'No User Assigned' }}
-    </td> --}}
+    <td>
+        {{ $sitevisit->users->representative_name ?? 'Not Updated' }}
+    </td>
     <td>
         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"
             data-target="#notesModal{{ $sitevisit->id }}">
             View Notes
         </button>
-        <div class="modal fade" id="notesModal{{ $sitevisit->id }}" tabindex="-1"
-            role="dialog" aria-labelledby="notesModalLabel{{ $sitevisit->id }}"
-            aria-hidden="true">
+        <div class="modal fade" id="notesModal{{ $sitevisit->id }}" tabindex="-1" role="dialog"
+            aria-labelledby="notesModalLabel{{ $sitevisit->id }}" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="notesModalLabel{{ $sitevisit->id }}">
                             Notes</h5>
-                        <button type="button" class="close" data-dismiss="modal"
-                            aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -74,8 +72,7 @@
                         <textarea id="notesTextArea{{ $sitevisit->id }}" class="form-control" rows="5" readonly>{{ $sitevisit->notes }}</textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary"
-                            data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -112,11 +109,8 @@
                         </div>
                     @endif
                 @elseif ($sitevisit->lead && in_array($sitevisit->parent_stage_id, [11, 20, 27, 10, 13]))
-                @elseif (
-                    !auth()->user()->is_client &&
-                        !auth()->user()->is_frontoffice &&
-                        $sitevisit->lead &&
-                        $sitevisit->stage_id != 20)
+
+                @elseif (!auth()->user()->is_client && !auth()->user()->is_frontoffice && $sitevisit->lead && $sitevisit->stage_id != 20)
                     <button type="button" class="btn btn-sm btn-warning" data-toggle="modal"
                         data-target="#editModal{{ $sitevisit->id }}">
                         Reschedule
@@ -267,6 +261,7 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -358,6 +353,7 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [26, 27, 20, 19]))
+
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&
@@ -449,7 +445,11 @@
             $sitevisit->stage_id != 13)
         <!-- Add this condition to hide "Cancel" button if the stage is conducted or 10 -->
         @php
-            $canCancel = !auth()->user()->is_frontoffice && !auth()->user()->is_client && $sitevisit->lead && $sitevisit->stage_id != 20;
+            $canCancel =
+                !auth()->user()->is_frontoffice &&
+                !auth()->user()->is_client &&
+                $sitevisit->lead &&
+                $sitevisit->stage_id != 20;
         @endphp
         @if ($canCancel)
             <br>
@@ -520,6 +520,7 @@
                     !auth()->user()->is_client &&
                     $sitevisit->lead &&
                     in_array($sitevisit->parent_stage_id, [11, 26, 27, 20, 19, 13]))
+
             @elseif (
                 !auth()->user()->is_superadmin &&
                     !auth()->user()->is_client &&

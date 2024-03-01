@@ -52,8 +52,13 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Reference Number</th>
-                                <th>Parent Name</th>
-                                <th>Campaign Name</th>
+                                <th>Father Name</th>
+                                <th>Mother Name</th>
+                                <th>Child Name</th>
+                                <th>Grade</th>
+                                <th>Age</th>
+
+                                {{-- <th>Campaign Name</th> --}}
                                 <th>Follow-Up Date</th>
                                 <th>Follow-Up Time</th>
                                 <th>Notes</th>
@@ -79,17 +84,59 @@
                                     <td>
                                         @foreach ($lead as $leads)
                                             @if ($leads->id === $followUp->lead_id)
-                                                {{ $leads->name }}
+                                                {{ $leads->father_name ?? 'Not Updated' }}
                                             @endif
                                         @endforeach
                                     </td>
                                     <td>
                                         @foreach ($lead as $leads)
                                             @if ($leads->id === $followUp->lead_id)
-                                                {{ $leads->campaign->name ?? ''}}
+                                                {{ $leads->mother_name ?? 'Not Updated' }}
                                             @endif
                                         @endforeach
                                     </td>
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->child_name ?? 'Not Updated' }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->grade_enquired ?? 'Not Updated' }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->child_age ?? 'Not Updated' }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    {{-- <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->campaign->name }}
+                                            @endif
+                                        @endforeach
+                                    </td> --}}
+                                    <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->child_age ?? 'Not Updated' }}
+                                            @endif
+                                        @endforeach
+                                    </td>
+                                    {{-- <td>
+                                        @foreach ($lead as $leads)
+                                            @if ($leads->id === $followUp->lead_id)
+                                                {{ $leads->campaign->name }}
+                                            @endif
+                                        @endforeach
+                                    </td> --}}
                                     <td>
                                         {{ $followUp->followup_date }}
                                     </td>

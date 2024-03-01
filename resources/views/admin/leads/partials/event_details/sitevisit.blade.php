@@ -7,8 +7,8 @@
         <div class="row">
             <div class="col-md-6">
                 <strong>Notes:</strong> {{ $sitevisit['notes'] ?? 'N/A' }} <br>
-                <strong>Date:</strong> {{ $sitevisit['follow_up_date'] ?? 'N/A' }} <br>
-                <strong>Time:</strong> {{ $sitevisit['follow_up_time'] ?? 'N/A' }} <br>
+                <strong>Date:</strong> {{ $sitevisit['visit_date'] ?? 'N/A' }} <br>
+                <strong>Time:</strong> {{ $sitevisit['visit_time'] ?? 'N/A' }} <br>
                 <!-- Display other site visit properties as needed -->
             </div>
         </div>

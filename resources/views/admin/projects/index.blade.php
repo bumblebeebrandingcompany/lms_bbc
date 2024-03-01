@@ -32,12 +32,7 @@
                         <th>
                             {{ trans('cruds.project.fields.name') }}
                         </th>
-                        {{-- <th>
-                            {{ trans('cruds.project.fields.start_date') }}
-                        </th>
-                        <th>
-                            {{ trans('cruds.project.fields.end_date') }}
-                        </th> --}}
+
                         <th>
                             {{ trans('cruds.project.fields.created_by') }}
                         </th>
@@ -47,9 +42,7 @@
                         <th>
                             {{ trans('cruds.client.fields.email') }}
                         </th>
-                        <th>
-                            {{ trans('cruds.project.fields.location') }}
-                        </th>
+
                         <th>
                             &nbsp;
                         </th>
@@ -58,12 +51,11 @@
                         <td>
                         </td>
                         <td>
-                            <input class="search" type="text" placeholder="{{ trans('global.search') }}">
+                        </td>
+                        {{-- <td>
                         </td>
                         <td>
-                        </td>
-                        <td>
-                        </td>
+                        </td> --}}
                         <td>
                             @if (auth()->user()->is_superadmin)
                                 <select class="search">
@@ -86,9 +78,9 @@
                         </td>
                         <td>
                         </td>
-                        <td>
+                        {{-- <td>
                             <input class="search" type="text" placeholder="{{ trans('global.search') }}">
-                        </td>
+                        </td> --}}
                         <td>
                         </td>
                     </tr>
@@ -157,17 +149,10 @@
                         data: 'name',
                         name: 'name'
                     },
-                    {
-                        data: 'start_date',
-                        name: 'start_date'
-                    },
-                    {
-                        data: 'end_date',
-                        name: 'end_date'
-                    },
+
                     {
                         data: 'created_by_name',
-                        name: 'created_by.name'
+                        name: 'user.name'
                     },
                     {
                         data: 'client_name',
@@ -177,10 +162,7 @@
                         data: 'client.email',
                         name: 'client.email'
                     },
-                    {
-                        data: 'location',
-                        name: 'location'
-                    },
+
                     {
                         data: 'actions',
                         name: '{{ trans('global.actions') }}'

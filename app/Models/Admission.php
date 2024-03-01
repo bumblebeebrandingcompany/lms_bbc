@@ -6,7 +6,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Admitted extends Model
+class Admission extends Model
 {
     use HasFactory;
 
@@ -17,16 +17,12 @@ class Admitted extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
-
-        'follow_up_date',
-
+        'admission_date',
     ];
 
 
     protected $fillable = [
-        'stage_id','lead_id','user_id','admission_no','follow_up_time',
-        'notes'
+        'application_id','stage_id','notes','admission_time','admission_date'
     ];
     public function lead()
     {

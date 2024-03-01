@@ -48,7 +48,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::resource('/notes', 'NoteController');
     Route::resource('/notenotinterested', 'NoteNotInterestedController');
 
-    Route::resource('/admitted', 'AdmittedController');
+    Route::resource('/admission', 'AdmissionController');
     Route::resource('/followups', 'FollowUpController');
     Route::delete('followups/destroy', 'FollowUpController@massDestroy')->name('followups.massDestroy');
     Route::get('leads/{lead}/initiate-call', 'LeadsController@initiateCall')
@@ -68,9 +68,6 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::match(['post', 'put'], '/admin/sitevisit/conducted', 'SiteVisitController@conductedstage')->name('sitevisit.conducted');
     Route::match(['post', 'put'], '/admin/sitevisit/notvisited', 'SiteVisitController@notvisitedstage')->name('sitevisit.notvisited');
     Route::match(['post', 'put'], '/admin/sitevisit/cancel', 'SiteVisitController@cancelstage')->name('sitevisit.cancel');
-
-    // Route::get('/admin/get-leads', 'WalkinController@getLeads')->name('admin.get.leads');
-    // Route::put('sitevisit/{sitevisit}', 'SiteVisitController@update')->name('admin.sitevisit.update');
 
     //call record
     Route::resource('/callog', 'CallRecordController');

@@ -20,7 +20,7 @@ use App\Models\Agency;
 use App\Models\Note;
 use App\Models\ParentStage;
 use App\Models\Tag;
-use App\Models\Admitted;
+use App\Models\Admission;
 use App\Models\NoteNotInterested;
 use App\Models\User;
 
@@ -118,7 +118,7 @@ class LeadsController extends Controller
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application withdrawn'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'Admitted', 'application withdrawn'];
             }
             $stageId = $request->input('stage_id');
             $admissionName = $request->input('admission_team_name');
@@ -194,30 +194,45 @@ class LeadsController extends Controller
                 return $overall_status;
             });
 
-            $table->addColumn('sell_do_date', function ($row) {
-                $date = '';
-                if (!empty ($row->sell_do_lead_created_at)) {
-                    $date = Carbon::parse($row->sell_do_lead_created_at)->format('d/m/Y');
-                }
-                return $date;
-            });
+            // $table->addColumn('sell_do_date', function ($row) {
+            //     $date = '';
+            //     if (!empty ($row->sell_do_lead_created_at)) {
+            //         $date = Carbon::parse($row->sell_do_lead_created_at)->format('d/m/Y');
+            //     }
+            //     return $date;
+            // });
 
-            $table->addColumn('sell_do_time', function ($row) {
-                $time = '';
-                if (!empty ($row->sell_do_lead_created_at)) {
-                    $time = Carbon::parse($row->sell_do_lead_created_at)->format('h:i A');
-                }
-                return $time;
-            });
+            // $table->addColumn('sell_do_time', function ($row) {
+            //     $time = '';
+            //     if (!empty ($row->sell_do_lead_created_at)) {
+            //         $time = Carbon::parse($row->sell_do_lead_created_at)->format('h:i A');
+            //     }
+            //     return $time;
+            // });
 
-            $table->addColumn('sell_do_lead_id', function ($row) {
-                $sell_do_lead_id = '';
-                if (!empty ($row->sell_do_lead_id)) {
-                    $sell_do_lead_id = $row->sell_do_lead_id;
+            // $table->addColumn('sell_do_lead_id', function ($row) {
+            //     $sell_do_lead_id = '';
+            //     if (!empty ($row->sell_do_lead_id)) {
+            //         $sell_do_lead_id = $row->sell_do_lead_id;
+            //     }
+            //     return $sell_do_lead_id;
+            // });
+            $table->addColumn('father_name', function ($row) use ($user) {
+                $father_name = $row->father_name ? $row->father_name : '';
+                if (!empty ($father_name) && $user->is_channel_partner_manager) {
+                    return $father_name;
+                } else {
+                    return 'Not Updated';
                 }
-                return $sell_do_lead_id;
             });
-
+            $table->addColumn('mother_name', function ($row) use ($user) {
+                $mother_name = $row->mother_name ? $row->mother_name : '';
+                if (!empty ($mother_name) && $user->is_channel_partner_manager) {
+                    return $mother_name;
+                } else {
+                    return 'Not Updated';
+                }
+            });
             $table->addColumn('phone', function ($row) use ($user) {
                 $phone = $row->phone ? $row->phone : '';
                 if (!empty ($phone) && $user->is_channel_partner_manager) {
@@ -378,7 +393,7 @@ class LeadsController extends Controller
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
         $parentStages = ParentStage::all();
-        $admitted = Admitted::all();
+        $admission = Admission::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
@@ -404,7 +419,7 @@ class LeadsController extends Controller
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application not purchased'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'Admitted', 'application not purchased'];
 
             }
 
@@ -459,7 +474,7 @@ class LeadsController extends Controller
                 }
             });
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'admitted', 'parentStages', 'sales', 'frontoffice', 'admissionteams', 'subsources'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'parentStages', 'sales', 'frontoffice', 'admissionteams', 'subsources'));
         }
     }
     public function create()
@@ -501,22 +516,17 @@ class LeadsController extends Controller
         })->first();
 
         if ($existingLead) {
-            // If lead already exists, merge the new sub_source_id with existing sub_source_id
             $existingSubSourceIds = json_decode($existingLead->sub_source_id, true);
 
-            // Ensure existingSubSourceIds is an array
             if (!is_array($existingSubSourceIds)) {
                 $existingSubSourceIds = [$existingLead->sub_source_id];
             }
 
-            // Ensure new sub_source_id is an array
             $newSubSourceIds = is_array($subSourceIdArray) ? $subSourceIdArray : [$subSourceIdArray];
 
-            // Merge the two arrays and remove duplicates
             $mergedSubSourceIds = array_values(array_unique(array_merge($existingSubSourceIds, $newSubSourceIds)));
 
-            // Convert merged sub_source_id array back to JSON
-            $existingLead->sub_source_id = json_encode($mergedSubSourceIds);
+            $existingLead->sub_source_id = $mergedSubSourceIds;
             $existingLead->save();
             $this->logTimeline($existingLead, 'lead_subSource_updated', 'SubSource IDs updated for the lead.');
 
@@ -597,21 +607,14 @@ class LeadsController extends Controller
     public function update(UpdateLeadRequest $request, Lead $lead)
     {
         $input = $request->except(['_method', '_token']);
-        $input['lead_details'] = $this->getLeadDetailsKeyValuePair($input['lead_details'] ?? []);
 
-        // Ensure that 'stage_id' is present in the $input array
         $input['stage_id'] = $request->input('stage_id');
 
-        // Log the update of 'stage_id'
         $this->logTimeline($lead, 'Stage Changed', "Stage was updated to {$input['stage_id']}");
 
-        // Log the general update
 
-        // Update the 'stage_id' directly without any authorization checks
         $lead->update($input);
 
-        // Assuming you have a method like storeUniqueWebhookFields
-        // $this->util->storeUniqueWebhookFields($lead);
 
         return redirect()->back()->with('success', 'Form submitted successfully!');
     }
@@ -642,7 +645,7 @@ class LeadsController extends Controller
         $stages = Stage::all();
         $tags = Tag::all();
         $leads = Lead::all();
-        $admitted = Admitted::all();
+        $admission = Admission::all();
         $sitevisits = SiteVisit::all();
         $allActivities = $this->getLeadActivities($lead);
         $noteNotInterested = NoteNotInterested::all();
@@ -685,7 +688,7 @@ class LeadsController extends Controller
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
-        return view('admin.leads.show', compact('admitted', 'lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested', 'users', 'application'));
+        return view('admin.leads.show', compact( 'lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested', 'users', 'application'));
     }
     public function destroy(Lead $lead)
     {

@@ -403,12 +403,12 @@
             @endif
                 @if (auth()->user()->is_admissionteam || auth()->user()->is_superadmin || auth()->user()->is_client)
                     <li class="nav-item">
-                        <a href="{{ route('admin.admitted.index') }}"
-                            class="nav-link {{ request()->is('admin/admitted') || request()->is('admin/admitted/*') ? 'active' : '' }}">
+                        <a href="{{ route('admin.admission.index') }}"
+                            class="nav-link {{ request()->is('admin/Admission') || request()->is('admin/Admission/*') ? 'active' : '' }}">
                             <i class="fas fa fa-check nav-icon"></i>
                             </i>
                             <p>
-                                Admitted
+                                Admission
                             </p>
                         </a>
                     </li>

@@ -327,29 +327,30 @@ class HomeController
         $settings8['total_number'] = 0;
         if (class_exists($settings8['model'])) {
             $settings8['total_number'] = $settings8['model']::when(isset($settings8['filter_field']), function ($query) use ($settings8) {
-                if (isset($settings8['filter_days'])) {
-                    return $query->where($settings8['filter_field'], '>=',
-                        now()->subDays($settings8['filter_days'])->format('Y-m-d'));
-                } elseif (isset($settings8['filter_period'])) {
-                    switch ($settings8['filter_period']) {
-                        case 'week': $start = date('Y-m-d', strtotime('last Monday'));
-                        break;
-                        case 'month': $start = date('Y-m') . '-01';
-                        break;
-                        case 'year': $start = date('Y') . '-01-01';
-                        break;
+                    if (isset($settings8['filter_days'])) {
+                        return $query->where($settings8['filter_field'], '>=',
+                            now()->subDays($settings8['filter_days'])->format('Y-m-d'));
+                    } elseif (isset($settings8['filter_period'])) {
+                        switch ($settings8['filter_period']) {
+                            case 'week': $start = date('Y-m-d', strtotime('last Monday'));
+                            break;
+                            case 'month': $start = date('Y-m') . '-01';
+                            break;
+                            case 'year': $start = date('Y') . '-01-01';
+                            break;
+                        }
+                        if (isset($start)) {
+                            return $query->where($settings8['filter_field'], '>=', $start);
+                        }
                     }
-                    if (isset($start)) {
-                        return $query->where($settings8['filter_field'], '>=', $start);
-                    }
-                }
-            })
-                ->where(function ($q) use($project_ids, $campaign_ids) {
-                    $q->whereIn('subsource.project_id', $project_ids)
-                        ->orWhereIn('subsource.campaign_id', $campaign_ids);
+                })
+                ->whereHas('subsource', function ($q) use ($project_ids, $campaign_ids) {
+                    $q->whereIn('project_id', $project_ids)
+                        ->orWhereIn('campaign_id', $campaign_ids);
                 })
                 ->{$settings8['aggregate_function'] ?? 'count'}($settings8['aggregate_field'] ?? '*');
         }
+
 
         $settings9 = [
             'chart_title'           => 'Recent Campaigns',
@@ -365,10 +366,8 @@ class HomeController
             'entries_number'        => '10',
             'fields'                => [
                 'name' => '',
-                'start_date'    => '',
-                'source'        => '',
+                'source'        => 'name',
                 'created_at'    => '',
-                'end_date'      => '',
                 'project'       => 'name',
                 'agency'        => 'name',
             ],
@@ -377,11 +376,30 @@ class HomeController
 
         $settings9['data'] = [];
         if (class_exists($settings9['model'])) {
-            $settings9['data'] = $settings9['model']::whereIn('id', $campaign_ids)
+            $settings9['data'] = $settings9['model']::with('source')
+                ->when(isset($settings9['filter_field']), function ($query) use ($settings9) {
+                    if (isset($settings9['filter_days'])) {
+                        return $query->where($settings9['filter_field'], '>=',
+                            now()->subDays($settings9['filter_days'])->format('Y-m-d'));
+                    } elseif (isset($settings9['filter_period'])) {
+                        switch ($settings9['filter_period']) {
+                            case 'week': $start = date('Y-m-d', strtotime('last Monday'));
+                            break;
+                            case 'month': $start = date('Y-m') . '-01';
+                            break;
+                            case 'year': $start = date('Y') . '-01-01';
+                            break;
+                        }
+                        if (isset($start)) {
+                            return $query->where($settings9['filter_field'], '>=', $start);
+                        }
+                    }
+                })
                 ->latest()
                 ->take($settings9['entries_number'])
                 ->get();
         }
+
 
         if (! array_key_exists('fields', $settings9)) {
             $settings9['fields'] = [];
@@ -400,8 +418,9 @@ class HomeController
             'column_class'          => 'col-md-6',
             'entries_number'        => '10',
             'fields'                => [
-                'project'      => 'name',
-                'campaign'     => 'name',
+                // 'project'      => 'name',
+                // 'campaign'     => 'name',
+                'ref_num'=>'',
                 'email' => '',
                 'phone' => '',
                 'created_at'   => '',
@@ -411,9 +430,10 @@ class HomeController
 
         $settings10['data'] = [];
         if (class_exists($settings10['model'])) {
-            $settings10['data'] = $settings10['model']::where(function ($q) use($project_ids, $campaign_ids) {
-                    $q->whereIn('leads.project_id', $project_ids)
-                    ->orWhereIn('leads.campaign_id', $campaign_ids);
+            $settings10['data'] = $settings10['model']::with(['subsource.project', 'subsource.campaign'])
+                ->whereHas('subsource', function ($query) use ($project_ids, $campaign_ids) {
+                    $query->whereIn('project_id', $project_ids)
+                          ->orWhereIn('campaign_id', $campaign_ids);
                 })
                 ->latest()
                 ->take($settings10['entries_number'])

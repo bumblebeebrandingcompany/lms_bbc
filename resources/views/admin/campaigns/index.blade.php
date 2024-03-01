@@ -24,12 +24,12 @@
                         <th>
                             {{ trans('cruds.campaign.fields.name') }}
                         </th>
-                        <th>
+                        {{-- <th>
                             {{ trans('cruds.campaign.fields.start_date') }}
                         </th>
                         <th>
                             {{ trans('cruds.campaign.fields.end_date') }}
-                        </th>
+                        </th> --}}
                         <th>
                             {{ trans('cruds.campaign.fields.project') }}
                         </th>
@@ -49,10 +49,10 @@
                         <td>
                             <input class="search" type="text" placeholder="{{ trans('global.search') }}">
                         </td>
-                        <td>
+                        {{-- <td>
                         </td>
                         <td>
-                        </td>
+                        </td> --}}
                         <td>
                             @if (empty($__global_clients_filter) && !auth()->user()->is_agency)
                                 <select class="search">
@@ -144,14 +144,7 @@
                         data: 'name',
                         name: 'name'
                     },
-                    {
-                        data: 'start_date',
-                        name: 'start_date'
-                    },
-                    {
-                        data: 'end_date',
-                        name: 'end_date'
-                    },
+
                     {
                         data: 'name',
                         name: 'project.name'

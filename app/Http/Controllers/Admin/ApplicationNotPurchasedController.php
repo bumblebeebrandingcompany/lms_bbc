@@ -63,7 +63,7 @@ class ApplicationNotPurchasedController extends Controller
             $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
             $applicationpurchased->save();
 
-            // Check if $admitted->lead is not null before updating
+            // Check if $admission->lead is not null before updating
             if ($applicationpurchased->lead) {
                 $applicationpurchased->lead->update(['stage_id' => $applicationpurchased->stage_id]);
 
