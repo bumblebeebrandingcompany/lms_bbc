@@ -304,14 +304,14 @@
                     <a class="float-right">
                         <span class="value-container">
                             <span class="display-value"
-                                style="{{ $errors->has('current_school') ? 'display:none;' : '' }}">
-                                {{ $lead->current_school }}
+                                style="{{ $errors->has('previous_school') ? 'display:none;' : '' }}">
+                                {{ $lead->previous_school }}
                             </span>
-                            <input type="text" name="current_school" class="edit-field"
+                            <input type="text" name="previous_school" class="edit-field"
                                 placeholder="Enter Current School"
-                                style="{{ $errors->has('current_school') ? '' : 'display:none;' }}"
-                                value="{{ old('current_school') }}">
-                            @error('current_school')
+                                style="{{ $errors->has('previous_school') ? '' : 'display:none;' }}"
+                                value="{{ old('previous_school') }}">
+                            @error('previous_school')
                                 <div class="text-danger">{{ $message }}</div>
                                 {{-- Show the save button when there is an error --}}
                                 <script>
@@ -1087,75 +1087,81 @@
             });
 
             $('.save-button').on('click', function() {
-                // Create an object to store the updated values
-                var updatedValues = {};
-                var isValid = true;
-                // Update the display values with the entered values and store in the object
-                $('.display-value').each(function() {
-                    var fieldName = $(this).attr('name');
-                    var updatedValue = $(this).siblings('.edit-field').val();
+    // Create an object to store the updated values
+    var updatedValues = {};
+    var isValid = true;
+    // Update the display values with the entered values and store in the object
+    $('.display-value').each(function() {
+        var fieldName = $(this).attr('name');
+        var updatedValue = $(this).siblings('.edit-field').val();
 
-                    // Perform validation for each field
-                    switch (fieldName) {
-                        case 'additional_email':
-                            if (!isValidEmail(updatedValue)) {
-                                isValid = false;
-                                $('.error-message').text('Invalid email address.');
-                            }
-                            break;
-                        case 'secondary_phone':
-                            if (!isValidPhoneNumber(updatedValue)) {
-                                isValid = false;
-                                $('.error-message').text(
-                                    'Invalid phone number (10 digits required).');
-                            }
-                            break;
-                        case 'intake_year':
-                            // Add validation logic if needed
-                            break;
-                        case 'grade_enquired':
-                            // Add validation logic if needed
-                            break;
-
-                        case 'current_school':
-                            // Add validation logic if needed
-                            break;
-                            // Add more cases for other fields as needed
-                    }
-
-                    updatedValues[fieldName] = updatedValue;
-                });
-                if (updatedValue.trim() === '') {
-                    $(this).siblings('.edit-field').css('border-color', 'red');
-                } else {
-                    $(this).siblings('.edit-field').css('border-color', 'blue');
+        // Perform validation for each field
+        switch (fieldName) {
+            case 'additional_email':
+                if (!isValidEmail(updatedValue)) {
+                    isValid = false;
+                    $('.error-message').text('Invalid email address.');
                 }
-
-                // Add the _method field for Laravel to recognize it as a PUT request
-                updatedValues['_method'] = 'PUT';
-                // Check if all fields are valid before making the AJAX request
-                if (isValid) {
-                    $.ajax({
-                        method: 'POST',
-                        url: '{{ route('admin.leads.update', [$lead->id]) }}',
-                        data: updatedValues,
-                        success: function(response) {
-                            // Handle success if needed
-                            console.log(response);
-                            // Hide the text fields and show the display values
-                            $('.edit-field').hide();
-                            $('.display-value').show();
-                        },
-                        error: function(error) {
-                            // Log the error response
-                            console.error(error.responseJSON);
-                            // Show the text fields and hide the display values
-                            $('.edit-field').show();
-                            $('.display-value').hide();
-                        }
-                    });
+                break;
+            case 'secondary_phone':
+                if (!isValidPhoneNumber(updatedValue)) {
+                    isValid = false;
+                    $('.error-message').text(
+                        'Invalid phone number (10 digits required).');
                 }
-            });
+                break;
+            case 'intake_year':
+                // Add validation logic if needed
+                break;
+            case 'grade_enquired':
+                break;
+
+            case 'previous_school':
+                // Add validation logic if needed
+                break;
+                // Add more cases for other fields as needed
+        }
+
+        updatedValues[fieldName] = updatedValue;
+    });
+
+    // Check for empty fields
+    if (updatedValue.trim() === '') {
+        $(this).siblings('.edit-field').css('border-color', 'red');
+    } else {
+        $(this).siblings('.edit-field').css('border-color', 'blue');
+    }
+
+    // Add the _method field for Laravel to recognize it as a PUT request
+    updatedValues['_method'] = 'PUT';
+
+    // Add CSRF token
+    updatedValues['_token'] = '{{ csrf_token() }}';
+
+    // Check if all fields are valid before making the AJAX request
+    if (isValid) {
+        $.ajax({
+            method: 'POST',
+            url: '{{ route('admin.leads.update', [$lead->id]) }}',
+            data: updatedValues,
+            success: function(response) {
+                // Handle success if needed
+                console.log(response);
+                // Hide the text fields and show the display values
+                $('.edit-field').hide();
+                $('.display-value').show();
+            },
+            error: function(error) {
+                // Log the error response
+                console.error(error.responseJSON);
+                // Show the text fields and hide the display values
+                $('.edit-field').show();
+                $('.display-value').hide();
+            }
+        });
+    }
+});
+
         });
     </script>
 

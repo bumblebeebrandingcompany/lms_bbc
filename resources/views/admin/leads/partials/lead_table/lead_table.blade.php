@@ -1,4 +1,3 @@
-
 <div class="row mb-2">
     <div class="col">
         <h5 id="leadCount"></h5>
@@ -13,15 +12,19 @@
             <th>
                 @lang('messages.ref_num')
             </th>
-            {{-- <th>
-                Parent Name </th>
-            <th> --}}
-                <th>
+            <th>
+                Father Name
+            </th>
+            <th>
+                Mother Name
+            </th>
+
+            <th>
                 @lang('messages.email')
             </th>
-            {{-- <th>
+            <th>
                 Addtl Email
-            </th> --}}
+            </th>
             <th>
                 @lang('messages.phone')
             </th>
@@ -31,9 +34,9 @@
             <th>
                 Child Name
             </th>
-            {{-- <th>
-                Child Grade
-            </th> --}}
+            <th>
+                Child Age
+            </th>
             <th>
                 Stage
             </th>
@@ -58,7 +61,7 @@
                 {{ trans('messages.source') }}
             </th>
             <th>
-               Sub Source
+                Sub Source
             </th>
             <th>
                 {{ trans('messages.added_by') }}

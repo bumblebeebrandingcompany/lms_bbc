@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('leads', function (Blueprint $table) {
             $table->string('intake_year');
             $table->string('grade_enquired');
-            $table->string('current_school');
+            $table->string('previous_school');
         });
     }
 
