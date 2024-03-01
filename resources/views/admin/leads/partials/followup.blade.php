@@ -5,7 +5,7 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Campaign Name</th>
+                    {{-- <th>Campaign Name</th> --}}
                     <th>Follow-Up Time</th>
                     <th>Follow-Up Date</th>
                     <th>Notes</th>
@@ -15,9 +15,9 @@
             <tbody>
                 @foreach ($followUps->where('stage_id', 9) as $followUp)
                     <tr>
-                        <td>{{ $lead->campaign->name }}</td>
-                        <td>{{ $followUp->follow_up_time }}</td>
-                        <td>{{ $followUp->follow_up_date }}</td>
+                        {{-- <td>{{ $lead->promo->campaign->name }}</td> --}}
+                        <td>{{ $followUp->followup_time }}</td>
+                        <td>{{ $followUp->followup_date }}</td>
                         <td>{{ $followUp->notes }}</td>
                         <td>{{ $followUp->created_at }}</td>
                     </tr>

@@ -19,16 +19,13 @@ class SitevisitRequest extends FormRequest
     {
 
         return [
-            'follow_up_date' => 'required|date',
-            'follow_up_time' => 'required|date_format:H:i',
-            'deleted_at' => 'date',
+            'visit_date' => 'required|date',
+            'visit_time' => 'required|date_format:H:i',
             'lead_id' => [
                 'required',
                 'integer',
             ],
-            'user_id' => [
 
-            ],
             'notes' => 'nullable|string'
         ];
     }

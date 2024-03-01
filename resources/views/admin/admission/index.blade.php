@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 @section('content')
-    <h2>Admitted Table</h2>
+    <h2>Admission Table</h2>
     <div class="card">
         <div class="card-body">
-            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-admitted"
+            <table class="table table-bordered table-striped table-hover ajaxTable datatable datatable-Admission"
                 id="followUpTable">
                 <thead>
                     <tr>
@@ -24,12 +24,12 @@
                     @php
                         $counter = 1;
                     @endphp
-                    @foreach ($admitteds as $admitted)
+                    @foreach ($admissions as $admission)
                         <td>{{ $counter++ }}</td>
 
                         <td>
                             @foreach ($lead as $leads)
-                                @if ($leads->id === $admitted->lead_id)
+                                @if ($leads->id === $admission->lead_id)
                                     <a href="{{ route('admin.leads.show', ['lead' => $leads->id]) }}">
                                         {{ $leads->ref_num }}
                                     </a>
@@ -37,31 +37,31 @@
                             @endforeach
                         </td>
                         <td>
-                            {{ $admitted->lead->name ?? '' }}
+                            {{ $admission->lead->name ?? '' }}
                         </td>
                         <td>
-                            {{ $admitted->lead->child_name ?? 'Not Updated' }}
+                            {{ $admission->lead->child_name ?? 'Not Updated' }}
                         </td>
                         <td>
-                            {{ $admitted->lead->grade_enquired ?? ''}}
+                            {{ $admission->lead->grade_enquired ?? ''}}
                         </td>
                         <td>
-                            {{ $admitted->application->application_no ?? '' }}
+                            {{ $admission->application->application_no ?? '' }}
                         </td>
                         <td>
-                            {{ $admitted->application->user->representative_name ?? 'No User Assigned' }}
+                            {{ $admission->application->user->representative_name ?? 'No User Assigned' }}
                         </td>
                         <td>
-                            {{ $admitted->follow_up_date ?? ''}}
+                            {{ $admission->follow_up_date ?? ''}}
                         </td>
                         <td>
-                            {{ $admitted->follow_up_time ?? ''}}
+                            {{ $admission->follow_up_time ?? ''}}
                         </td>
                         <td>
-                            {{ $admitted->notes ?? ''}}
+                            {{ $admission->notes ?? ''}}
                         </td>
                         <td>
-                            {{ $admitted->created_at->format('Y-m-d') }}
+                            {{ $admission->created_at->format('Y-m-d') }}
                         </td>
                         </tr>
                     @endforeach
@@ -74,12 +74,8 @@
     @parent
     <script>
         $(function() {
-            // Existing JavaScript code for DataTable initialization
-
-            // Additional customization for DataTable
-            let table = $('.datatable-admitted').DataTable();
+            let table = $('.datatable-Admission').DataTable();
             table.on('draw.dt', function() {
-                // Add any additional customization after the table is drawn
             });
         });
     </script>

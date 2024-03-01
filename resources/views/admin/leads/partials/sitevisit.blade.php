@@ -55,7 +55,7 @@
             <thead>
                 <tr>
                     <th>Ref Number</th>
-                    <th>Campaign Name</th>
+                    {{-- <th>Campaign Name</th> --}}
                     <th>Site Visit Date</th>
                     <th>Site Visit Time</th>
 
@@ -71,10 +71,10 @@
                         <td>
                             {{ $sitevisit->lead_id }}
                         </td>
-                        <td>{{ $lead->campaign->name }}</td>
+                        {{-- <td>{{ $lead->campaign->name }}</td> --}}
 
-                        <td>{{ $sitevisit->follow_up_date }}</td>
-                        <td>{{ $sitevisit->follow_up_time }}</td>
+                        <td>{{ $sitevisit->visit_date }}</td>
+                        <td>{{ $sitevisit->visit_time }}</td>
                         <td>
                             {{ $sitevisit->notes }}
                             <td style="text-align: center;">

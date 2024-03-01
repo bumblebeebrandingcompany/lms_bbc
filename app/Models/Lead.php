@@ -60,6 +60,7 @@ class Lead extends Model
      */
     protected $casts = [
         'lead_details' => 'array',
+        'subsource' => 'json',
         'webhook_response' => 'array',
         'lead_event_webhook_response' => 'array',
 
@@ -206,9 +207,9 @@ class Lead extends Model
     {
         return $this->hasMany(Note::class);
     }
-    public function admitted()
+    public function Admission()
     {
-        return $this->hasMany(Admitted::class);
+        return $this->hasMany(Admission::class);
     }
 
 
@@ -223,9 +224,10 @@ class Lead extends Model
     public function subsource()
     {
         return $this->hasOne(SubSource::class, 'id', 'sub_source_id')
-            ->select('id', 'campaign_id','project_id','source_id')
+            ->select('id', 'campaign_id', 'project_id', 'source_id')
             ->withDefault();
     }
+
 
 }
 

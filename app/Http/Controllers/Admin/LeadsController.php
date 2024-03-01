@@ -20,7 +20,7 @@ use App\Models\Agency;
 use App\Models\Note;
 use App\Models\ParentStage;
 use App\Models\Tag;
-use App\Models\Admitted;
+use App\Models\Admission;
 use App\Models\NoteNotInterested;
 use App\Models\User;
 
@@ -118,7 +118,7 @@ class LeadsController extends Controller
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application withdrawn'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'Admitted', 'application withdrawn'];
             }
             $stageId = $request->input('stage_id');
             $admissionName = $request->input('admission_team_name');
@@ -393,7 +393,7 @@ class LeadsController extends Controller
         $campaigns = Campaign::whereIn('id', $campaign_ids)
             ->get();
         $parentStages = ParentStage::all();
-        $admitted = Admitted::all();
+        $admission = Admission::all();
         $sources = Source::whereIn('project_id', $project_ids)
             ->whereIn('campaign_id', $campaign_ids)
             ->get();
@@ -419,7 +419,7 @@ class LeadsController extends Controller
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'admitted', 'application not purchased'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'Admitted', 'application not purchased'];
 
             }
 
@@ -474,7 +474,7 @@ class LeadsController extends Controller
                 }
             });
             $filters = $request->except(['view']);
-            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'admitted', 'parentStages', 'sales', 'frontoffice', 'admissionteams', 'subsources'));
+            return view('admin.leads.kanban_index', compact('projects', 'campaigns', 'sources', 'lead_view', 'stage_wise_leads', 'lead_stages', 'filters', 'leads', 'parentStages', 'sales', 'frontoffice', 'admissionteams', 'subsources'));
         }
     }
     public function create()
@@ -645,7 +645,7 @@ class LeadsController extends Controller
         $stages = Stage::all();
         $tags = Tag::all();
         $leads = Lead::all();
-        $admitted = Admitted::all();
+        $admission = Admission::all();
         $sitevisits = SiteVisit::all();
         $allActivities = $this->getLeadActivities($lead);
         $noteNotInterested = NoteNotInterested::all();
@@ -688,7 +688,7 @@ class LeadsController extends Controller
 // });
         $sitevisits = SiteVisit::all();
         $campaigns = Campaign::all();
-        return view('admin.leads.show', compact('admitted', 'lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested', 'users', 'application'));
+        return view('admin.leads.show', compact( 'lead', 'lead_events', 'timelineItems', 'projects_list', 'parentStages', 'stages', 'tags', 'agencies', 'user_id', 'followUps', 'campaigns', 'sitevisit', 'client', 'leads', 'note', 'sitevisits', 'callRecords', 'notes', 'allActivities', 'noteNotInterested', 'users', 'application'));
     }
     public function destroy(Lead $lead)
     {

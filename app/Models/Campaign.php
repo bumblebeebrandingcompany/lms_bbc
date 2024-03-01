@@ -52,6 +52,12 @@ class Campaign extends Model
         return $this->hasMany(Source::class, 'campaign_id', 'id');
     }
 
+
+    public function source()
+    {
+        return $this->hasMany(Source::class, 'campaign_id', 'id');
+    }
+
     public function getStartDateAttribute($value)
     {
         return $value ? Carbon::parse($value)->format(config('panel.date_format')) : null;

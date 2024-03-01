@@ -183,7 +183,8 @@ return [
             'deleted_at'          => 'Deleted at',
             'deleted_at_helper'   => ' ',
             'email'               => 'Email',
-            'phone'               => 'Phone No.'
+            'phone'               => 'Phone No.',
+            'ref_num' =>'ref_num'
         ],
     ],
     'auditLog' => [

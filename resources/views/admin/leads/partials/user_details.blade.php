@@ -387,24 +387,7 @@
                                     <div class="modal-body">
                                         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                                         <input type="hidden" name="stage_id" value="9">
-                                        {{-- <div class="form-group">
-                                            <label type="select" for="user_id">clients</label>
-                                            <select name="user_id" id="user_id"
-                                                class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                                                rows="3" required>{{ old('user_id') }}
-                                                >
-                                                <option value="" selected disabled>Please
-                                                    Select</option>
-                                                @foreach ($agencies as $id => $agency)
-                                                    @foreach ($agency->agencyUsers as $user)
-                                                        <option value="{{ $user->id }}"
-                                                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                            {{ $user->representative_name }}
-                                                        </option>
-                                                    @endforeach
-                                                @endforeach
-                                            </select>
-                                        </div> --}}
+
                                         <div class="form-group">
                                             <label for="Date">Select Date </label>
                                             <input type="date"
@@ -445,33 +428,17 @@
                                         <input type="hidden" name="stage_id" value="10">
 
                                         <div class="form-group">
-                                            {{-- <label type="select" for="user_id">clients</label>
-                                            <select name="user_id" id="user_id"
-                                                class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                                                rows="3" required>{{ old('user_id') }}
-                                                >
-                                                <option value="" selected disabled>Please
-                                                    Select
-                                                </option>
-                                                @foreach ($client as $id => $clients)
-                                                    @foreach ($clients->clientUsers as $user)
-                                                        <option value="{{ $user->id }}"
-                                                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                                            {{ $user->representative_name }}
-                                                        </option>
-                                                    @endforeach
-                                                @endforeach
-                                            </select> --}}
+
                                             <div class="form-group">
                                                 <label for="Date">Select Date </label>
                                                 <input type="date"
                                                     class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                                    name="follow_up_date" id="follow_up_date" rows="3"
-                                                    required>{{ old('follow_up_date') }}
+                                                    name="visit_date" id="visit_date" rows="3"
+                                                    required>{{ old('visit_date') }}
                                             </div>
                                             <label for="Time">Select Time</label>
-                                            <input id="follow_up_time" name="follow_up_time" type="time"
-                                                class="form-control timepicker" value="{{ old('follow_up_time') }}">
+                                            <input id="visit_time" name="visit_time" type="time"
+                                                class="form-control timepicker" value="{{ old('visit_time') }}">
                                             <div class="form-group">
                                                 <label for="noteContent">Note Content</label>
                                                 <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
@@ -559,8 +526,7 @@
                 <!-- Your follow-up content goes here -->
                 <div class="modal-body">
                     <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="stage_id"
-                        value="19">
+                    <input type="hidden" name="stage_id" value="19">
 
                     <div class="form-group">
                         <label for="Date">Select Date </label>
@@ -764,10 +730,10 @@
                 </div>
             </div>
         </form>
-        <form id="AdmittedFormId" method="POST" action="{{ route('admin.admitted.store') }}" class="myForm"
+        <form id="AdmissionFormId" method="POST" action="{{ route('admin.admission.store') }}" class="myForm"
             enctype="multipart/form-data">
             @csrf
-            <div id="admittedContent" style="display: none;">
+            <div id="AdmissionContent" style="display: none;">
                 <div>
                     <input type="hidden" name="lead_id" value="{{ $lead->id }}">
                     <p> Lead ID: {{ $lead->id }}</p>
@@ -914,31 +880,31 @@
             </div>
         </form>
         <form id="ApplicationwithdrawnFormId" method="POST" action="{{ route('admin.stage-notes.store') }}"
-        enctype="multipart/form-data">
-        @csrf
-        <div id="applicationwithdrawnContent" style="display: none;">
-            <div class="modal-content">
+            enctype="multipart/form-data">
+            @csrf
+            <div id="applicationwithdrawnContent" style="display: none;">
+                <div class="modal-content">
 
-                <div class="modal-body">
-                    <input type="hidden" name="lead_id" value="{{ $lead->id }}">
-                    <input type="hidden" name="stage_id" value="29">
-                    <input type="hidden" name="stage" value="admission withdrawn">
-                    <div class="form-group">
+                    <div class="modal-body">
+                        <input type="hidden" name="lead_id" value="{{ $lead->id }}">
+                        <input type="hidden" name="stage_id" value="29">
+                        <input type="hidden" name="stage" value="admission withdrawn">
                         <div class="form-group">
-                            <label for="noteContent">Note Content</label>
-                            <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
-                                rows="4" required>{{ old('notes') }}</textarea>
-                        </div>
-                        <div class="modal-footer">
-                            <button class="btn btn-danger" type="submit">
-                                Save
-                            </button>
+                            <div class="form-group">
+                                <label for="noteContent">Note Content</label>
+                                <textarea class="form-control {{ $errors->has('notes') ? 'is-invalid' : '' }}" name="notes" id="notes"
+                                    rows="4" required>{{ old('notes') }}</textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-danger" type="submit">
+                                    Save
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </form>
+        </form>
         <form id="applicationnotpurchasedFormId" method="POST" action="{{ route('admin.applications.store') }}"
             class="myForm" enctype="multipart/form-data">
             @csrf
@@ -999,23 +965,48 @@
 </div>
 @php
     $lead_info = $lead->lead_info;
-    if (!empty($lead->source) && !empty($lead->source->name_key) && isset($lead_info[$lead->source->name_key]) && !empty($lead_info[$lead->source->name_key])) {
+    if (
+        !empty($lead->source) &&
+        !empty($lead->source->name_key) &&
+        isset($lead_info[$lead->source->name_key]) &&
+        !empty($lead_info[$lead->source->name_key])
+    ) {
         unset($lead_info[$lead->source->name_key]);
     }
 
-    if (!empty($lead->source) && !empty($lead->source->email_key) && isset($lead_info[$lead->source->email_key]) && !empty($lead_info[$lead->source->email_key])) {
+    if (
+        !empty($lead->source) &&
+        !empty($lead->source->email_key) &&
+        isset($lead_info[$lead->source->email_key]) &&
+        !empty($lead_info[$lead->source->email_key])
+    ) {
         unset($lead_info[$lead->source->email_key]);
     }
 
-    if (!empty($lead->source) && !empty($lead->source->phone_key) && isset($lead_info[$lead->source->phone_key]) && !empty($lead_info[$lead->source->phone_key])) {
+    if (
+        !empty($lead->source) &&
+        !empty($lead->source->phone_key) &&
+        isset($lead_info[$lead->source->phone_key]) &&
+        !empty($lead_info[$lead->source->phone_key])
+    ) {
         unset($lead_info[$lead->source->phone_key]);
     }
 
-    if (!empty($lead->source) && !empty($lead->source->additional_email_key) && isset($lead_info[$lead->source->additional_email_key]) && !empty($lead_info[$lead->source->additional_email_key])) {
+    if (
+        !empty($lead->source) &&
+        !empty($lead->source->additional_email_key) &&
+        isset($lead_info[$lead->source->additional_email_key]) &&
+        !empty($lead_info[$lead->source->additional_email_key])
+    ) {
         unset($lead_info[$lead->source->additional_email_key]);
     }
 
-    if (!empty($lead->source) && !empty($lead->source->secondary_phone_key) && isset($lead_info[$lead->source->secondary_phone_key]) && !empty($lead_info[$lead->source->secondary_phone_key])) {
+    if (
+        !empty($lead->source) &&
+        !empty($lead->source->secondary_phone_key) &&
+        isset($lead_info[$lead->source->secondary_phone_key]) &&
+        !empty($lead_info[$lead->source->secondary_phone_key])
+    ) {
         unset($lead_info[$lead->source->secondary_phone_key]);
     }
 @endphp
@@ -1087,13 +1078,13 @@
             });
 
             $('.save-button').on('click', function() {
-    // Create an object to store the updated values
-    var updatedValues = {};
-    var isValid = true;
-    // Update the display values with the entered values and store in the object
-    $('.display-value').each(function() {
-        var fieldName = $(this).attr('name');
-        var updatedValue = $(this).siblings('.edit-field').val();
+                // Create an object to store the updated values
+                var updatedValues = {};
+                var isValid = true;
+                // Update the display values with the entered values and store in the object
+                $('.display-value').each(function() {
+                    var fieldName = $(this).attr('name');
+                    var updatedValue = $(this).siblings('.edit-field').val();
 
                     // Perform validation for each field
                     switch (fieldName) {
@@ -1117,51 +1108,51 @@
                             // Add validation logic if needed
                             break;
 
-            case 'previous_school':
-                // Add validation logic if needed
-                break;
-                // Add more cases for other fields as needed
-        }
+                        case 'previous_school':
+                            // Add validation logic if needed
+                            break;
+                            // Add more cases for other fields as needed
+                    }
 
-        updatedValues[fieldName] = updatedValue;
-    });
+                    updatedValues[fieldName] = updatedValue;
+                });
 
-    // Check for empty fields
-    if (updatedValue.trim() === '') {
-        $(this).siblings('.edit-field').css('border-color', 'red');
-    } else {
-        $(this).siblings('.edit-field').css('border-color', 'blue');
-    }
+                // Check for empty fields
+                if (updatedValue.trim() === '') {
+                    $(this).siblings('.edit-field').css('border-color', 'red');
+                } else {
+                    $(this).siblings('.edit-field').css('border-color', 'blue');
+                }
 
-    // Add the _method field for Laravel to recognize it as a PUT request
-    updatedValues['_method'] = 'PUT';
+                // Add the _method field for Laravel to recognize it as a PUT request
+                updatedValues['_method'] = 'PUT';
 
-    // Add CSRF token
-    updatedValues['_token'] = '{{ csrf_token() }}';
+                // Add CSRF token
+                updatedValues['_token'] = '{{ csrf_token() }}';
 
-    // Check if all fields are valid before making the AJAX request
-    if (isValid) {
-        $.ajax({
-            method: 'POST',
-            url: '{{ route('admin.leads.update', [$lead->id]) }}',
-            data: updatedValues,
-            success: function(response) {
-                // Handle success if needed
-                console.log(response);
-                // Hide the text fields and show the display values
-                $('.edit-field').hide();
-                $('.display-value').show();
-            },
-            error: function(error) {
-                // Log the error response
-                console.error(error.responseJSON);
-                // Show the text fields and hide the display values
-                $('.edit-field').show();
-                $('.display-value').hide();
-            }
-        });
-    }
-});
+                // Check if all fields are valid before making the AJAX request
+                if (isValid) {
+                    $.ajax({
+                        method: 'POST',
+                        url: '{{ route('admin.leads.update', [$lead->id]) }}',
+                        data: updatedValues,
+                        success: function(response) {
+                            // Handle success if needed
+                            console.log(response);
+                            // Hide the text fields and show the display values
+                            $('.edit-field').hide();
+                            $('.display-value').show();
+                        },
+                        error: function(error) {
+                            // Log the error response
+                            console.error(error.responseJSON);
+                            // Show the text fields and hide the display values
+                            $('.edit-field').show();
+                            $('.display-value').hide();
+                        }
+                    });
+                }
+            });
 
         });
     </script>
@@ -1191,7 +1182,7 @@
         document.getElementById('rnrContent').style.display = 'none';
         document.getElementById('sitevisitconductedContent').style.display = 'none';
         document.getElementById('applicationpurchasedContent').style.display = 'none';
-        document.getElementById('admittedContent').style.display = 'none';
+        document.getElementById('AdmissionContent').style.display = 'none';
         document.getElementById('applicationnotpurchasedContent').style.display = 'none';
         document.getElementById('applicationwithdrawnContent').style.display = 'none';
         // Check the selected option and display the corresponding modal
@@ -1221,11 +1212,11 @@
             document.getElementById('sitevisitconductedContent').style.display = 'block';
         } else if (selectedName === 'application purchased') {
             document.getElementById('applicationpurchasedContent').style.display = 'block';
-        } else if (selectedName === 'admitted') {
-            document.getElementById('admittedContent').style.display = 'block';
+        } else if (selectedName === 'Admission') {
+            document.getElementById('AdmissionContent').style.display = 'block';
         } else if (selectedName === 'application not purchased') {
             document.getElementById('applicationnotpurchasedContent').style.display = 'block';
-        }else if (selectedName === 'admission withdrawn') {
+        } else if (selectedName === 'admission withdrawn') {
             document.getElementById('applicationwithdrawnContent').style.display = 'block';
         }
     }

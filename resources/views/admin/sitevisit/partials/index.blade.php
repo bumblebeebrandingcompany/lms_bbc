@@ -42,7 +42,7 @@
                                     {{-- <th>Campaign Name</th> --}}
                                     <th>Site Visit Date</th>
                                     <th>Site Visit Time</th>
-                                    <th>Supervise By</th>
+                                    <th>Created By</th>
                                     <th>Notes</th>
                                     <th>Created At</th>
                                     <th>Actions</th>
@@ -219,7 +219,7 @@
                                         {{-- <th>Campaign Name</th> --}}
                                         <th>Site Visit Date</th>
                                         <th>Site Visit Time</th>
-                                        <th>Supervise By</th>
+                                        <th>Created By</th>
                                         <th>Notes</th>
                                         <th>Created At</th>
                                         <th>Actions</th>

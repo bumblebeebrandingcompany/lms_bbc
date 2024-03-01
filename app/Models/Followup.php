@@ -17,35 +17,19 @@ class Followup extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
-        'follow_up_date',
-        'follow_up_time',
-        'notes'
+        'followup_date',
+        'followup_time',
     ];
-    // public function users()
-    // {
-    //     return $this->belongsTo(User::class, 'user_id');
-    // }
+    public function users()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
 
     protected $fillable = [
-        'stage_id'
+        'stage_id','lead_id',
+        'created_by','notes'
     ];
-    public function logTimeline($lead,$description, $activityType = null,$followup)
-    {
 
-
-        $data = [
-            'lead_id'=> $lead,
-            'description' => $description,
-            'follow_up_id'=>$followup,
-        ];
-
-        if ($activityType !== null) {
-            $data['activity_type'] = $activityType;
-        }
-
-        $this->timeline()->create($data);
-    }
     public function timeline()
     {
         return $this->hasMany(LeadTimeline::class);

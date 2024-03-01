@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('followups', function (Blueprint $table) {
             $table->id();
             $table->date('followup_date');
-            $table->date('followup_time');
+            $table->time('followup_time');
             $table->string('notes');
             $table->bigInteger('stage_id');
             $table->bigInteger('lead_id');

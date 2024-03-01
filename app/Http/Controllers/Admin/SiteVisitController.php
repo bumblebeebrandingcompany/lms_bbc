@@ -33,7 +33,6 @@ class SiteVisitController extends Controller
     public function __construct(Util $util)
     {
         $this->util = $util;
-        $this->lead_view = ['list', 'kanban'];
     }
 
     public function index(Request $request)
@@ -57,18 +56,16 @@ class SiteVisitController extends Controller
     }
     public function store(SiteVisitRequest $request)
     {
-        $input = $request->validated(); // Use the validated input from the request
+        $input = $request->validated();
 
-        // Find the lead and user based on their IDs
         $lead = Lead::findOrFail($input['lead_id']);
         $parentStageId = $request->input('stage_id');
         $sitevisit = new SiteVisit();
         $sitevisit->lead_id = $lead->id;
-        $sitevisit->follow_up_date = $input['follow_up_date']; // Assign the date
-        $sitevisit->follow_up_time = $input['follow_up_time']; // Assign the time
+        $sitevisit->visit_date = $input['visit_date']; // Assign the date
+        $sitevisit->visit_time = $input['visit_time']; // Assign the time
         $sitevisit->notes = $input['notes'];
-        $sitevisit->user_id = auth()->user()->id;
-        $sitevisit->created_by=auth()->user()->id;
+        $sitevisit->created_by = auth()->user()->id;
         $sitevisit->stage_id = $parentStageId;
         $sitevisit->save();
         $sitevisit->lead->update(['stage_id' => $sitevisit->stage_id]);
@@ -300,11 +297,14 @@ class SiteVisitController extends Controller
         $lead = Lead::find($sitevisit->lead_id);
         if ($lead) {
             $parentStageId = $request->input('stage_id');
-            $sitevisit->update(['stage_id' => $parentStageId,
-            'created_by' => $request->input('created_by'),]);
-            $lead->update(['stage_id' => $parentStageId,
+            $sitevisit->update([
+                'stage_id' => $parentStageId,
+                'created_by' => $request->input('created_by'),
+            ]);
+            $lead->update([
+                'stage_id' => $parentStageId,
 
-        ]);
+            ]);
 
             $note = new StageNotes();
             $note->lead_id = $sitevisit->lead_id;
