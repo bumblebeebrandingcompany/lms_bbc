@@ -10,7 +10,7 @@ use App\Http\Requests\StoreFollowupRequest;
 use App\Models\Lead;
 use App\Models\User;
 
-use App\Models\ApplicationPurchased;
+use App\Models\Application;
 use App\Utils\Util;
 
 use Illuminate\Http\Request;
@@ -35,11 +35,11 @@ class ApplicationNotPurchasedController extends Controller
         $user = auth()->user();
         if($user->is_superadmin)
         {
-            $applications = ApplicationPurchased::all();
+            $applications = Application::all();
         }
         else
         {
-            $applications = ApplicationPurchased::where('for_whom', auth()->id())->get();
+            $applications = Application::where('for_whom', auth()->id())->get();
         }
 
         return view('admin.application_not_purchased.index', compact('lead', 'applications', 'agencies'));
@@ -51,7 +51,7 @@ class ApplicationNotPurchasedController extends Controller
 
         if ($lead) {
             $parentStageId = $request->input('stage_id');
-            $applicationpurchased = new ApplicationPurchased();
+            $applicationpurchased = new Application();
             $applicationpurchased->lead_id = $lead->id;
             $applicationpurchased->who_assigned = auth()->user()->id; // Store current user_id
             $applicationpurchased->for_whom = $request->input('user_id');

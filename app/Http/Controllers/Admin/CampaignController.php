@@ -78,7 +78,7 @@ class CampaignController extends Controller
             $table->editColumn('name', function ($row) {
                 return $row->name ? $row->name : '';
             });
-            $table->addColumn('name', function ($row) {
+            $table->addColumn('project_name', function ($row) {
                 return $row->project ? $row->project->name : '';
             });
 

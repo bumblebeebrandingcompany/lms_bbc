@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MassDestroyLeadRequest;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
-use App\Models\ApplicationPurchased;
+use App\Models\Application;
 use App\Models\Campaign;
 use App\Models\Lead;
 use App\Models\LeadTimeline;
@@ -112,13 +112,13 @@ class LeadsController extends Controller
             $user = auth()->user();
             $lead_stage = '';
             if ($user->is_agency || $user->is_superadmin || $user->is_presales) {
-                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp', 'application withdrawn'];
+                $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'enquiry', 'application purchased', 'lost', 'followup', 'rescheduled', 'Site Not Visited', 'Admitted', 'Spam', 'Not Qualified', 'Future Prospect', 'Cancelled', 'RNR', 'virtual call scheduled', 'Virtual Call Conducted', 'virtual call cancelled' . 'Admission FollowUp', 'admission withdrawn'];
             } elseif ($user->is_client || $user->is_frontoffice) {
 
                 $lead_stage = ['Site Visit Scheduled', 'Site Visit Conducted', 'Cancelled', 'rescheduled'];
             } elseif ($user->is_admissionteam) {
 
-                $lead_stage = ['Admission FollowUp', 'application purchased', 'Admitted', 'application withdrawn'];
+                $lead_stage = ['Admission FollowUp', 'application purchased', 'Admitted', 'admission withdrawn'];
             }
             $stageId = $request->input('stage_id');
             $admissionName = $request->input('admission_team_name');
@@ -653,7 +653,7 @@ class LeadsController extends Controller
         $lead->load('project', 'campaign', 'source', 'createdBy');
         $agencies = Agency::all();
         $users = User::all();
-        $application = ApplicationPurchased::all();
+        $application = Application::all();
         $user_id = request()->get('user_id'); // Get the user ID from the request
         $followUps = Followup::where('lead_id', $lead->id)
             ->when($user_id, function ($query) use ($user_id) {
@@ -800,11 +800,11 @@ class LeadsController extends Controller
         try {
             $mails = [];
             if (!empty($lead->email)) {
-                $mails[$lead->email] = $lead->name ?? $lead->ref_num;
+                $mails[$lead->email] = $lead->father_name ?? $lead->ref_num;
             }
 
             if (!empty($lead->secondary_email)) {
-                $mails[$lead->secondary_email] = $lead->name ?? $lead->ref_num;
+                $mails[$lead->secondary_email] = $lead->father_name ?? $lead->ref_num;
             }
 
             if (!empty($mails)) {

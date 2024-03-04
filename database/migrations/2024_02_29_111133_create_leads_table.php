@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('leads', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('sno');
             $table->string('ref_num');
             $table->string('father_name');
             $table->string('father_occupation');
@@ -27,7 +26,6 @@ return new class extends Migration
             $table->string('child_name');
             $table->string('child_age');
             $table->string('child_gender');
-            $table->string('grade_enquired');
             $table->date('dob');
             $table->string('email');
             $table->string('secondary_email');
@@ -42,9 +40,9 @@ return new class extends Migration
             $table->bigInteger('added_by');
             $table->bigInteger('stage_id');
             $table->string('comments');
-            $table->string('reference');
             $table->bigInteger('walkin_id');
             $table->softDeletes();
+
             $table->timestamps();
 
         });

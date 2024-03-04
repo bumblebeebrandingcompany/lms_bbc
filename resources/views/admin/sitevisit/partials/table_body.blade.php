@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 
-<tr data-created-at="{{ $sitevisit->visit_date }}">
+<tr data-created-at="{{ $sitevisit->follow_up_date }}">
     <td>{{ $counter }}</td>
 
     {{-- <td>
@@ -141,8 +141,8 @@
                                 <div class="float-left">
                                     <label for="Date">Select Date</label>
                                 </div>
-                                <input type="date" name="visit_date" class="form-control datepicker"
-                                    value="{{ $sitevisit->visit_date }}">
+                                <input type="date" name="follow_up_date" class="form-control datepicker"
+                                    value="{{ $sitevisit->follow_up_date }}">
                                 <div class="float-left">
                                     <label for="Time">Select Time</label>
                                 </div>
@@ -150,8 +150,8 @@
                                     <label for="Time">select time </label>
                                     <input type="time"
                                         class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                        name="visit_time" id="visit_time" rows="3"
-                                        required>{{ old('visit_time') }}
+                                        name="follow_up_time" id="follow_up_time" rows="3"
+                                        required>{{ old('follow_up_time') }}
                                 </div>
                                 <div class="form-group">
                                     <div class="float-left">
@@ -307,15 +307,15 @@
                                 <label for="Date">Select Date </label>
                                 <input type="date"
                                     class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                    name="visit_date" id="visit_date" rows="3"
-                                    required>{{ old('visit_date') }}
+                                    name="follow_up_date" id="follow_up_date" rows="3"
+                                    required>{{ old('follow_up_date') }}
                             </div>
                             <div class="form-group">
                                 <label for="Time">Select Time </label>
                                 <input type="time"
                                     class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                    name="visit_time" id="visit_time" rows="3"
-                                    required>{{ old('visit_time') }}
+                                    name="follow_up_time" id="follow_up_time" rows="3"
+                                    required>{{ old('follow_up_time') }}
                             </div>
                             <br>
                             <div class="form-group">
@@ -397,15 +397,15 @@
                                 <label for="Date">Select Date </label>
                                 <input type="date"
                                     class="form-control datepicker {{ $errors->has('form-control datepicker') ? 'is-invalid' : '' }}"
-                                    name="visit_date" id="visit_date" rows="3"
-                                    required>{{ old('visit_date') }}
+                                    name="follow_up_date" id="follow_up_date" rows="3"
+                                    required>{{ old('follow_up_date') }}
                             </div>
                             <div class="form-group">
                                 <label for="Time">Select Time </label>
                                 <input type="time"
                                     class="form-control timepicker {{ $errors->has('form-control timepicker') ? 'is-invalid' : '' }}"
-                                    name="visit_time" id="visit_time" rows="3"
-                                    required>{{ old('visit_time') }}
+                                    name="follow_up_time" id="follow_up_time" rows="3"
+                                    required>{{ old('follow_up_time') }}
                             </div>
                             <br>
                             <div class="form-group">
@@ -565,7 +565,7 @@
     </td>
     <td>
         <?php
-        $followUpDateTime = strtotime($sitevisit->visit_date . ' ' . $sitevisit->visit_time);
+        $followUpDateTime = strtotime($sitevisit->follow_up_date . ' ' . $sitevisit->follow_up_time);
         $currentTime = time();
         $timeRemaining = max(0, $followUpDateTime - $currentTime); // in seconds
         ?>

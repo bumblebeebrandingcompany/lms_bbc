@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lead;
-use App\Models\ApplicationPurchased;
+use App\Models\Application;
 use App\Models\Admission;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class AdmissionController extends Controller
         $lead = Lead::all();
         $admissions=Admission::all();
 
-        $application=ApplicationPurchased::all();
+        $application=Application::all();
         return view('admin.admission.index', compact( 'lead','Admissions','application',));
     }
     public function store(Request $request)

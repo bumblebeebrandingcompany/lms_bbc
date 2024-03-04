@@ -13,6 +13,6 @@ class Stage extends Model
 
     public function parentStage()
     {
-        return $this->belongsTo(ParentStage::class);
+        return $this->belongsTo(ParentStage::class,'stage_id');
     }
 }

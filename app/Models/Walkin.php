@@ -14,7 +14,7 @@ class Walkin extends Model
     public $table = 'walkins';
 
     public static $searchable = [
-        'name',
+        'father_name',
     ];
 
     protected $dates = [
@@ -23,12 +23,12 @@ class Walkin extends Model
     ];
 
     protected $fillable = [
-        'name',
+        'father_name',
         'email',
         'phone',
         'secondary_phone',
         'secondary_email',
-        'subsource_id'
+        'sub_source_id'
     ];
     public function leads()
     {

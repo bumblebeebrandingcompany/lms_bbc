@@ -185,7 +185,54 @@
 }
 
    </style>
+<style>
+    .popup {
+        display: none;
+        position: fixed;
+        top: 30%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        width: 400px;
+        /* Adjust the width as needed */
+        height: 300px;
+        /* Adjust the height as needed */
+    }
+</style>
+<style>
+    .popup {
+        display: none;
+    }
+
+    .show {
+        display: block;
+    }
+</style>
+<style>
+    .edit-field.error {
+        background-color: #ffcccc;
+        /* Change this to the desired shade of red */
+    }
+</style>
 
 
+<style>
+    .myDiv {
+        display: none;
+        padding: 10px;
+        margin-top: 20px;
+    }
+
+
+    #showOther {}
+
+    #showfollowup {}
+
+    #showsitevisitScheduled {}
+</style>
 
 

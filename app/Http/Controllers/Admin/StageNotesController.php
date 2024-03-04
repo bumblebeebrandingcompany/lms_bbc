@@ -52,7 +52,7 @@ class StageNotesController extends Controller
         ];
 
         $timeline->payload = json_encode($payload); // Convert array to JSON
-        $timeline->description = $description;
+        // $timeline->description = $description;
         $timeline->save();
     }
 

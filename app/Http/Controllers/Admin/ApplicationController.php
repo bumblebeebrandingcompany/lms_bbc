@@ -10,14 +10,14 @@ use App\Http\Requests\StoreFollowupRequest;
 use App\Models\Lead;
 use App\Models\User;
 
-use App\Models\ApplicationPurchased;
+use App\Models\Application;
 use App\Utils\Util;
 
 use Illuminate\Http\Request;
 
 use Symfony\Component\HttpFoundation\Response;
 
-class ApplicationPurchasedController extends Controller
+class ApplicationController extends Controller
 {
     /**
      * All Utils instance.
@@ -34,7 +34,7 @@ class ApplicationPurchasedController extends Controller
         $lead = Lead::all();
         $agencies = User::all();
         // Alternatively, if you want to get the IDs in a loop
-        $applications = ApplicationPurchased::all();
+        $applications = Application::all();
 
         return view('admin.applicationpurchased.index', compact('lead', 'applications', 'agencies'));
     }
@@ -44,21 +44,19 @@ class ApplicationPurchasedController extends Controller
 
         if ($lead) {
             $parentStageId = $request->input('stage_id');
-            $applicationpurchased = new ApplicationPurchased();
+            $applicationpurchased = new Application();
             $applicationpurchased->lead_id = $lead->id;
             $applicationpurchased->who_assigned = auth()->user()->id;
             $applicationpurchased->for_whom = $request->input('user_id');
             $applicationpurchased->application_no = $request->input('application_no');
-            $applicationpurchased->follow_up_date = $request->input('follow_up_date');
+            $applicationpurchased->application_date = $request->input('follow_up_date');
             $applicationpurchased->notes = $request->input('notes');
-            $applicationpurchased->follow_up_time = $request->input('follow_up_time');
+            $applicationpurchased->application_time = $request->input('follow_up_time');
             $applicationpurchased->stage_id = $parentStageId;
             $applicationpurchased->lead->update(['user_id' => $applicationpurchased->for_whom]);
             $applicationpurchased->save();
-            // Check if $admission->lead is not null before updating
             if ($applicationpurchased->lead) {
                 $applicationpurchased->lead->update(['stage_id' => $applicationpurchased->stage_id]);
-                // Update the latest site visit as purchased
                 $latestSiteVisit = $applicationpurchased->lead->siteVisits()->latest()->first();
                 if ($latestSiteVisit) {
                     $latestSiteVisit->update(['stage_id' => $applicationpurchased->stage_id]);
@@ -67,7 +65,6 @@ class ApplicationPurchasedController extends Controller
 
             return redirect()->back()->with('success', 'Form submitted successfully!');
         } else {
-            // Handle the case where the lead is not found
             return redirect()->back()->with('error', 'Lead not found!');
         }
     }

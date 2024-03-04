@@ -61,7 +61,10 @@ class SubSource extends Model
     {
         return $this->hasMany(Walkin::class, 'sub_source_id');
     }
-
+    public function campaigns()
+    {
+        return $this->belongsTo(Campaign::class, 'campaign_id');
+    }
 
 }
 

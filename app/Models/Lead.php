@@ -27,7 +27,7 @@ class Lead extends Model
     ];
 
     public const DEFAULT_WEBHOOK_FIELDS = [
-        'name',
+        'father_name',
         'email',
         'phone',
         'predefined_comments',
@@ -219,7 +219,7 @@ class Lead extends Model
     }
     public function application()
     {
-        return $this->hasOne(ApplicationPurchased::class);
+        return $this->hasOne(Application::class);
     }
     public function subsource()
     {
@@ -227,7 +227,9 @@ class Lead extends Model
             ->select('id', 'campaign_id', 'project_id', 'source_id')
             ->withDefault();
     }
-
-
+    public function subsources()
+    {
+        return $this->belongsTo(SubSource::class, 'sub_source_id');
+    }
 }
 

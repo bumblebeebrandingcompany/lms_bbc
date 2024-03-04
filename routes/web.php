@@ -71,7 +71,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
 
     //call record
     Route::resource('/callog', 'CallRecordController');
-    Route::resource('/applications', 'ApplicationPurchasedController');
+    Route::resource('/applications', 'ApplicationController');
 
     Route::resource('/walkinform', 'WalkinController');
     Route::resource('/importfile', 'FileImportController');
@@ -138,6 +138,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'namespace' => 'Admin', 'mi
     Route::post('clients/media', 'ClientController@storeMedia')->name('clients.storeMedia');
     Route::post('clients/ckmedia', 'ClientController@storeCKEditorImages')->name('clients.storeCKEditorImages');
     Route::resource('clients', 'ClientController');
+    Route::resource('report', 'ReportController');
 
     // Agency
     Route::delete('agencies/destroy', 'AgencyController@massDestroy')->name('agencies.massDestroy');

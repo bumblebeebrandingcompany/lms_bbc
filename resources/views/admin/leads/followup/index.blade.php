@@ -124,24 +124,10 @@
                                         @endforeach
                                     </td> --}}
                                     <td>
-                                        @foreach ($lead as $leads)
-                                            @if ($leads->id === $followUp->lead_id)
-                                                {{ $leads->child_age ?? 'Not Updated' }}
-                                            @endif
-                                        @endforeach
-                                    </td>
-                                    {{-- <td>
-                                        @foreach ($lead as $leads)
-                                            @if ($leads->id === $followUp->lead_id)
-                                                {{ $leads->campaign->name }}
-                                            @endif
-                                        @endforeach
-                                    </td> --}}
-                                    <td>
-                                        {{ $followUp->followup_date }}
+                                        {{ $followUp->follow_up_date }}
                                     </td>
                                     <td>
-                                        {{ $followUp->followup_time }}
+                                        {{ $followUp->follow_up_time }}
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-primary btn-sm" data-toggle="modal"

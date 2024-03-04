@@ -30,6 +30,6 @@ class Admission extends Model
     }
     public function application()
     {
-        return $this->belongsTo(ApplicationPurchased::class,'application_id');
+        return $this->belongsTo(Application::class,'application_id');
     }
 }

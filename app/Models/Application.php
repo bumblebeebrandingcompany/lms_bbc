@@ -6,7 +6,7 @@ use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ApplicationPurchased extends Model
+class Application extends Model
 {
     use HasFactory;
 
@@ -29,7 +29,7 @@ class ApplicationPurchased extends Model
     }
     public function application()
     {
-        return $this->hasMany(ApplicationPurchased::class,'application_id');
+        return $this->hasMany(Application::class,'application_id');
     }
 
     public function user()

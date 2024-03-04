@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Lead;
+use App\Models\FileImport;
 use Maatwebsite\Excel\Concerns\ToModel;
 
 class FilesImport implements ToModel
@@ -17,7 +17,7 @@ class FilesImport implements ToModel
         // Check if both 'first_name' and 'last_name' keys exist in the $row array
         if(isset($row['first_name']) && isset($row['last_name'])) {
             // Create a new FileImport model instance with the provided data
-            $fileImport = new Lead([
+            $fileImport = new FileImport([
                 'first_name' => $row['first_name'],
                 'last_name' => $row['last_name'],
             ]);

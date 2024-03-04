@@ -138,7 +138,7 @@
                     },
                     {
                         data: 'campaign_name',
-                        name: 'name'
+                        name: 'campaign.name'
                     },
                     {
                         data: 'name',

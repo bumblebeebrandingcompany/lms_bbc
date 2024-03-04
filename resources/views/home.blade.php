@@ -86,7 +86,6 @@
                                     <span class="info-box-icon bg-danger" >
                                         <i class="fa fa-chart-line"></i>
                                     </span>
-
                                     <div class="info-box-content">
                                         <span class="info-box-text">{{ $settings5['chart_title'] }}</span>
                                         <span class="info-box-number">{{ number_format($settings5['total_number']) }}</span>

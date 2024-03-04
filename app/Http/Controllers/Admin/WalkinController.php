@@ -71,68 +71,62 @@ class WalkinController extends Controller
 
 
     public function store(WalkinStoreRequest $request)
-    {
-        $input = $request->all();
-        \Log::info('Request Data: ' . json_encode($request->all()));
-$subsource=SubSource::all();
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string',
-            'phone' => 'required|string|max:255',
-            'sub_source_id' => 'required',
-        ]);
+{
+    $request->validate([
+        'father_name' => 'required|string|max:255',
+        'email' => 'required|string',
+        'phone' => 'required|string|max:255',
+        'sub_source_id' => 'required',
+    ]);
 
+    // Check if Walkin already exists
+    $walkin = Walkin::where('phone', $request->input('phone'))->first();
+
+    if (!$walkin) {
+        // If Walkin doesn't exist, create a new one
         $walkin = Walkin::create([
-            'name' => $request->input('name'),
+            'father_name' => $request->input('father_name'),
             'email' => $request->input('email'),
             'phone' => $request->input('phone'),
-            // 'source_id' => $request->input('source_id'),
-            // 'project_id' => $request->input('project_id'),
-            // 'campaign_id' => $request->input('campaign_id'),
             'sub_source_id' => $request->input('sub_source_id'),
             'secondary_email' => $request->input('secondary_email'),
             'secondary_phone' => $request->input('secondary_phone'),
+            'stage_id' => 11,
         ]);
-        $promo_details = $request->except('_token');
+    } else {
+        // If Walkin exists, update the sub_source_id
+        $walkin->update([
+            'sub_source_id' => $request->input('sub_source_id'),
+        ]);
+    }
 
+    // Check if Lead already exists
+    $lead = Lead::where('walkin_id', $walkin->id)->first();
+
+    if (!$lead) {
+        // If Lead doesn't exist, create a new one
         $lead = Lead::create([
             'walkin_id' => $walkin->id,
-            'name' => $walkin->name,
+            'father_name' => $walkin->father_name,
             'email' => $walkin->email,
             'phone' => $walkin->phone,
-            // 'source_id' => $walkin->source_id,
-            // 'project_id' => $walkin->project_id,
-            // 'campaign_id' => $walkin->campaign_id,
-            'parent_stage_id' => 11,
+            'stage_id' => 11,
             'created_by' => auth()->user()->id,
-            'secondary_email' => $request->secondary_email,
-            'secondary_phone' => $request->secondary_phone,
-            'sub_source_id' => $request->sub_source_id,
-        ]);$input = $request->except(['_method', '_token']);
-        // $existingLeads = Lead::where('phone', $input['phone'])->get();
-
-        // foreach ($existingLeads as $existingLead) {
-        //     // Update each existing lead with the new data
-        //     $existingLead->fill($input);
-        //     $existingLead->save();
-        // }
-
+            'secondary_email' => $request->input('secondary_email'),
+            'secondary_phone' => $request->input('secondary_phone'),
+            'sub_source_id' => $request->input('sub_source_id'), // Make sure to include this line
+        ]);
+        // Generate and save the ref_num
         $lead->ref_num = $this->util->generateLeadRefNum($lead);
         $lead->save();
-        // $this->util->storeUniqueWebhookFields($lead);
-        $walkins=Walkin::all();
-
-        // // Define $existingLeads as an empty array
-        // $existingLeads = [];
-
-        // if ($existingLead) {
-        //     // You can access the 'ref_no' attribute
-        //     $ref_num = $existingLead->ref_num;
-            return view('admin.walkinform.index')->with(compact( 'walkins'));
-        // } else {
-        //     return response()->json(['error' => 'Lead not found'], 404);
-        // }
     }
+
+    $walkins = Walkin::all();
+
+    return view('admin.walkinform.index')->with(compact('walkins'));
+}
+
+
 
 
     public function show($id)
@@ -152,13 +146,13 @@ $subsource=SubSource::all();
     public function update(Request $request, Walkin $walkinform)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'father_name' => 'required|string|max:255',
             'email' => 'required|string',
             'phone' => 'required|string|max:255',
         ]);
 
         $data = $request->only([
-            'name',
+            'father_name',
             'email',
             'phone',
             'secondary_email',

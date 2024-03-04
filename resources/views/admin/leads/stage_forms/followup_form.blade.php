@@ -8,24 +8,7 @@ enctype="multipart/form-data">
     <div class="modal-body">
         <input type="hidden" name="lead_id" value="{{ $lead->id }}">
         <input type="hidden" name="stage_id" value="9">
-        {{-- <div class="form-group">
-            <label type="select" for="user_id">clients</label>
-            <select name="user_id" id="user_id"
-                class="form-control{{ $errors->has('user_id') ? ' is-invalid' : '' }}"
-                rows="3" required>{{ old('user_id') }}
-                >
-                <option value="" selected disabled>Please
-                    Select</option>
-                @foreach ($agencies as $id => $agency)
-                    @foreach ($agency->agencyUsers as $user)
-                        <option value="{{ $user->id }}"
-                            {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                            {{ $user->representative_name }}
-                        </option>
-                    @endforeach
-                @endforeach
-            </select>
-        </div> --}}
+
         <div class="form-group">
             <label for="Date">Select Date </label>
             <input type="date"

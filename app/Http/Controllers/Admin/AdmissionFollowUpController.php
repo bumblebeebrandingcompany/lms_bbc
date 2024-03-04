@@ -80,9 +80,9 @@ class AdmissionFollowUpController extends Controller
 
             $followup = new Followup();
             $followup->lead_id = $lead->id;
-            $followup->user_id = $input['user_id'];
-            $followup->follow_up_date = $input['follow_up_date'];
-            $followup->follow_up_time = $input['follow_up_time'];
+            // $followup->user_id = $input['user_id'];
+            $followup->followup_date = $input['follow_up_date'];
+            $followup->followup_time = $input['follow_up_time'];
             $followup->notes = $input['notes'];
             $followup->stage_id = $parentStageId;
             $followup->save();

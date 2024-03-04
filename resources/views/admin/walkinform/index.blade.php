@@ -53,7 +53,7 @@
                                         {{ $lead->ref_num ?? '' }}
                                     @endforeach
                                 </td>
-                                <td> {{ $walkin->name }}</td>
+                                <td> {{ $walkin->father_name }}</td>
                                 <td> {{ $walkin->email }}</td>
                                 <td> {{ $walkin->secondary_email }}</td>
                                 <td> {{ $walkin->phone }}</td>

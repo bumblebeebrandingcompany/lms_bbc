@@ -10,6 +10,8 @@
 
             </th>
             <th>
+                S.No </th>
+            <th>
                 @lang('messages.ref_num')
             </th>
             <th>
