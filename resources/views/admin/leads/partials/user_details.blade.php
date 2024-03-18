@@ -406,7 +406,6 @@
                         {!! $lead->comments ?? '' !!}
                     </a>
                 </li>
-
                 <li class="list-group-item">
                     <b>@lang('messages.added_by')</b>
                     <a class="float-right">

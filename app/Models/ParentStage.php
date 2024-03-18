@@ -28,6 +28,4 @@ class ParentStage extends Model
     {
         return $this->childStages->where('tag_id', $tagId);
     }
-
-
 }

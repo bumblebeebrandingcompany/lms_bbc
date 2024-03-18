@@ -109,7 +109,7 @@ class Lead extends Model
 
     public function users()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'added_by');
     }
 
     public function siteVisits()

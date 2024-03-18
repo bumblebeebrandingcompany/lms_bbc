@@ -209,7 +209,5 @@ public function getLeads(Request $request)
     $leads = Lead::where('phone', $phone)->orWhere('email', $email)->get();
     return response()->json($leads);
 }
-
-
 }
 

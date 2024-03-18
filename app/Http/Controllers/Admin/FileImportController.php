@@ -3,18 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Application;
+use Carbon\Carbon;
 
-use App\Imports\FilesImport;
-use App\Models\FileImport;
-use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
-
-
 
 
 class FileImportController extends Controller
 {
-
     public function index()
     {
         return view('admin.import.index');
@@ -27,7 +23,7 @@ class FileImportController extends Controller
     ]);
 
     // Process the CSV file
-    if ($request->hasFile('csv_file')) {
+  if ($request->hasFile('csv_file')) {
         $file = $request->file('csv_file');
         $csvData = array_map('str_getcsv', file($file));
 
@@ -37,14 +33,27 @@ class FileImportController extends Controller
         // Extract first_name and last_name columns
         $dataToInsert = [];
         foreach ($csvData as $row) {
+            $createdAt = !empty($row[6]) ? Carbon::createFromFormat('d-m-Y', $row[6])->format('Y-m-d H:i:s') : null;
+
             $dataToInsert[] = [
-                'first_name' => $row[0], // Assuming first_name is in the first column
-                'last_name' => $row[1],  // Assuming last_name is in the second column
+                'lead_id' => $row[0],
+                'application_no' => $row[1],
+                'application_date' => $row[2],
+                'stage_id' => $row[3],
+                'who_assigned' => $row[4],
+                'for_whom' => $row[5],
+                'created_at' => $createdAt,
+                'application_time' => $row[7],
             ];
+
+            \Log::info('Row Data: ' . json_encode($row)); // Add this line for logging row data
         }
 
+        // Log the data before insertion
+        \Log::info('Data to Insert: ' . json_encode($dataToInsert));
+
         // Bulk insert into the database
-        FileImport::insert($dataToInsert);
+        Application::insert($dataToInsert);
 
         return redirect()->back()->with('success', 'CSV data imported successfully.');
     }
@@ -53,5 +62,3 @@ class FileImportController extends Controller
 }
 
 }
-
-

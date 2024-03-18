@@ -1,7 +1,7 @@
 <?php
 use App\Http\Controllers\Admin\StagesController;
 use App\Http\Controllers\Admin\WebhookReceiverController;
-
+use App\Http\Controllers\LeadController;
 Route::redirect('/', '/login');
 Route::get('/home', function () {
     if (session('status')) {

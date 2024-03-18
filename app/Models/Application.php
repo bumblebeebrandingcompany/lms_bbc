@@ -17,12 +17,8 @@ class Application extends Model
     protected $dates = [
         'created_at',
         'updated_at',
-        'deleted_at',
-        'follow_up_date',
-
     ];
-    protected $fillable = ['lead_id', 'who_assigned', 'for_whom', 'application_no', 'follow_up_date', 'notes', 'follow_up_time', 'stage_id'];
-
+    protected $fillable = ['lead_id', 'who_assigned', 'for_whom', 'application_no', 'application_date', 'notes', 'application_time', 'stage_id'];
     public function lead()
     {
         return $this->belongsTo(Lead::class,'lead_id');
@@ -31,7 +27,6 @@ class Application extends Model
     {
         return $this->hasMany(Application::class,'application_id');
     }
-
     public function user()
     {
         return $this->belongsTo(User::class,'who_assigned');

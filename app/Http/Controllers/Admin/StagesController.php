@@ -12,11 +12,8 @@ class StagesController extends Controller
 {
     public function index()
     {
-
         $parentStages = ParentStage::all();
         $stages = Stage:: all();
-
-
         return view('admin.stages.index', compact('parentStages','stages'));
     }
 
@@ -36,8 +33,6 @@ class StagesController extends Controller
 
         return redirect()->route('admin.stages.index')->with('success', 'Stage created successfully.');
     }
-
-
     public function update(Request $request, $id)
     {
         $request->validate([

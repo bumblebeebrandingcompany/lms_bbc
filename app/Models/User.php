@@ -143,7 +143,23 @@ class User extends Authenticatable
         return $this->belongsTo(Agency::class, 'agency_id');
     }
 
+
+    public function leads()
+    {
+        return $this->hasMany(Lead::class, 'added_by');
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'who_assigned');
+    }
+
+    public function admissions()
+    {
+        return $this->hasMany(Application::class, 'for_whom');
+    }
     /**
+     *
      * is user super admin?
      *
      * @return boolean

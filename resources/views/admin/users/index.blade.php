@@ -169,7 +169,6 @@
                 { data: 'website', name: 'website' },
                 { data: 'client_name', name: 'client.name' },
                 { data: 'agency_name', name: 'agency.name' },
-
                 // { data: 'assigned_projects', name: 'assigned_projects' },
                 { data: 'created_at', name: 'created_at' },
                 { data: 'actions', name: '{{ trans('global.actions') }}' }

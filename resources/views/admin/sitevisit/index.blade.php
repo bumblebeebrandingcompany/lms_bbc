@@ -338,7 +338,6 @@
                         }
                         break;
                 }
-
                 // Filter the table rows based on the calculated start and end dates
                 $(tableId + ' tbody tr').hide().filter(function() {
                     var createdDate = $(this).data('created-at');

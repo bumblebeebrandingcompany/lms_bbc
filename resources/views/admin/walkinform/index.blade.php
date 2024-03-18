@@ -41,8 +41,8 @@
                     </thead>
                     <tbody>
                         @php
-                        $counter = 1;
-                    @endphp
+                            $counter = 1;
+                        @endphp
                         @foreach ($walkins as $walkin)
                             <tr>
                                 <td>{{ $counter++ }}</td>
